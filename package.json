@@ -1,0 +1,19 @@
+{
+  "name": "leaflet-ts",
+  "version": "1.0.0",
+  "description": "Leaflet TypeScript Version",
+  "keywords": [
+    "GIS",
+    "Leaflet"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sheng Zheng",
+  "license": "ISC"
+}
