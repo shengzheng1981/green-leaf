@@ -94,13 +94,13 @@ export class FeatureLayer extends Layer {
     if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom) return;
 
     let feature = this._featureClass.first;
-    let count = 0;
+    // let count = 0;
     const features = [];
     while (feature) {
       if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
         feature.draw(ctx, this._renderer.getSymbol(feature));       
         features.push(feature);
-        count += 1;
+        // count += 1;
       }
       feature = feature.next;
     }

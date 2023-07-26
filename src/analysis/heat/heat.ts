@@ -161,7 +161,7 @@ export class Heat extends Raster {
       ctx.setTransform(1,0,0,1,0,0);
       ctx.strokeStyle = "#ffffff88";
       ctx.lineWidth = 1;
-      let count = 0;
+      // let count = 0;
       let flag = 0; //奇偶标志
       for (let y = 0; y <= canvas.height; y = Math.floor(y + this.honeySide * 1.732 / 2)) {
         for (let x = 0 + flag * (3 / 2 * this.honeySide); x <= canvas.width; x = x + 3 * this.honeySide) {
@@ -184,12 +184,12 @@ export class Heat extends Raster {
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
-            count += 1;
+            // count += 1;
           }
         }
         flag = flag === 0 ? 1 : 0;
       }
-      console.log("honey", count);
+      // console.log("honey", count);
       ctx.restore();
     } else {
       for (let i = 0; i < data.length; i++) {

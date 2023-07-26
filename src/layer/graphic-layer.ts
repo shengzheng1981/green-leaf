@@ -72,15 +72,15 @@ export class GraphicLayer extends Layer {
   draw(ctx: CanvasRenderingContext2D, zoom: number, redrawBounds?: ScreenBounds) {
     if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom) return;
     let graphic = this._first;
-    let count = 0;
+    // let count = 0;
     while (graphic) {
       if (!redrawBounds || (graphic.geometry && graphic.geometry.screenBounds && graphic.geometry.screenBounds.intersects(redrawBounds))) {
         graphic.draw(ctx);
-        count += 1;
+        // count += 1;
       }
       graphic = graphic.next;
     }
-    console.log("count:", count);
+    // console.log("count:", count);
   }
 
   query(screenXY: ScreenXY, zoom: number, bounds: ScreenBounds) {

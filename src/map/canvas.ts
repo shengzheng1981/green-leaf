@@ -338,7 +338,7 @@ export class Canvas extends EventedObject {
 			}
 	
 			this._drawing = true;
-			console.time("draw");
+			// console.time("draw");
       this._rasterLayers.forEach(layer => {
 				layer.draw(this._ctx, this._zoom, bounds || this._bounds);
 			});
@@ -352,7 +352,7 @@ export class Canvas extends EventedObject {
 			});
 
       this._graphicLayer.draw(this._ctx, this._zoom, bounds || this._bounds);
-			console.timeEnd("draw");
+			// console.timeEnd("draw");
 
 			this._drawing = false;
 	
