@@ -24,9 +24,4 @@ export abstract class BaseObject {
     return this._id.toString();
   }
 
-  clone(): BaseObject {
-    const cls: any = this.constructor;
-    const obj = new cls();
-    return obj;
-  }
 }

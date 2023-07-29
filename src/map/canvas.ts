@@ -373,14 +373,7 @@ export class Canvas extends EventedObject {
     this._featureLayers.forEach(layer => {
 			elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
 		})
-		// for (var order = this._drawFirst; order; order = order.next) {
-		// 	layer = order.layer;
-		// 	if (layer.options.interactive && layer._containsPoint(point)) {
-		// 		if (!(e.type === 'click' || e.type !== 'preclick') || !this._map._draggableMoved(layer)) {
-		// 			clickedLayer = layer;
-		// 		}
-		// 	}
-		// }
+
 		if (elements.length > 0)  {
 			DomEvent.fakeStop(e);
 			this._fireEvent(elements, e);
@@ -419,12 +412,7 @@ export class Canvas extends EventedObject {
     this._featureLayers.forEach(layer => {
 			elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
 		})
-		// for (let order = this._drawFirst; order; order = order.next) {
-		// 	layer = order.layer;
-		// 	if (layer.options.interactive && layer._containsPoint(point)) {
-		// 		candidateHoveredLayer = layer;
-		// 	}
-		// }
+
 		candidateHoveredLayer = elements.length > 0 ? elements[0] : null;
 		if (candidateHoveredLayer !== this._hoveredLayer) {
 			this._handleMouseOut(e);

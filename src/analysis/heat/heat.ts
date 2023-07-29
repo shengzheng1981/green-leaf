@@ -127,8 +127,6 @@ export class Heat extends Raster {
     // const gray = this.honey ? canvas.getContext("2d") : ctx;  
     const matrix = ctx.getTransform();
     gray.setTransform(matrix.a, 0, 0, matrix.d, matrix.e, matrix.f);
-    console.log("ctx matrix", ctx.getTransform());
-    console.log("gray matrix", gray.getTransform()); 
     // const gray = ctx;
     //遍历要素集合，根据字段值画alpha通道图
     this._featureClass.features.forEach((feature: Feature) => {

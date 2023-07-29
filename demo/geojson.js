@@ -1,7 +1,7 @@
 
 import {
   LatLng, Map, FeatureLayer, FeatureClass, GeometryType,
-  CategoryRenderer, Field, FieldType, Tile
+  CategoryRenderer, Field, FieldType, Tile, GeoJSONAdapter
 } from "../dist";
 
 window.load = async () => {
@@ -14,14 +14,13 @@ window.load = async () => {
 
   map.setView(new LatLng(39.909186, 116.397411), 12);
 
-  let response = await fetch("assets/geojson/beijing.json");
-  let data = await response.json();
+  const geojsonAdapter = new GeoJSONAdapter(GeometryType.Polygon, "assets/geojson/beijing.json");
   //新建要素类
   const featureClass = new FeatureClass(GeometryType.Polygon);
   //新建字段
   const field = new Field("name", FieldType.String);
   featureClass.addField(field);
-  featureClass.loadGeoJSON(data);
+  await featureClass.load(geojsonAdapter);
   //新建矢量图层
   const featureLayer = new FeatureLayer();
   featureLayer.featureClass = featureClass;

@@ -32,6 +32,7 @@ export class Point extends Geometry {
   protected _type: GeometryType = GeometryType.Point;
 	private _latlng: LatLng;
 	private _planeXY: PlaneXY;
+  //
 	private _screenXY: ScreenXY;
 
   get latlng(): LatLng {

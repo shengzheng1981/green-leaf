@@ -937,10 +937,10 @@ export class Map extends EventedObject {
 		this.createPane('overlayPane');
 		// @pane shadowPane: HTMLElement = 500
 		// Pane for overlay shadows (e.g. `Marker` shadows)
-		this.createPane('shadowPane');
+		// this.createPane('shadowPane');
 		// @pane markerPane: HTMLElement = 600
 		// Pane for `Icon`s of `Marker`s
-		this.createPane('markerPane');
+		// this.createPane('markerPane');
 		// @pane tooltipPane: HTMLElement = 650
 		// Pane for `Tooltip`s.
 		this.createPane('tooltipPane');
@@ -948,10 +948,6 @@ export class Map extends EventedObject {
 		// Pane for `Popup`s.
 		this.createPane('popupPane');
 
-		if (!this.options.markerZoomAnimation) {
-			DomUtil.addClass(panes.markerPane, 'leaflet-zoom-hide');
-			DomUtil.addClass(panes.shadowPane, 'leaflet-zoom-hide');
-		}
 	}
 
 

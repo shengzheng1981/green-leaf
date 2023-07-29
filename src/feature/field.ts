@@ -20,7 +20,7 @@ export enum FieldType {
  * @remarks
  * TODO: a lot of things to be done
  */
-export class Field extends CommonObject {
+export class Field {
   /**
    * 字段名称
    */
@@ -35,7 +35,6 @@ export class Field extends CommonObject {
   type: FieldType;
 
   constructor(name: string, type: FieldType) {
-    super();
     this.name = name;
     this.type = type;
   }

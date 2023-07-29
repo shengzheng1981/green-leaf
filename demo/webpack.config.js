@@ -1,6 +1,6 @@
 module.exports = {
     mode: "development",
-    entry: "./heat.js",
+    entry: "./geojson.js",
     output: {
         filename: "bundle.js"
     },
