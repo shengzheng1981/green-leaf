@@ -1,4 +1,3 @@
-import { CommonObject } from "../base/common-object";
 import { ScreenBounds } from "../common/screen-bounds";
 import { ScreenXY } from "../common/screen-xy";
 
@@ -8,7 +7,7 @@ import { ScreenXY } from "../common/screen-xy";
  * 如按现实世界来抽取对象基类，下述属性不应放在基类
  * 但考虑到Canvas的上下文设定，才决定抽取到基类
  */
-export abstract class Symbol extends CommonObject {
+export abstract class Symbol {
 
 
   /**

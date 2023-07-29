@@ -1,4 +1,3 @@
-import { CommonObject } from '../base/common-object';
 import { XY } from './xy';
 
 /*
@@ -26,7 +25,7 @@ import { XY } from './xy';
  * can't be added to it with the `include` function.
  */
 
-export abstract class XYBounds extends CommonObject {
+export abstract class XYBounds {
 	// @property min: Point
 	// The top left corner of the rectangle.
 	// @property max: Point
@@ -35,7 +34,6 @@ export abstract class XYBounds extends CommonObject {
 	max: XY;
 
 	constructor(a?: XY | XY[], b?: XY) {
-		super();
 		let points: XY[];
 		if (a instanceof XY && b instanceof XY) {
 			points = [a, b];

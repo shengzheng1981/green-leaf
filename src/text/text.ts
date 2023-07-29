@@ -1,11 +1,9 @@
-import { CommonObject } from "../base/common-object";
-
 /**
  * 文本符号
  * @remarks
  * 常用于文本标注
  */
- export class Text extends CommonObject {
+ export class Text {
   /**
    * 边框宽
    */

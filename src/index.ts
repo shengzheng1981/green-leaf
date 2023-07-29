@@ -3,7 +3,6 @@ export * from './util/browser';
 export * from './util/dom-util';
 export * from './util/dom-event';
 export * from './base/base-object';
-export * from './base/common-object';
 export * from './base/evented-object';
 export * from './base/handler-object';
 export * from './base/draggable-object';

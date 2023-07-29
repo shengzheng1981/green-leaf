@@ -1,5 +1,3 @@
-import { CommonObject } from "../base/common-object";
-
 /**
  * 字段类型
  */

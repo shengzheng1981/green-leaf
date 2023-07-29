@@ -1,4 +1,3 @@
-import { CommonObject } from '../base/common-object';
 import * as Util from '../util/util';
 import { Earth } from '../crs/crs-earth';
 import { LatLngBounds } from './latlng-bounds';
@@ -28,13 +27,12 @@ import { LatLngBounds } from './latlng-bounds';
  * can't be added to it with the `include` function.
  */
 
-export class LatLng extends CommonObject{
+export class LatLng {
 	public lat: number;
 	public lng: number;
 	public alt: number;
 
 	constructor(lat: number = 0, lng: number = 0, alt: number = 0) {
-		super();
 		// @property lat: Number
 		// Latitude in degrees
 		this.lat = lat;

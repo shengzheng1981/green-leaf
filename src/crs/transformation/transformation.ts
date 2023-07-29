@@ -1,4 +1,3 @@
-import { CommonObject } from '../../base/common-object';
 import { PlaneXY } from '../../common/plane-xy';
 import { ScreenXY } from '../../common/screen-xy';
 
@@ -23,13 +22,12 @@ import { ScreenXY } from '../../common/screen-xy';
 
 // factory new L.Transformation(a: Number, b: Number, c: Number, d: Number)
 // Creates a `Transformation` object with the given coefficients.
-export class Transformation extends CommonObject {
+export class Transformation {
 	_a: number;
 	_b: number;
 	_c: number;
 	_d: number;
 	constructor(a: any, b: number, c: number, d: number) {
-		super();
 		this._a = a;
 		this._b = b;
 		this._c = c;

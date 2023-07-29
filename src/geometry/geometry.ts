@@ -1,11 +1,8 @@
-import { CommonObject } from "../base/common-object";
 import { LatLngBounds } from "../common/latlng-bounds";
 import { PlaneBounds } from "../common/plane-bounds";
 import { ScreenBounds } from "../common/screen-bounds";
-import { Projection } from "../crs/projection/projection";
 import { Symbol } from '../symbol/symbol';
 import { Text } from '../text/text';
-import { Map } from '../map/map';
 import { ScreenXY } from "../common/screen-xy";
 import { CRS } from "../crs/crs";
 import { XY } from "../common/xy";
@@ -45,7 +42,7 @@ export enum GeometryType {
 /**
  * 图形基类
  */
-export abstract class Geometry extends CommonObject {
+export abstract class Geometry {
   protected _type: GeometryType;
   /**
    * 坐标投影变换

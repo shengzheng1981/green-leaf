@@ -1,4 +1,3 @@
-import { CommonObject } from '../base/common-object';
 import { formatNum } from '../util/util';
 
 /*
@@ -25,13 +24,12 @@ import { formatNum } from '../util/util';
  * can't be added to it with the `include` function.
  */
 
-export abstract class XY extends CommonObject{
+export abstract class XY {
 
 	public x: number;
 	public y: number;
 
 	constructor(x: number = 0, y: number = 0) {
-		super();
 		// @property x: Number; The `x` coordinate of the point
 		this.x = x;
 		// @property y: Number; The `y` coordinate of the point

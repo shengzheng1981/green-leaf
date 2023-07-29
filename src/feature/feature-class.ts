@@ -1,12 +1,6 @@
 import { Adapter } from "../adapter/adapter";
-import { CommonObject } from "../base/common-object";
-import { LatLng } from "../common/latlng";
 import { CRS } from "../crs/crs";
 import { GeometryType } from "../geometry/geometry";
-import { MultiplePolygon } from "../geometry/multiple-polygon";
-import { Point } from "../geometry/point";
-import { Polygon } from "../geometry/polygon";
-import { Polyline } from "../geometry/polyline";
 import { Feature } from "./feature";
 import { Field } from "./field";
 
@@ -15,7 +9,7 @@ import { Field } from "./field";
  * @remarks
  * TODO: a lot of things to be done
  */
-export class FeatureClass extends CommonObject {
+export class FeatureClass {
   /**
    * 要素集合名称
    */
@@ -69,7 +63,6 @@ export class FeatureClass extends CommonObject {
    * @param {GeometryType} type - 空间数据类型：点/线/面
    */
   constructor(type: GeometryType) {
-    super();
     this._type = type;
   }
 
