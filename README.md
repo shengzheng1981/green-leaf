@@ -17,7 +17,7 @@
 10. 增加Label用于FeatureLayer矢量图层标记，通过继承Collision类来完成标记碰撞冲突检测，当前SimpleCollision暂实现简单碰撞冲突；
 11. 增加Renderer用于FeatureLayer矢量图层渲染方式设置，通过继承Renderer类来自定义渲染方式，当前实现SimpleRenderer单一渲染，CategoryRenderer分类渲染，ClassRenderer分级渲染；
 12. 增加Raster用于RasterLayer设置像素数据源，当前已完成IDW插值、热力图，克里金插值有待完善；
-13. 拆分原Point类，区分三类不同坐标，LatLng经纬度坐标，PlaneXY平面坐标，ScreenXY像素坐标（屏幕像素坐标和世界像素坐标）；
+13. 拆分原Point类，区分三类不同坐标，LatLng经纬度坐标，PlaneXY平面坐标，ScreenXY像素坐标（屏幕像素坐标和世界像素坐标）。
 
 
 #### 所有类中英对照
