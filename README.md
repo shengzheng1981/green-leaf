@@ -19,6 +19,9 @@
 12. 增加Raster用于RasterLayer设置像素数据源，当前已完成IDW插值、热力图，克里金插值有待完善；
 13. 拆分原Point类，区分三类不同坐标，LatLng经纬度坐标，PlaneXY平面坐标，ScreenXY像素坐标（屏幕像素坐标和世界像素坐标）。
 
+#### UML
+![image](https://github.com/shengzheng1981/green-leaf/blob/master/green-leaf-uml.png)
+
 
 #### 所有类中英对照
 1. Adapter            数据适配基类
