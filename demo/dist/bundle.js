@@ -1190,34 +1190,8 @@ class BaseObject {
     toString() {
         return this._id.toString();
     }
-    clone() {
-        const cls = this.constructor;
-        const obj = new cls();
-        return obj;
-    }
 }
 BaseObject.MAX_ID = 0;
-
-
-/***/ }),
-
-/***/ "../dist/base/common-object.js":
-/*!*************************************!*\
-  !*** ../dist/base/common-object.js ***!
-  \*************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "CommonObject": () => (/* binding */ CommonObject)
-/* harmony export */ });
-/* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
-
-class CommonObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
-    constructor() {
-        super();
-    }
-}
 
 
 /***/ }),
@@ -1777,9 +1751,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "XYBounds": () => (/* binding */ XYBounds)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./xy */ "../dist/common/xy.js");
-
+/* harmony import */ var _xy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./xy */ "../dist/common/xy.js");
 
 /*
  * @class Bounds
@@ -1805,11 +1777,10 @@ __webpack_require__.r(__webpack_exports__);
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */
-class XYBounds extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class XYBounds {
     constructor(a, b) {
-        super();
         let points;
-        if (a instanceof _xy__WEBPACK_IMPORTED_MODULE_1__.XY && b instanceof _xy__WEBPACK_IMPORTED_MODULE_1__.XY) {
+        if (a instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY && b instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY) {
             points = [a, b];
         }
         else if (Array.isArray(a)) {
@@ -1832,7 +1803,7 @@ class XYBounds extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonOb
         // The top left corner of the rectangle.
         // @property max: Point
         // The bottom right corner of the rectangle.
-        if (xy instanceof _xy__WEBPACK_IMPORTED_MODULE_1__.XY) {
+        if (xy instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY) {
             if (!this.min && !this.max) {
                 this.min = xy.clone();
                 this.max = xy.clone();
@@ -2120,11 +2091,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LatLng": () => (/* binding */ LatLng)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
-/* harmony import */ var _crs_crs_earth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../crs/crs-earth */ "../dist/crs/crs-earth.js");
-/* harmony import */ var _latlng_bounds__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./latlng-bounds */ "../dist/common/latlng-bounds.js");
-
+/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
+/* harmony import */ var _crs_crs_earth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../crs/crs-earth */ "../dist/crs/crs-earth.js");
+/* harmony import */ var _latlng_bounds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./latlng-bounds */ "../dist/common/latlng-bounds.js");
 
 
 
@@ -2152,9 +2121,8 @@ __webpack_require__.r(__webpack_exports__);
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */
-class LatLng extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class LatLng {
     constructor(lat = 0, lng = 0, alt = 0) {
-        super();
         // @property lat: Number
         // Latitude in degrees
         this.lat = lat;
@@ -2178,27 +2146,27 @@ class LatLng extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObje
     // Returns a string representation of the point (for debugging purposes).
     toString(precision = 6) {
         return 'LatLng(' +
-            _util_util__WEBPACK_IMPORTED_MODULE_1__.formatNum(this.lat, precision) + ', ' +
-            _util_util__WEBPACK_IMPORTED_MODULE_1__.formatNum(this.lng, precision) + ')';
+            _util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lat, precision) + ', ' +
+            _util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lng, precision) + ')';
     }
     toGeoJSON(precision = 6) {
-        return [_util_util__WEBPACK_IMPORTED_MODULE_1__.formatNum(this.lng, precision), _util_util__WEBPACK_IMPORTED_MODULE_1__.formatNum(this.lat, precision)];
+        return [_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lng, precision), _util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lat, precision)];
     }
     // @method distanceTo(otherLatLng: LatLng): Number
     // Returns the distance (in meters) to the given `LatLng` calculated using the [Spherical Law of Cosines](https://en.wikipedia.org/wiki/Spherical_law_of_cosines).
     distanceTo(other) {
-        return new _crs_crs_earth__WEBPACK_IMPORTED_MODULE_2__.Earth().distance(this, other);
+        return new _crs_crs_earth__WEBPACK_IMPORTED_MODULE_1__.Earth().distance(this, other);
     }
     // @method wrap(): LatLng
     // Returns a new `LatLng` object with the longitude wrapped so it's always between -180 and +180 degrees.
     wrap() {
-        return new _crs_crs_earth__WEBPACK_IMPORTED_MODULE_2__.Earth().wrapLatLng(this);
+        return new _crs_crs_earth__WEBPACK_IMPORTED_MODULE_1__.Earth().wrapLatLng(this);
     }
     // @method toBounds(sizeInMeters: Number): LatLngBounds
     // Returns a new `LatLngBounds` object in which each boundary is `sizeInMeters/2` meters apart from the `LatLng`.
     toLatLngBounds(sizeInMeters) {
         var latAccuracy = 180 * sizeInMeters / 40075017, lngAccuracy = latAccuracy / Math.cos((Math.PI / 180) * this.lat);
-        return new _latlng_bounds__WEBPACK_IMPORTED_MODULE_3__.LatLngBounds(new LatLng(this.lat - latAccuracy, this.lng - lngAccuracy), new LatLng(this.lat + latAccuracy, this.lng + lngAccuracy));
+        return new _latlng_bounds__WEBPACK_IMPORTED_MODULE_2__.LatLngBounds(new LatLng(this.lat - latAccuracy, this.lng - lngAccuracy), new LatLng(this.lat + latAccuracy, this.lng + lngAccuracy));
     }
     clone() {
         return new LatLng(this.lat, this.lng, this.alt);
@@ -2498,9 +2466,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "XY": () => (/* binding */ XY)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
-
+/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
 
 /*
  * @class Point
@@ -2525,9 +2491,8 @@ __webpack_require__.r(__webpack_exports__);
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */
-class XY extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class XY {
     constructor(x = 0, y = 0) {
-        super();
         // @property x: Number; The `x` coordinate of the point
         this.x = x;
         // @property y: Number; The `y` coordinate of the point
@@ -2681,8 +2646,8 @@ class XY extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
     // Returns a string representation of the point for debugging purposes.
     toString() {
         return 'XY(' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_1__.formatNum)(this.x) + ', ' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_1__.formatNum)(this.y) + ')';
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x) + ', ' +
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y) + ')';
     }
 }
 
@@ -3080,9 +3045,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Projection": () => (/* binding */ Projection)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/common-object */ "../dist/base/common-object.js");
-
-class Projection extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Projection {
 }
 
 
@@ -3098,10 +3061,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Transformation": () => (/* binding */ Transformation)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _common_plane_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../common/plane-xy */ "../dist/common/plane-xy.js");
-/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../common/screen-xy */ "../dist/common/screen-xy.js");
-
+/* harmony import */ var _common_plane_xy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../common/plane-xy */ "../dist/common/plane-xy.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../common/screen-xy */ "../dist/common/screen-xy.js");
 
 
 /*
@@ -3123,9 +3084,8 @@ __webpack_require__.r(__webpack_exports__);
  */
 // factory new L.Transformation(a: Number, b: Number, c: Number, d: Number)
 // Creates a `Transformation` object with the given coefficients.
-class Transformation extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Transformation {
     constructor(a, b, c, d) {
-        super();
         this._a = a;
         this._b = b;
         this._c = c;
@@ -3135,13 +3095,13 @@ class Transformation extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.Co
     // Returns a transformed point, optionally multiplied by the given scale.
     // Only accepts actual `L.Point` instances, not arrays.
     transform(planeXY, scale = 1) {
-        return new _common_screen_xy__WEBPACK_IMPORTED_MODULE_2__.ScreenXY(scale * (this._a * planeXY.x + this._b), scale * (this._c * planeXY.y + this._d));
+        return new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(scale * (this._a * planeXY.x + this._b), scale * (this._c * planeXY.y + this._d));
     }
     // @method untransform(point: Point, scale?: Number): Point
     // Returns the reverse transformation of the given point, optionally divided
     // by the given scale. Only accepts actual `L.Point` instances, not arrays.
     untransform(screenXY, scale = 1) {
-        return new _common_plane_xy__WEBPACK_IMPORTED_MODULE_1__.PlaneXY((screenXY.x / scale - this._b) / this._a, (screenXY.y / scale - this._d) / this._c);
+        return new _common_plane_xy__WEBPACK_IMPORTED_MODULE_0__.PlaneXY((screenXY.x / scale - this._b) / this._a, (screenXY.y / scale - this._d) / this._c);
     }
 }
 
@@ -3158,20 +3118,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "FeatureClass": () => (/* binding */ FeatureClass)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-
 /**
  * 要素类（要素集合）
  * @remarks
  * TODO: a lot of things to be done
  */
-class FeatureClass extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class FeatureClass {
     /**
      * 创建要素集合
      * @param {GeometryType} type - 空间数据类型：点/线/面
      */
     constructor(type) {
-        super();
         /**
          * 属性字段集合
          */
@@ -3359,8 +3316,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "FieldType": () => (/* binding */ FieldType),
 /* harmony export */   "Field": () => (/* binding */ Field)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-
 /**
  * 字段类型
  */
@@ -3380,9 +3335,8 @@ var FieldType;
  * @remarks
  * TODO: a lot of things to be done
  */
-class Field extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Field {
     constructor(name, type) {
-        super();
         this.name = name;
         this.type = type;
     }
@@ -3403,9 +3357,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "GeometryType": () => (/* binding */ GeometryType),
 /* harmony export */   "Geometry": () => (/* binding */ Geometry)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../text/text */ "../dist/text/text.js");
-
+/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../text/text */ "../dist/text/text.js");
 
 /**
  * 坐标类型
@@ -3439,7 +3391,7 @@ var GeometryType;
 /**
  * 图形基类
  */
-class Geometry extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Geometry {
     get type() {
         return this._type;
     }
@@ -3531,7 +3483,7 @@ class Geometry extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonOb
        * @param {Projection} projection - 坐标投影转换
        * @param {SimpleTextSymbol} symbol - 标注符号
        */
-    label(ctx, value, symbol = new _text_text__WEBPACK_IMPORTED_MODULE_1__.Text()) {
+    label(ctx, value, symbol = new _text_text__WEBPACK_IMPORTED_MODULE_0__.Text()) {
         if (value == null || value == undefined || value === "")
             return;
         // ctx.save();
@@ -5539,145 +5491,142 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "stop": () => (/* reexport safe */ _util_dom_event__WEBPACK_IMPORTED_MODULE_3__.stop),
 /* harmony export */   "stopPropagation": () => (/* reexport safe */ _util_dom_event__WEBPACK_IMPORTED_MODULE_3__.stopPropagation),
 /* harmony export */   "BaseObject": () => (/* reexport safe */ _base_base_object__WEBPACK_IMPORTED_MODULE_4__.BaseObject),
-/* harmony export */   "CommonObject": () => (/* reexport safe */ _base_common_object__WEBPACK_IMPORTED_MODULE_5__.CommonObject),
-/* harmony export */   "EventedObject": () => (/* reexport safe */ _base_evented_object__WEBPACK_IMPORTED_MODULE_6__.EventedObject),
-/* harmony export */   "HandlerObject": () => (/* reexport safe */ _base_handler_object__WEBPACK_IMPORTED_MODULE_7__.HandlerObject),
-/* harmony export */   "DraggableObject": () => (/* reexport safe */ _base_draggable_object__WEBPACK_IMPORTED_MODULE_8__.DraggableObject),
-/* harmony export */   "LatLng": () => (/* reexport safe */ _common_latlng__WEBPACK_IMPORTED_MODULE_9__.LatLng),
-/* harmony export */   "LatLngBounds": () => (/* reexport safe */ _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_10__.LatLngBounds),
-/* harmony export */   "XYBounds": () => (/* reexport safe */ _common_bounds__WEBPACK_IMPORTED_MODULE_11__.XYBounds),
-/* harmony export */   "XY": () => (/* reexport safe */ _common_xy__WEBPACK_IMPORTED_MODULE_12__.XY),
-/* harmony export */   "PlaneXY": () => (/* reexport safe */ _common_plane_xy__WEBPACK_IMPORTED_MODULE_13__.PlaneXY),
-/* harmony export */   "ScreenXY": () => (/* reexport safe */ _common_screen_xy__WEBPACK_IMPORTED_MODULE_14__.ScreenXY),
-/* harmony export */   "PlaneBounds": () => (/* reexport safe */ _common_plane_bounds__WEBPACK_IMPORTED_MODULE_15__.PlaneBounds),
-/* harmony export */   "ScreenBounds": () => (/* reexport safe */ _common_screen_bounds__WEBPACK_IMPORTED_MODULE_16__.ScreenBounds),
-/* harmony export */   "CRS": () => (/* reexport safe */ _crs_crs__WEBPACK_IMPORTED_MODULE_17__.CRS),
-/* harmony export */   "Earth": () => (/* reexport safe */ _crs_crs_earth__WEBPACK_IMPORTED_MODULE_18__.Earth),
-/* harmony export */   "EPSG4326": () => (/* reexport safe */ _crs_crs_4326__WEBPACK_IMPORTED_MODULE_19__.EPSG4326),
-/* harmony export */   "EPSG3857": () => (/* reexport safe */ _crs_crs_3857__WEBPACK_IMPORTED_MODULE_20__.EPSG3857),
-/* harmony export */   "Projection": () => (/* reexport safe */ _crs_projection_projection__WEBPACK_IMPORTED_MODULE_21__.Projection),
-/* harmony export */   "LonLat": () => (/* reexport safe */ _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_22__.LonLat),
-/* harmony export */   "Mercator": () => (/* reexport safe */ _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_23__.Mercator),
-/* harmony export */   "SphericalMercator": () => (/* reexport safe */ _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_24__.SphericalMercator),
-/* harmony export */   "Transformation": () => (/* reexport safe */ _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_25__.Transformation),
-/* harmony export */   "CoordinateType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_26__.CoordinateType),
-/* harmony export */   "Geometry": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_26__.Geometry),
-/* harmony export */   "GeometryType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_26__.GeometryType),
-/* harmony export */   "Point": () => (/* reexport safe */ _geometry_point__WEBPACK_IMPORTED_MODULE_27__.Point),
-/* harmony export */   "Polyline": () => (/* reexport safe */ _geometry_polyline__WEBPACK_IMPORTED_MODULE_28__.Polyline),
-/* harmony export */   "Polygon": () => (/* reexport safe */ _geometry_polygon__WEBPACK_IMPORTED_MODULE_29__.Polygon),
-/* harmony export */   "MultiplePoint": () => (/* reexport safe */ _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_30__.MultiplePoint),
-/* harmony export */   "MultiplePolyline": () => (/* reexport safe */ _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_31__.MultiplePolyline),
-/* harmony export */   "MultiplePolygon": () => (/* reexport safe */ _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_32__.MultiplePolygon),
-/* harmony export */   "Graphic": () => (/* reexport safe */ _graphic_graphic__WEBPACK_IMPORTED_MODULE_33__.Graphic),
-/* harmony export */   "Layer": () => (/* reexport safe */ _layer_layer__WEBPACK_IMPORTED_MODULE_34__.Layer),
-/* harmony export */   "GraphicLayer": () => (/* reexport safe */ _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_35__.GraphicLayer),
-/* harmony export */   "FeatureLayer": () => (/* reexport safe */ _layer_feature_layer__WEBPACK_IMPORTED_MODULE_36__.FeatureLayer),
-/* harmony export */   "RasterLayer": () => (/* reexport safe */ _layer_raster_layer__WEBPACK_IMPORTED_MODULE_37__.RasterLayer),
-/* harmony export */   "FillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.FillSymbol),
-/* harmony export */   "LineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.LineSymbol),
-/* harmony export */   "PointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.PointSymbol),
-/* harmony export */   "SimpleFillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.SimpleFillSymbol),
-/* harmony export */   "SimpleLineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.SimpleLineSymbol),
-/* harmony export */   "SimpleMarkerSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.SimpleMarkerSymbol),
-/* harmony export */   "SimplePointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.SimplePointSymbol),
-/* harmony export */   "Symbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__.Symbol),
-/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_39__.Field),
-/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_39__.FieldType),
-/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_40__.Feature),
-/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_41__.FeatureClass),
-/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_42__.Adapter),
-/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_43__.GeoJSONAdapter),
-/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_44__.Renderer),
-/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_45__.SimpleRenderer),
-/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_46__.DotRenderer),
-/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_47__.CategoryRenderer),
-/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_47__.CategoryRendererItem),
-/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_48__.ClassRenderer),
-/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_48__.ClassRendererItem),
-/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_49__.Text),
-/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_50__.Collision),
-/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_50__.NullCollision),
-/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_50__.SimpleCollision),
-/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_51__.Label),
-/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_52__.Grid),
-/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_53__.Tile),
-/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_54__.Raster),
-/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_55__.Kriging),
-/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_56__.IDW),
-/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_57__.Heat),
-/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_58__.Map),
-/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_59__.Canvas),
-/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_60__.PosAnimation),
-/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_61__.DragHandler),
-/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_62__.ScrollWheelZoomHandler),
-/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_63__.DoubleClickZoomHandler)
+/* harmony export */   "EventedObject": () => (/* reexport safe */ _base_evented_object__WEBPACK_IMPORTED_MODULE_5__.EventedObject),
+/* harmony export */   "HandlerObject": () => (/* reexport safe */ _base_handler_object__WEBPACK_IMPORTED_MODULE_6__.HandlerObject),
+/* harmony export */   "DraggableObject": () => (/* reexport safe */ _base_draggable_object__WEBPACK_IMPORTED_MODULE_7__.DraggableObject),
+/* harmony export */   "LatLng": () => (/* reexport safe */ _common_latlng__WEBPACK_IMPORTED_MODULE_8__.LatLng),
+/* harmony export */   "LatLngBounds": () => (/* reexport safe */ _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_9__.LatLngBounds),
+/* harmony export */   "XYBounds": () => (/* reexport safe */ _common_bounds__WEBPACK_IMPORTED_MODULE_10__.XYBounds),
+/* harmony export */   "XY": () => (/* reexport safe */ _common_xy__WEBPACK_IMPORTED_MODULE_11__.XY),
+/* harmony export */   "PlaneXY": () => (/* reexport safe */ _common_plane_xy__WEBPACK_IMPORTED_MODULE_12__.PlaneXY),
+/* harmony export */   "ScreenXY": () => (/* reexport safe */ _common_screen_xy__WEBPACK_IMPORTED_MODULE_13__.ScreenXY),
+/* harmony export */   "PlaneBounds": () => (/* reexport safe */ _common_plane_bounds__WEBPACK_IMPORTED_MODULE_14__.PlaneBounds),
+/* harmony export */   "ScreenBounds": () => (/* reexport safe */ _common_screen_bounds__WEBPACK_IMPORTED_MODULE_15__.ScreenBounds),
+/* harmony export */   "CRS": () => (/* reexport safe */ _crs_crs__WEBPACK_IMPORTED_MODULE_16__.CRS),
+/* harmony export */   "Earth": () => (/* reexport safe */ _crs_crs_earth__WEBPACK_IMPORTED_MODULE_17__.Earth),
+/* harmony export */   "EPSG4326": () => (/* reexport safe */ _crs_crs_4326__WEBPACK_IMPORTED_MODULE_18__.EPSG4326),
+/* harmony export */   "EPSG3857": () => (/* reexport safe */ _crs_crs_3857__WEBPACK_IMPORTED_MODULE_19__.EPSG3857),
+/* harmony export */   "Projection": () => (/* reexport safe */ _crs_projection_projection__WEBPACK_IMPORTED_MODULE_20__.Projection),
+/* harmony export */   "LonLat": () => (/* reexport safe */ _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_21__.LonLat),
+/* harmony export */   "Mercator": () => (/* reexport safe */ _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_22__.Mercator),
+/* harmony export */   "SphericalMercator": () => (/* reexport safe */ _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_23__.SphericalMercator),
+/* harmony export */   "Transformation": () => (/* reexport safe */ _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_24__.Transformation),
+/* harmony export */   "CoordinateType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__.CoordinateType),
+/* harmony export */   "Geometry": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__.Geometry),
+/* harmony export */   "GeometryType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__.GeometryType),
+/* harmony export */   "Point": () => (/* reexport safe */ _geometry_point__WEBPACK_IMPORTED_MODULE_26__.Point),
+/* harmony export */   "Polyline": () => (/* reexport safe */ _geometry_polyline__WEBPACK_IMPORTED_MODULE_27__.Polyline),
+/* harmony export */   "Polygon": () => (/* reexport safe */ _geometry_polygon__WEBPACK_IMPORTED_MODULE_28__.Polygon),
+/* harmony export */   "MultiplePoint": () => (/* reexport safe */ _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_29__.MultiplePoint),
+/* harmony export */   "MultiplePolyline": () => (/* reexport safe */ _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_30__.MultiplePolyline),
+/* harmony export */   "MultiplePolygon": () => (/* reexport safe */ _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_31__.MultiplePolygon),
+/* harmony export */   "Graphic": () => (/* reexport safe */ _graphic_graphic__WEBPACK_IMPORTED_MODULE_32__.Graphic),
+/* harmony export */   "Layer": () => (/* reexport safe */ _layer_layer__WEBPACK_IMPORTED_MODULE_33__.Layer),
+/* harmony export */   "GraphicLayer": () => (/* reexport safe */ _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_34__.GraphicLayer),
+/* harmony export */   "FeatureLayer": () => (/* reexport safe */ _layer_feature_layer__WEBPACK_IMPORTED_MODULE_35__.FeatureLayer),
+/* harmony export */   "RasterLayer": () => (/* reexport safe */ _layer_raster_layer__WEBPACK_IMPORTED_MODULE_36__.RasterLayer),
+/* harmony export */   "FillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.FillSymbol),
+/* harmony export */   "LineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.LineSymbol),
+/* harmony export */   "PointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.PointSymbol),
+/* harmony export */   "SimpleFillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimpleFillSymbol),
+/* harmony export */   "SimpleLineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimpleLineSymbol),
+/* harmony export */   "SimpleMarkerSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimpleMarkerSymbol),
+/* harmony export */   "SimplePointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimplePointSymbol),
+/* harmony export */   "Symbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.Symbol),
+/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_38__.Field),
+/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_38__.FieldType),
+/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_39__.Feature),
+/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_40__.FeatureClass),
+/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_41__.Adapter),
+/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_42__.GeoJSONAdapter),
+/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_43__.Renderer),
+/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_44__.SimpleRenderer),
+/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_45__.DotRenderer),
+/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_46__.CategoryRenderer),
+/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_46__.CategoryRendererItem),
+/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_47__.ClassRenderer),
+/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_47__.ClassRendererItem),
+/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_48__.Text),
+/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_49__.Collision),
+/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_49__.NullCollision),
+/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_49__.SimpleCollision),
+/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_50__.Label),
+/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_51__.Grid),
+/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_52__.Tile),
+/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_53__.Raster),
+/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_54__.Kriging),
+/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_55__.IDW),
+/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_56__.Heat),
+/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_57__.Map),
+/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_58__.Canvas),
+/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_59__.PosAnimation),
+/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_60__.DragHandler),
+/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_61__.ScrollWheelZoomHandler),
+/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_62__.DoubleClickZoomHandler)
 /* harmony export */ });
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/util */ "../dist/util/util.js");
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/browser */ "../dist/util/browser.js");
 /* harmony import */ var _util_dom_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/dom-util */ "../dist/util/dom-util.js");
 /* harmony import */ var _util_dom_event__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/dom-event */ "../dist/util/dom-event.js");
 /* harmony import */ var _base_base_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/base-object */ "../dist/base/base-object.js");
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base/evented-object */ "../dist/base/evented-object.js");
-/* harmony import */ var _base_handler_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base/handler-object */ "../dist/base/handler-object.js");
-/* harmony import */ var _base_draggable_object__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base/draggable-object */ "../dist/base/draggable-object.js");
-/* harmony import */ var _common_latlng__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common/latlng */ "../dist/common/latlng.js");
-/* harmony import */ var _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common/latlng-bounds */ "../dist/common/latlng-bounds.js");
-/* harmony import */ var _common_bounds__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common/bounds */ "../dist/common/bounds.js");
-/* harmony import */ var _common_xy__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common/xy */ "../dist/common/xy.js");
-/* harmony import */ var _common_plane_xy__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common/plane-xy */ "../dist/common/plane-xy.js");
-/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./common/screen-xy */ "../dist/common/screen-xy.js");
-/* harmony import */ var _common_plane_bounds__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common/plane-bounds */ "../dist/common/plane-bounds.js");
-/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./common/screen-bounds */ "../dist/common/screen-bounds.js");
-/* harmony import */ var _crs_crs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./crs/crs */ "../dist/crs/crs.js");
-/* harmony import */ var _crs_crs_earth__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./crs/crs-earth */ "../dist/crs/crs-earth.js");
-/* harmony import */ var _crs_crs_4326__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./crs/crs-4326 */ "../dist/crs/crs-4326.js");
-/* harmony import */ var _crs_crs_3857__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./crs/crs-3857 */ "../dist/crs/crs-3857.js");
-/* harmony import */ var _crs_projection_projection__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./crs/projection/projection */ "../dist/crs/projection/projection.js");
-/* harmony import */ var _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./crs/projection/projection-lonlat */ "../dist/crs/projection/projection-lonlat.js");
-/* harmony import */ var _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./crs/projection/projection-mercator */ "../dist/crs/projection/projection-mercator.js");
-/* harmony import */ var _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./crs/projection/projection-spherical-mercator */ "../dist/crs/projection/projection-spherical-mercator.js");
-/* harmony import */ var _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./crs/transformation/transformation */ "../dist/crs/transformation/transformation.js");
-/* harmony import */ var _geometry_geometry__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./geometry/geometry */ "../dist/geometry/geometry.js");
-/* harmony import */ var _geometry_point__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./geometry/point */ "../dist/geometry/point.js");
-/* harmony import */ var _geometry_polyline__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./geometry/polyline */ "../dist/geometry/polyline.js");
-/* harmony import */ var _geometry_polygon__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./geometry/polygon */ "../dist/geometry/polygon.js");
-/* harmony import */ var _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./geometry/multiple-point */ "../dist/geometry/multiple-point.js");
-/* harmony import */ var _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./geometry/multiple-polyline */ "../dist/geometry/multiple-polyline.js");
-/* harmony import */ var _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./geometry/multiple-polygon */ "../dist/geometry/multiple-polygon.js");
-/* harmony import */ var _graphic_graphic__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./graphic/graphic */ "../dist/graphic/graphic.js");
-/* harmony import */ var _layer_layer__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./layer/layer */ "../dist/layer/layer.js");
-/* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./layer/graphic-layer */ "../dist/layer/graphic-layer.js");
-/* harmony import */ var _layer_feature_layer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./layer/feature-layer */ "../dist/layer/feature-layer.js");
-/* harmony import */ var _layer_raster_layer__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./layer/raster-layer */ "../dist/layer/raster-layer.js");
-/* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./symbol/symbol */ "../dist/symbol/symbol.js");
-/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
-/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
-/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
-/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
-/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
-/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
-/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
-/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
-/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
-/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
-/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
-/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
-/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
-/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
-/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
-/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
-/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
-/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
-/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
-/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
-/* harmony import */ var _map_canvas__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./map/canvas */ "../dist/map/canvas.js");
-/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
-/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
-/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
-/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
-
+/* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base/evented-object */ "../dist/base/evented-object.js");
+/* harmony import */ var _base_handler_object__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base/handler-object */ "../dist/base/handler-object.js");
+/* harmony import */ var _base_draggable_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base/draggable-object */ "../dist/base/draggable-object.js");
+/* harmony import */ var _common_latlng__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common/latlng */ "../dist/common/latlng.js");
+/* harmony import */ var _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common/latlng-bounds */ "../dist/common/latlng-bounds.js");
+/* harmony import */ var _common_bounds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common/bounds */ "../dist/common/bounds.js");
+/* harmony import */ var _common_xy__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common/xy */ "../dist/common/xy.js");
+/* harmony import */ var _common_plane_xy__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common/plane-xy */ "../dist/common/plane-xy.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common/screen-xy */ "../dist/common/screen-xy.js");
+/* harmony import */ var _common_plane_bounds__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./common/plane-bounds */ "../dist/common/plane-bounds.js");
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _crs_crs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./crs/crs */ "../dist/crs/crs.js");
+/* harmony import */ var _crs_crs_earth__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./crs/crs-earth */ "../dist/crs/crs-earth.js");
+/* harmony import */ var _crs_crs_4326__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./crs/crs-4326 */ "../dist/crs/crs-4326.js");
+/* harmony import */ var _crs_crs_3857__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./crs/crs-3857 */ "../dist/crs/crs-3857.js");
+/* harmony import */ var _crs_projection_projection__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./crs/projection/projection */ "../dist/crs/projection/projection.js");
+/* harmony import */ var _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./crs/projection/projection-lonlat */ "../dist/crs/projection/projection-lonlat.js");
+/* harmony import */ var _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./crs/projection/projection-mercator */ "../dist/crs/projection/projection-mercator.js");
+/* harmony import */ var _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./crs/projection/projection-spherical-mercator */ "../dist/crs/projection/projection-spherical-mercator.js");
+/* harmony import */ var _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./crs/transformation/transformation */ "../dist/crs/transformation/transformation.js");
+/* harmony import */ var _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./geometry/geometry */ "../dist/geometry/geometry.js");
+/* harmony import */ var _geometry_point__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./geometry/point */ "../dist/geometry/point.js");
+/* harmony import */ var _geometry_polyline__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./geometry/polyline */ "../dist/geometry/polyline.js");
+/* harmony import */ var _geometry_polygon__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./geometry/polygon */ "../dist/geometry/polygon.js");
+/* harmony import */ var _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./geometry/multiple-point */ "../dist/geometry/multiple-point.js");
+/* harmony import */ var _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./geometry/multiple-polyline */ "../dist/geometry/multiple-polyline.js");
+/* harmony import */ var _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./geometry/multiple-polygon */ "../dist/geometry/multiple-polygon.js");
+/* harmony import */ var _graphic_graphic__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./graphic/graphic */ "../dist/graphic/graphic.js");
+/* harmony import */ var _layer_layer__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./layer/layer */ "../dist/layer/layer.js");
+/* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./layer/graphic-layer */ "../dist/layer/graphic-layer.js");
+/* harmony import */ var _layer_feature_layer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./layer/feature-layer */ "../dist/layer/feature-layer.js");
+/* harmony import */ var _layer_raster_layer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./layer/raster-layer */ "../dist/layer/raster-layer.js");
+/* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./symbol/symbol */ "../dist/symbol/symbol.js");
+/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
+/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
+/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
+/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
+/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
+/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
+/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
+/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
+/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
+/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
+/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
+/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
+/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
+/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
+/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
+/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
+/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
+/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
+/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
+/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
+/* harmony import */ var _map_canvas__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./map/canvas */ "../dist/map/canvas.js");
+/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
+/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
+/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
+/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
 
 
 
@@ -8689,12 +8638,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Renderer": () => (/* binding */ Renderer)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
 /**
  * 渲染方式基类
  */
-
-class Renderer extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Renderer {
 }
 
 
@@ -8741,10 +8688,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SimpleLineSymbol": () => (/* binding */ SimpleLineSymbol),
 /* harmony export */   "SimpleFillSymbol": () => (/* binding */ SimpleFillSymbol)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
-/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
-
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
 
 
 /**
@@ -8753,9 +8698,8 @@ __webpack_require__.r(__webpack_exports__);
  * 如按现实世界来抽取对象基类，下述属性不应放在基类
  * 但考虑到Canvas的上下文设定，才决定抽取到基类
  */
-class Symbol extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Symbol {
     constructor() {
-        super(...arguments);
         /**
          * 线宽
          */
@@ -8840,8 +8784,8 @@ class SimplePointSymbol extends PointSymbol {
         //ctx.restore();
     }
     getScreenBounds(screenXY) {
-        let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_2__.ScreenXY(r + w, r + w);
-        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_1__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
+        let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
+        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
     }
 }
 /**
@@ -8930,9 +8874,9 @@ class SimpleMarkerSymbol extends PointSymbol {
         }
     }
     getScreenBounds(screenXY) {
-        let p1 = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_2__.ScreenXY(this.offsetX, this.offsetY);
-        let p2 = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_2__.ScreenXY(this.offsetX + this.width, this.offsetY + this.height);
-        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_1__.ScreenBounds(screenXY.add(p1), screenXY.add(p2));
+        let p1 = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(this.offsetX, this.offsetY);
+        let p2 = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(this.offsetX + this.width, this.offsetY + this.height);
+        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.add(p1), screenXY.add(p2));
     }
 }
 /**
@@ -8965,7 +8909,7 @@ class SimpleLineSymbol extends LineSymbol {
         // ctx.restore();
     }
     getScreenBounds(screenXYs) {
-        const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_1__.ScreenBounds();
+        const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(screenXY => {
             bounds.extend(screenXY);
         });
@@ -9021,7 +8965,7 @@ class SimpleFillSymbol extends FillSymbol {
         // ctx.restore();
     }
     getScreenBounds(screenXYs) {
-        const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_1__.ScreenBounds();
+        const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(ring => {
             ring.forEach(screenXY => {
                 bounds.extend(screenXY);
@@ -9045,16 +8989,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Text": () => (/* binding */ Text)
 /* harmony export */ });
-/* harmony import */ var _base_common_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../base/common-object */ "../dist/base/common-object.js");
-
 /**
  * 文本符号
  * @remarks
  * 常用于文本标注
  */
-class Text extends _base_common_object__WEBPACK_IMPORTED_MODULE_0__.CommonObject {
+class Text {
     constructor() {
-        super(...arguments);
         /**
          * 边框宽
          */
@@ -10334,7 +10275,8 @@ window.load = async () => {
 
   map.setView(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), 12);
 
-  const geojsonAdapter = new _dist__WEBPACK_IMPORTED_MODULE_0__.GeoJSONAdapter(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polygon, "assets/geojson/beijing.json");
+  const geojsonAdapter = new _dist__WEBPACK_IMPORTED_MODULE_0__.GeoJSONAdapter(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polygon, "https://raw.githubusercontent.com/shengzheng1981/green-leaf/master/demo/assets/geojson/beijing.json");
+  // const geojsonAdapter = new GeoJSONAdapter(GeometryType.Polygon, "assets/geojson/beijing.json");
   //新建要素类
   const featureClass = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureClass(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polygon);
   //新建字段

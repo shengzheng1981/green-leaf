@@ -16,16 +16,6 @@ window.load = async () => {
 
   map.setView(new LatLng(39.909186, 116.397411), 12);
 
-  const symbol2 = new SimplePointSymbol();
-  symbol2.strokeStyle = "#3388FF";
-  symbol2.fillStyle = "#3388FF80";
-  const symbol3 = new SimplePointSymbol();
-  symbol3.strokeStyle = "#88FF33";
-  symbol3.fillStyle = "#88FF3380";
-  const symbol4 = new SimplePointSymbol();
-  symbol4.strokeStyle = "#FF8833";
-  symbol4.fillStyle = "#FF883380";
-
   const featureClass = new FeatureClass(GeometryType.Point);
   //新建字段
   const field = new Field("rank", FieldType.Number);
@@ -33,12 +23,6 @@ window.load = async () => {
   //新建矢量图层
   const layer2 = new FeatureLayer();
   layer2.featureClass = featureClass;
-  //设置渲染方式——分类渲染
-  layer2.renderer = new CategoryRenderer();
-  layer2.renderer.field = field;
-  layer2.renderer.items.push(new CategoryRendererItem(2, symbol2));
-  layer2.renderer.items.push(new CategoryRendererItem(3, symbol3));
-  layer2.renderer.items.push(new CategoryRendererItem(4, symbol4));
   //设置图层标记
   const label = new Label();
   label.field = field;

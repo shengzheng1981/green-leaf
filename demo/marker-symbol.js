@@ -14,7 +14,8 @@ window.load = async () => {
   map.setView(new LatLng(39.909186, 116.397411), 12);
   //设置渲染符号
   const symbol2 = new SimpleMarkerSymbol();
-  symbol2.url = "assets/images/marker.svg";
+  symbol2.url = "https://raw.githubusercontent.com/shengzheng1981/green-leaf/master/demo/assets/images/marker.svg";
+  // symbol2.url = "assets/images/marker.svg";
   await symbol2.load();
   //新建图形图层
   const layer = new GraphicLayer();
