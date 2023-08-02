@@ -5,7 +5,7 @@
 
 #### 安装
 1.  npm install green-leaf
-2.  <link rel="stylesheet" type="text/css" href="leaflet.css">
+2.  `<link rel="stylesheet" type="text/css" href="leaflet.css">`
 
 #### 相同与不同
 与Leaflet的相同与不同点如下：

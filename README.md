@@ -5,7 +5,7 @@ This is an ultra-lightweight GIS API that is refactored on the basis of Leaflet.
 
 #### Installation
 1.  npm install green-leaf
-2.  <link rel="stylesheet" type="text/css" href="leaflet.css">
+2.  `<link rel="stylesheet" type="text/css" href="leaflet.css">`
 
 #### Refactor Content
 The similarities and differences with Leaflet are as follows:
