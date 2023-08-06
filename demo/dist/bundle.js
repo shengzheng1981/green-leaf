@@ -1162,6 +1162,248 @@ class Kriging extends _raster_raster__WEBPACK_IMPORTED_MODULE_2__.Raster {
 
 /***/ }),
 
+/***/ "../dist/animation/animation.js":
+/*!**************************************!*\
+  !*** ../dist/animation/animation.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Animation": () => (/* binding */ Animation)
+/* harmony export */ });
+/**
+ * 动画效果基类
+ * @remarks
+ * 动画两种实现方式：
+ * 1.针对单个图形要素，实现动画，使用时，逻辑较清晰；
+ * 2.针对整个图层，类似Symbol，使用时，可能存在效率问题；
+ * 目前暂实现1，针对2，目前保留部分已注释的代码，便于日后参考。
+ */
+class Animation {
+}
+
+
+/***/ }),
+
+/***/ "../dist/animation/line-animation.js":
+/*!*******************************************!*\
+  !*** ../dist/animation/line-animation.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LineAnimation": () => (/* binding */ LineAnimation)
+/* harmony export */ });
+/**
+ * 线默认动画效果类
+ * @remarks
+ * 类似航线效果
+ */
+class LineAnimation extends Animation {
+    /**
+     * 创建动画效果
+     * @param {Polyline} geometry - 线
+     */
+    constructor(geometry) {
+        super();
+        this._percent = 0;
+        /**
+         * 线宽
+         */
+        this.lineWidth = 2;
+        /**
+         * 起始色
+         */
+        this.startColor = "#ff0000";
+        /**
+         * 终止色
+         */
+        this.endColor = "#ffff00";
+        /**
+         * 二次贝塞尔曲线控制点与线段夹角
+         */
+        this.angle = Math.PI / 4;
+        this._polyline = geometry;
+    }
+    project(crs) {
+        this._polyline.crs = crs;
+    }
+    transform(origin, zoom) {
+        this._polyline.transform(origin, zoom);
+        //TODO: polyline, not line; but now just line
+        const start = this._polyline._screenXYs[0];
+        const end = this._polyline._screenXYs[1];
+        this._start = [start.x, start.y];
+        this._end = [end.x, end.y];
+        const k = (this._end[1] - this._start[1]) / (this._end[0] - this._start[0]);
+        const d = Math.sqrt((this._end[1] - this._start[1]) * (this._end[1] - this._start[1]) + (this._end[0] - this._start[0]) * (this._end[0] - this._start[0]));
+        const s = d / 2 / Math.cos(this.angle);
+        //const a = (Math.atan(k) < 0 ? (Math.PI +  Math.atan(k)) : Math.atan(k)) - this.angle;
+        //this._control = this._start[0] >= this._end[0] ? [this._start[0] + s * Math.cos(a), this._start[1] + s * Math.sin(a)] : [this._end[0] + s * Math.cos(a), this._end[1] + s * Math.sin(a)];
+        const a = Math.atan(k) - this.angle;
+        if (Math.atan(k) < 0) {
+            if (this._end[0] > this._start[0]) {
+                this._control = [this._start[0] + s * Math.cos(a), this._start[1] + s * Math.sin(a)];
+            }
+            else {
+                this._control = [this._end[0] + s * Math.cos(a), this._end[1] + s * Math.sin(a)];
+            }
+        }
+        else {
+            if (this._end[0] > this._start[0]) {
+                this._control = [this._start[0] + s * Math.cos(a), this._start[1] + s * Math.sin(a)];
+            }
+            else {
+                this._control = [this._end[0] + s * Math.cos(a), this._end[1] + s * Math.sin(a)];
+            }
+        }
+        this._percent = 0;
+    }
+    /**
+     * 动画效果
+     * @remarks
+     * 通过Animator中requestAnimationFrame循环调用，因此注意优化代码，保持帧数
+     * @param {number} elapsed - 已逝去的时间，毫秒
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     */
+    animate(elapsed, ctx) {
+        ctx.save();
+        ctx.lineWidth = this.lineWidth;
+        //keep size
+        //地理坐标 转回 屏幕坐标
+        // ctx.setTransform(1,0,0,1,0,0);
+        const lineGradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
+        lineGradient.addColorStop(0, this.startColor);
+        // lineGradient.addColorStop(0.3, '#fff');
+        lineGradient.addColorStop(1, this.endColor);
+        ctx.strokeStyle = lineGradient; //设置线条样式
+        this._drawCurvePath(ctx, this._start, this._control, this._end, this._percent);
+        this._percent += 0.8; //进程增加,这个控制动画速度
+        if (this._percent >= 100) { //没有画完接着调用,画完的话重置进度
+            this._percent = 0;
+        }
+    }
+    _drawCurvePath(ctx, start, point, end, percent) {
+        ctx.beginPath();
+        ctx.moveTo(start[0], start[1]);
+        for (let t = 0; t <= percent / 100; t += 0.005) {
+            let x = this._quadraticBezier(start[0], point[0], end[0], t);
+            let y = this._quadraticBezier(start[1], point[1], end[1], t);
+            ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+    _quadraticBezier(p0, p1, p2, t) {
+        let k = 1 - t;
+        return k * k * p0 + 2 * (1 - t) * t * p1 + t * t * p2; // 二次贝赛尔曲线方程
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/animation/point-animation.js":
+/*!********************************************!*\
+  !*** ../dist/animation/point-animation.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "PointAnimation": () => (/* binding */ PointAnimation)
+/* harmony export */ });
+/* harmony import */ var _animation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./animation */ "../dist/animation/animation.js");
+
+/**
+ * 点默认动画效果类
+ * @remarks
+ * 类似flashing效果，从中心点向外光环扩散效果
+ */
+class PointAnimation extends _animation__WEBPACK_IMPORTED_MODULE_0__.Animation {
+    //radius: number = this.limit / this.ring;
+    /**
+     * 创建动画效果
+     * @param {Point} geometry - 点
+     */
+    constructor(geometry) {
+        super();
+        /**
+         * 边宽
+         */
+        this.lineWidth = 3;
+        /**
+         * 颜色
+         */
+        this.color = "#ff0000";
+        /**
+         * 扩散速度
+         */
+        this.velocity = 10; //  px/s
+        /**
+         * 扩散的最大半径
+         */
+        this.limit = 30;
+        /**
+         * 扩散的光圈数
+         */
+        this.ring = 3;
+        this._point = geometry;
+    }
+    /**
+     * 动画效果初始化
+     * @remarks
+     * 一般情况下，把一次性逻辑放于此处，以及处理动画的初始状态
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     * @param {Projection} projection - 坐标投影转换
+     */
+    project(crs) {
+        this._point.crs = crs;
+        /*ctx.save();
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineWidth;
+        //keep size
+        //地理坐标 转回 屏幕坐标
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.beginPath(); //Start path
+        ctx.arc(this._screenX, this._screenY, this.limit / this.ring, 0, Math.PI * 2, true);
+        ctx.stroke();
+        ctx.restore();*/
+    }
+    transform(origin, zoom) {
+        this._point.transform(origin, zoom);
+    }
+    /**
+     * 动画效果
+     * @remarks
+     * 通过Animator中requestAnimationFrame循环调用，因此注意优化代码，保持帧数
+     * @param {number} elapsed - 已逝去的时间，毫秒
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     */
+    animate(elapsed, ctx) {
+        const screenXY = this._point.screenXY;
+        ctx.save();
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineWidth;
+        //keep size
+        //地理坐标 转回 屏幕坐标
+        // ctx.setTransform(1,0,0,1,0,0);
+        /*ctx.arc(this._screenX, this._screenY, this.limit / this.ring, 0, Math.PI * 2, true);
+        ctx.fill();*/
+        for (let i = 0; i < this.ring; i++) {
+            ctx.beginPath(); //Start path
+            ctx.arc(screenXY.x, screenXY.y, (elapsed / 1000 * this.velocity + i * this.limit / this.ring) % this.limit, 0, Math.PI * 2, true);
+            //ctx.arc(this._screenX, this._screenY, this.limit / this.ring + ((elapsed/1000 + (this.limit - this.limit / this.ring) / this.velocity * (i/(this.ring - 1))) * this.velocity) % this.limit, 0, Math.PI * 2, true);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+}
+
+
+/***/ }),
+
 /***/ "../dist/base/base-object.js":
 /*!***********************************!*\
   !*** ../dist/base/base-object.js ***!
@@ -1173,25 +1415,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "BaseObject": () => (/* binding */ BaseObject)
 /* harmony export */ });
 class BaseObject {
-    constructor() {
-        this._create();
-    }
-    get id() {
-        return this._id;
-    }
-    _create() {
-        // const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-        // this._id = timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
-        //     return (Math.random() * 16 | 0).toString(16);
-        // }).toLowerCase();
-        BaseObject.MAX_ID += 1;
-        this._id = BaseObject.MAX_ID;
-    }
-    toString() {
-        return this._id.toString();
-    }
 }
-BaseObject.MAX_ID = 0;
 
 
 /***/ }),
@@ -1204,6 +1428,7 @@ BaseObject.MAX_ID = 0;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DraggableOptions": () => (/* binding */ DraggableOptions),
 /* harmony export */   "DraggableObject": () => (/* binding */ DraggableObject)
 /* harmony export */ });
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/browser */ "../dist/util/browser.js");
@@ -1212,6 +1437,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
 /* harmony import */ var _evented_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./evented-object */ "../dist/base/evented-object.js");
 /* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
+/* harmony import */ var _options_object__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./options-object */ "../dist/base/options-object.js");
+
 
 
 
@@ -1246,23 +1473,27 @@ const MOVE = {
     pointerdown: 'touchmove',
     MSPointerDown: 'touchmove'
 };
+class DraggableOptions extends _options_object__WEBPACK_IMPORTED_MODULE_6__.OptionsObject {
+    constructor() {
+        super(...arguments);
+        // @section
+        // @aka Draggable options
+        // @option clickTolerance: Number = 3
+        // The max number of pixels a user can shift the mouse pointer during a click
+        // for it to be considered a valid click (as opposed to a mouse drag).
+        this.clickTolerance = 3;
+        this.preventOutline = false;
+    }
+}
 class DraggableObject extends _evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObject {
     // @constructor L.Draggable(el: HTMLElement, dragHandle?: HTMLElement, preventOutline?: Boolean, options?: Draggable options)
     // Creates a `Draggable` object for moving `el` when you start dragging the `dragHandle` element (equals `el` itself by default).
-    constructor(element, dragStartTarget, preventOutline, options) {
+    constructor(element, dragStartTarget, options) {
         super();
-        this.options = {
-            // @section
-            // @aka Draggable options
-            // @option clickTolerance: Number = 3
-            // The max number of pixels a user can shift the mouse pointer during a click
-            // for it to be considered a valid click (as opposed to a mouse drag).
-            clickTolerance: 3
-        };
-        _util_util__WEBPACK_IMPORTED_MODULE_3__.setOptions(this, options);
+        this.options = new DraggableOptions();
+        this.options.assign(options);
         this._element = element;
         this._dragStartTarget = dragStartTarget || element;
-        this._preventOutline = preventOutline;
     }
     // @method enable()
     // Enables the dragging ability
@@ -1424,11 +1655,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EventedObject": () => (/* binding */ EventedObject)
 /* harmony export */ });
-/* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
-/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
+/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
+/* harmony import */ var _id_object__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./id-object */ "../dist/base/id-object.js");
 
 
-class EventedObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
+class EventedObject extends _id_object__WEBPACK_IMPORTED_MODULE_1__.IDObject {
     constructor() {
         super();
         this._events = {};
@@ -1453,7 +1684,7 @@ class EventedObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject
         }
         else {
             // types can be a string of space-separated words
-            types = _util_util__WEBPACK_IMPORTED_MODULE_1__.splitWords(types);
+            types = _util_util__WEBPACK_IMPORTED_MODULE_0__.splitWords(types);
             for (let i = 0, len = types.length; i < len; i++) {
                 this._on(types[i], fn, context);
             }
@@ -1482,7 +1713,7 @@ class EventedObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject
             }
         }
         else {
-            types = _util_util__WEBPACK_IMPORTED_MODULE_1__.splitWords(types);
+            types = _util_util__WEBPACK_IMPORTED_MODULE_0__.splitWords(types);
             for (let i = 0, len = types.length; i < len; i++) {
                 this._off(types[i], fn, context);
             }
@@ -1523,7 +1754,7 @@ class EventedObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject
         if (!fn) {
             // Set all removed listeners to noop so they are not called if remove happens in fire
             for (i = 0, len = listeners.length; i < len; i++) {
-                listeners[i].fn = _util_util__WEBPACK_IMPORTED_MODULE_1__.falseFn;
+                listeners[i].fn = _util_util__WEBPACK_IMPORTED_MODULE_0__.falseFn;
             }
             // clear all listeners for a type if function isn't specified
             delete this._events[type];
@@ -1541,7 +1772,7 @@ class EventedObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject
                 }
                 if (l.fn === fn) {
                     // set the removed listener to noop so that's not called if remove happens in fire
-                    l.fn = _util_util__WEBPACK_IMPORTED_MODULE_1__.falseFn;
+                    l.fn = _util_util__WEBPACK_IMPORTED_MODULE_0__.falseFn;
                     if (this._firingCount) {
                         /* copy array in case events are being fired */
                         this._events[type] = listeners = listeners.slice();
@@ -1686,9 +1917,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HandlerObject": () => (/* binding */ HandlerObject)
 /* harmony export */ });
-/* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
+/* harmony import */ var _id_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./id-object */ "../dist/base/id-object.js");
 
-class HandlerObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
+class HandlerObject extends _id_object__WEBPACK_IMPORTED_MODULE_0__.IDObject {
     // @section There is static function which can be called without instantiating L.Handler:
     // @function addTo(map: Map, name: String): this
     // Adds a new Handler to the given map with the given name.
@@ -1735,6 +1966,73 @@ class HandlerObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject
     addHooks() {
     }
     removeHooks() {
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/base/id-object.js":
+/*!*********************************!*\
+  !*** ../dist/base/id-object.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "IDObject": () => (/* binding */ IDObject)
+/* harmony export */ });
+/* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
+
+class IDObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
+    constructor() {
+        super();
+        this._create();
+    }
+    get id() {
+        return this._id;
+    }
+    _create() {
+        // const timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+        // this._id = timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+        //     return (Math.random() * 16 | 0).toString(16);
+        // }).toLowerCase();
+        IDObject.MAX_ID += 1;
+        this._id = IDObject.MAX_ID;
+    }
+    toString() {
+        return this._id.toString();
+    }
+}
+IDObject.MAX_ID = 0;
+
+
+/***/ }),
+
+/***/ "../dist/base/options-object.js":
+/*!**************************************!*\
+  !*** ../dist/base/options-object.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OptionsObject": () => (/* binding */ OptionsObject)
+/* harmony export */ });
+/* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
+
+class OptionsObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
+    constructor() {
+        super();
+    }
+    assign(options) {
+        if (options !== undefined) {
+            for (let key in options) {
+                if (this.hasOwnProperty(key)) {
+                    this[key] = options[key];
+                }
+            }
+        }
     }
 }
 
@@ -4371,6 +4669,7 @@ class Polyline extends _geometry__WEBPACK_IMPORTED_MODULE_2__.Geometry {
         this._screenXYs = this._planeXYs.map(planeXY => {
             return this._crs.planeXYToScreenXY(planeXY, zoom).round(false).subtract(origin);
         });
+        symbol = symbol || new _symbol_symbol__WEBPACK_IMPORTED_MODULE_3__.SimpleLineSymbol();
         this._screenBounds = symbol.getScreenBounds(this._screenXYs);
     }
     draw(ctx, symbol) {
@@ -4463,6 +4762,7 @@ class Graphic extends _base_evented_object__WEBPACK_IMPORTED_MODULE_0__.EventedO
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "GridOptions": () => (/* binding */ GridOptions),
 /* harmony export */   "Grid": () => (/* binding */ Grid)
 /* harmony export */ });
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/browser */ "../dist/util/browser.js");
@@ -4472,6 +4772,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
 /* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
 /* harmony import */ var _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../common/latlng-bounds */ "../dist/common/latlng-bounds.js");
+/* harmony import */ var _base_options_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base/options-object */ "../dist/base/options-object.js");
+
 
 
 
@@ -4543,77 +4845,77 @@ __webpack_require__.r(__webpack_exports__);
  *
  * @section
  */
+class GridOptions extends _base_options_object__WEBPACK_IMPORTED_MODULE_7__.OptionsObject {
+    constructor() {
+        super(...arguments);
+        // @option tileSize: Number|Point = 256
+        // Width and height of tiles in the grid. Use a number if width and height are equal, or `L.point(width, height)` otherwise.
+        this.tileSize = 256;
+        // @option opacity: Number = 1.0
+        // Opacity of the tiles. Can be used in the `createTile()` function.
+        this.opacity = 1;
+        // @option updateWhenIdle: Boolean = (depends)
+        // Load new tiles only when panning ends.
+        // `true` by default on mobile browsers, in order to avoid too many requests and keep smooth navigation.
+        // `false` otherwise in order to display new tiles _during_ panning, since it is easy to pan outside the
+        // [`keepBuffer`](#gridlayer-keepbuffer) option in desktop browsers.
+        this.updateWhenIdle = _util_browser__WEBPACK_IMPORTED_MODULE_0__.mobile;
+        // @option updateWhenZooming: Boolean = true
+        // By default, a smooth zoom animation (during a [touch zoom](#map-touchzoom) or a [`flyTo()`](#map-flyto)) will update grid layers every integer zoom level. Setting this option to `false` will update the grid layer only when the smooth animation ends.
+        this.updateWhenZooming = true;
+        // @option updateInterval: Number = 200
+        // Tiles will not update more than once every `updateInterval` milliseconds when panning.
+        this.updateInterval = 200;
+        // @option zIndex: Number = 1
+        // The explicit zIndex of the tile layer.
+        this.zIndex = 1;
+        // @option bounds: LatLngBounds = undefined
+        // If set, tiles will only be loaded inside the set `LatLngBounds`.
+        this.bounds = null;
+        // @option minZoom: Number = 0
+        // The minimum zoom level down to which this layer will be displayed (inclusive).
+        this.minZoom = 0;
+        // @option maxZoom: Number = undefined
+        // The maximum zoom level up to which this layer will be displayed (inclusive).
+        this.maxZoom = 18;
+        // @option maxNativeZoom: Number = undefined
+        // Maximum zoom number the tile source has available. If it is specified,
+        // the tiles on all zoom levels higher than `maxNativeZoom` will be loaded
+        // from `maxNativeZoom` level and auto-scaled.
+        this.maxNativeZoom = undefined;
+        // @option minNativeZoom: Number = undefined
+        // Minimum zoom number the tile source has available. If it is specified,
+        // the tiles on all zoom levels lower than `minNativeZoom` will be loaded
+        // from `minNativeZoom` level and auto-scaled.
+        this.minNativeZoom = undefined;
+        // @option noWrap: Boolean = false
+        // Whether the layer is wrapped around the antimeridian. If `true`, the
+        // GridLayer will only be displayed once at low zoom levels. Has no
+        // effect when the [map CRS](#map-crs) doesn't wrap around. Can be used
+        // in combination with [`bounds`](#gridlayer-bounds) to prevent requesting
+        // tiles outside the CRS limits.
+        this.noWrap = false;
+        // @option pane: String = 'tilePane'
+        // `Map pane` where the grid layer will be added.
+        this.pane = 'tilePane';
+        // @option className: String = ''
+        // A custom class name to assign to the tile layer. Empty by default.
+        this.className = '';
+        // @option keepBuffer: Number = 2
+        // When panning the map, keep this many rows and columns of tiles before unloading them.
+        this.keepBuffer = 2;
+        // @option zoomOffset: Number = 0
+        // The zoom number used in tile URLs will be offset with this value.
+        this.zoomOffset = 0;
+    }
+}
 class Grid extends _base_evented_object__WEBPACK_IMPORTED_MODULE_3__.EventedObject {
     constructor(options) {
         super();
-        // @section
-        // @aka GridLayer options
-        this.options = {
-            // @option tileSize: Number|Point = 256
-            // Width and height of tiles in the grid. Use a number if width and height are equal, or `L.point(width, height)` otherwise.
-            tileSize: 256,
-            // @option opacity: Number = 1.0
-            // Opacity of the tiles. Can be used in the `createTile()` function.
-            opacity: 1,
-            // @option updateWhenIdle: Boolean = (depends)
-            // Load new tiles only when panning ends.
-            // `true` by default on mobile browsers, in order to avoid too many requests and keep smooth navigation.
-            // `false` otherwise in order to display new tiles _during_ panning, since it is easy to pan outside the
-            // [`keepBuffer`](#gridlayer-keepbuffer) option in desktop browsers.
-            updateWhenIdle: _util_browser__WEBPACK_IMPORTED_MODULE_0__.mobile,
-            // @option updateWhenZooming: Boolean = true
-            // By default, a smooth zoom animation (during a [touch zoom](#map-touchzoom) or a [`flyTo()`](#map-flyto)) will update grid layers every integer zoom level. Setting this option to `false` will update the grid layer only when the smooth animation ends.
-            updateWhenZooming: true,
-            // @option updateInterval: Number = 200
-            // Tiles will not update more than once every `updateInterval` milliseconds when panning.
-            updateInterval: 200,
-            // @option zIndex: Number = 1
-            // The explicit zIndex of the tile layer.
-            zIndex: 1,
-            // @option bounds: LatLngBounds = undefined
-            // If set, tiles will only be loaded inside the set `LatLngBounds`.
-            bounds: null,
-            // @option minZoom: Number = 0
-            // The minimum zoom level down to which this layer will be displayed (inclusive).
-            minZoom: 0,
-            // @option maxZoom: Number = undefined
-            // The maximum zoom level up to which this layer will be displayed (inclusive).
-            maxZoom: 18,
-            // @option maxNativeZoom: Number = undefined
-            // Maximum zoom number the tile source has available. If it is specified,
-            // the tiles on all zoom levels higher than `maxNativeZoom` will be loaded
-            // from `maxNativeZoom` level and auto-scaled.
-            maxNativeZoom: undefined,
-            // @option minNativeZoom: Number = undefined
-            // Minimum zoom number the tile source has available. If it is specified,
-            // the tiles on all zoom levels lower than `minNativeZoom` will be loaded
-            // from `minNativeZoom` level and auto-scaled.
-            minNativeZoom: undefined,
-            // @option noWrap: Boolean = false
-            // Whether the layer is wrapped around the antimeridian. If `true`, the
-            // GridLayer will only be displayed once at low zoom levels. Has no
-            // effect when the [map CRS](#map-crs) doesn't wrap around. Can be used
-            // in combination with [`bounds`](#gridlayer-bounds) to prevent requesting
-            // tiles outside the CRS limits.
-            noWrap: false,
-            // @option pane: String = 'tilePane'
-            // `Map pane` where the grid layer will be added.
-            pane: 'tilePane',
-            // @option className: String = ''
-            // A custom class name to assign to the tile layer. Empty by default.
-            className: '',
-            // @option keepBuffer: Number = 2
-            // When panning the map, keep this many rows and columns of tiles before unloading them.
-            keepBuffer: 2,
-            // @option zoomOffset: Number = 0
-            // The zoom number used in tile URLs will be offset with this value.
-            zoomOffset: 0,
-            crossOrigin: false,
-            subdomains: ['a', 'b', 'c']
-        };
+        this.options = new GridOptions();
         this._tiles = {};
         this._levels = {};
-        _util_util__WEBPACK_IMPORTED_MODULE_1__.setOptions(this, options);
+        this.options.assign(options);
     }
     addTo(map) {
         this._map = map;
@@ -4700,8 +5002,7 @@ class Grid extends _base_evented_object__WEBPACK_IMPORTED_MODULE_3__.EventedObje
     // @method getTileSize: Point
     // Normalizes the [tileSize option](#gridlayer-tilesize) into a point. Used by the `createTile()` method.
     getTileSize() {
-        const s = this.options.tileSize;
-        return s instanceof _common_screen_xy__WEBPACK_IMPORTED_MODULE_4__.ScreenXY ? s : new _common_screen_xy__WEBPACK_IMPORTED_MODULE_4__.ScreenXY(s, s);
+        return new _common_screen_xy__WEBPACK_IMPORTED_MODULE_4__.ScreenXY(this.options.tileSize, this.options.tileSize);
     }
     _updateOpacity() {
         if (!this._map) {
@@ -4928,7 +5229,7 @@ class Grid extends _base_evented_object__WEBPACK_IMPORTED_MODULE_3__.EventedObje
         }
     }
     _resetGrid() {
-        let map = this._map, crs = map.options.crs, tileSize = this._tileSize = this.getTileSize(), tileZoom = this._tileZoom;
+        let crs = this._map.getCRS(), tileSize = this._tileSize = this.getTileSize(), tileZoom = this._tileZoom;
         const bounds = this._map.getPixelWorldBounds(this._tileZoom);
         if (bounds) {
             this._globalTileRange = this._pxBoundsToTileRange(bounds);
@@ -5015,7 +5316,7 @@ class Grid extends _base_evented_object__WEBPACK_IMPORTED_MODULE_3__.EventedObje
         }
     }
     _isValidTile(coords) {
-        var crs = this._map.options.crs;
+        const crs = this._map.getCRS();
         if (!crs.infinite) {
             // don't load tile if it's out of bounds and not wrapped
             const bounds = this._globalTileRange;
@@ -5186,6 +5487,7 @@ class Grid extends _base_evented_object__WEBPACK_IMPORTED_MODULE_3__.EventedObje
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TileOptions": () => (/* binding */ TileOptions),
 /* harmony export */   "Tile": () => (/* binding */ Tile)
 /* harmony export */ });
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/browser */ "../dist/util/browser.js");
@@ -5227,44 +5529,40 @@ __webpack_require__.r(__webpack_exports__);
  * L.tileLayer('http://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
  * ```
  */
+class TileOptions extends _grid__WEBPACK_IMPORTED_MODULE_4__.GridOptions {
+    constructor() {
+        super(...arguments);
+        // @option subdomains: String|String[] = 'abc'
+        // Subdomains of the tile service. Can be passed in the form of one string (where each letter is a subdomain name) or an array of strings.
+        this.subdomains = ['a', 'b', 'c'];
+        // @option errorTileUrl: String = ''
+        // URL to the tile image to show in place of the tile that failed to load.
+        this.errorTileUrl = '';
+        // @option zoomOffset: Number = 0
+        // The zoom number used in tile URLs will be offset with this value.
+        this.zoomOffset = 0;
+        // @option tms: Boolean = false
+        // If `true`, inverses Y axis numbering for tiles (turn this on for [TMS](https://en.wikipedia.org/wiki/Tile_Map_Service) services).
+        this.tms = false;
+        // @option zoomReverse: Boolean = false
+        // If set to true, the zoom number used in tile URLs will be reversed (`maxZoom - zoom` instead of `zoom`)
+        this.zoomReverse = false;
+        // @option detectRetina: Boolean = false
+        // If `true` and user is on a retina display, it will request four tiles of half the specified size and a bigger zoom level in place of one to utilize the high resolution.
+        this.detectRetina = false;
+        // @option crossOrigin: Boolean|String = false
+        // Whether the crossOrigin attribute will be added to the tiles.
+        // If a String is provided, all tiles will have their crossOrigin attribute set to the String provided. This is needed if you want to access tile pixel data.
+        // Refer to [CORS Settings](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes) for valid String values.
+        this.crossOrigin = false;
+    }
+}
 class Tile extends _grid__WEBPACK_IMPORTED_MODULE_4__.Grid {
     constructor(url, options) {
         super();
-        // @section
-        // @aka TileLayer options
-        this.tile_options = {
-            // @option minZoom: Number = 0
-            // The minimum zoom level down to which this layer will be displayed (inclusive).
-            minZoom: 0,
-            // @option maxZoom: Number = 18
-            // The maximum zoom level up to which this layer will be displayed (inclusive).
-            maxZoom: 18,
-            // @option subdomains: String|String[] = 'abc'
-            // Subdomains of the tile service. Can be passed in the form of one string (where each letter is a subdomain name) or an array of strings.
-            subdomains: ['a', 'b', 'c'],
-            // @option errorTileUrl: String = ''
-            // URL to the tile image to show in place of the tile that failed to load.
-            errorTileUrl: '',
-            // @option zoomOffset: Number = 0
-            // The zoom number used in tile URLs will be offset with this value.
-            zoomOffset: 0,
-            // @option tms: Boolean = false
-            // If `true`, inverses Y axis numbering for tiles (turn this on for [TMS](https://en.wikipedia.org/wiki/Tile_Map_Service) services).
-            tms: false,
-            // @option zoomReverse: Boolean = false
-            // If set to true, the zoom number used in tile URLs will be reversed (`maxZoom - zoom` instead of `zoom`)
-            zoomReverse: false,
-            // @option detectRetina: Boolean = false
-            // If `true` and user is on a retina display, it will request four tiles of half the specified size and a bigger zoom level in place of one to utilize the high resolution.
-            detectRetina: false,
-            // @option crossOrigin: Boolean|String = false
-            // Whether the crossOrigin attribute will be added to the tiles.
-            // If a String is provided, all tiles will have their crossOrigin attribute set to the String provided. This is needed if you want to access tile pixel data.
-            // Refer to [CORS Settings](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes) for valid String values.
-            crossOrigin: false
-        };
+        this.options = new TileOptions();
         this._url = url;
-        _util_util__WEBPACK_IMPORTED_MODULE_1__.setOptions(this, options);
+        this.options.assign(options);
     }
     // @method setUrl(url: String, noRedraw?: Boolean): this
     // Updates the layer's URL template and redraws it (unless `noRedraw` is set to `true`).
@@ -5315,15 +5613,15 @@ class Tile extends _grid__WEBPACK_IMPORTED_MODULE_4__.Grid {
     // Called only internally, returns the URL for a tile given its coordinates.
     // Classes extending `TileLayer` can override this function to provide custom tile URL naming schemes.
     getTileUrl(coords) {
-        var data = {
+        const data = {
             r: _util_browser__WEBPACK_IMPORTED_MODULE_0__.retina ? '@2x' : '',
             s: this._getSubdomain(coords),
             x: coords.x,
             y: coords.y,
             z: this._getZoomForUrl()
         };
-        if (this._map && !this._map.options.crs.infinite) {
-            var invertedY = this._globalTileRange.max.y - coords.y;
+        if (this._map && !this._map.getCRS().infinite) {
+            const invertedY = this._globalTileRange.max.y - coords.y;
             if (this.options.tms) {
                 data['y'] = invertedY;
             }
@@ -5419,7 +5717,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "lastId": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.lastId),
 /* harmony export */   "requestAnimFrame": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.requestAnimFrame),
 /* harmony export */   "requestFn": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.requestFn),
-/* harmony export */   "setOptions": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.setOptions),
 /* harmony export */   "splitWords": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.splitWords),
 /* harmony export */   "stamp": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.stamp),
 /* harmony export */   "template": () => (/* reexport safe */ _util_util__WEBPACK_IMPORTED_MODULE_0__.template),
@@ -5491,142 +5788,162 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "stop": () => (/* reexport safe */ _util_dom_event__WEBPACK_IMPORTED_MODULE_3__.stop),
 /* harmony export */   "stopPropagation": () => (/* reexport safe */ _util_dom_event__WEBPACK_IMPORTED_MODULE_3__.stopPropagation),
 /* harmony export */   "BaseObject": () => (/* reexport safe */ _base_base_object__WEBPACK_IMPORTED_MODULE_4__.BaseObject),
-/* harmony export */   "EventedObject": () => (/* reexport safe */ _base_evented_object__WEBPACK_IMPORTED_MODULE_5__.EventedObject),
-/* harmony export */   "HandlerObject": () => (/* reexport safe */ _base_handler_object__WEBPACK_IMPORTED_MODULE_6__.HandlerObject),
-/* harmony export */   "DraggableObject": () => (/* reexport safe */ _base_draggable_object__WEBPACK_IMPORTED_MODULE_7__.DraggableObject),
-/* harmony export */   "LatLng": () => (/* reexport safe */ _common_latlng__WEBPACK_IMPORTED_MODULE_8__.LatLng),
-/* harmony export */   "LatLngBounds": () => (/* reexport safe */ _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_9__.LatLngBounds),
-/* harmony export */   "XYBounds": () => (/* reexport safe */ _common_bounds__WEBPACK_IMPORTED_MODULE_10__.XYBounds),
-/* harmony export */   "XY": () => (/* reexport safe */ _common_xy__WEBPACK_IMPORTED_MODULE_11__.XY),
-/* harmony export */   "PlaneXY": () => (/* reexport safe */ _common_plane_xy__WEBPACK_IMPORTED_MODULE_12__.PlaneXY),
-/* harmony export */   "ScreenXY": () => (/* reexport safe */ _common_screen_xy__WEBPACK_IMPORTED_MODULE_13__.ScreenXY),
-/* harmony export */   "PlaneBounds": () => (/* reexport safe */ _common_plane_bounds__WEBPACK_IMPORTED_MODULE_14__.PlaneBounds),
-/* harmony export */   "ScreenBounds": () => (/* reexport safe */ _common_screen_bounds__WEBPACK_IMPORTED_MODULE_15__.ScreenBounds),
-/* harmony export */   "CRS": () => (/* reexport safe */ _crs_crs__WEBPACK_IMPORTED_MODULE_16__.CRS),
-/* harmony export */   "Earth": () => (/* reexport safe */ _crs_crs_earth__WEBPACK_IMPORTED_MODULE_17__.Earth),
-/* harmony export */   "EPSG4326": () => (/* reexport safe */ _crs_crs_4326__WEBPACK_IMPORTED_MODULE_18__.EPSG4326),
-/* harmony export */   "EPSG3857": () => (/* reexport safe */ _crs_crs_3857__WEBPACK_IMPORTED_MODULE_19__.EPSG3857),
-/* harmony export */   "Projection": () => (/* reexport safe */ _crs_projection_projection__WEBPACK_IMPORTED_MODULE_20__.Projection),
-/* harmony export */   "LonLat": () => (/* reexport safe */ _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_21__.LonLat),
-/* harmony export */   "Mercator": () => (/* reexport safe */ _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_22__.Mercator),
-/* harmony export */   "SphericalMercator": () => (/* reexport safe */ _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_23__.SphericalMercator),
-/* harmony export */   "Transformation": () => (/* reexport safe */ _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_24__.Transformation),
-/* harmony export */   "CoordinateType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__.CoordinateType),
-/* harmony export */   "Geometry": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__.Geometry),
-/* harmony export */   "GeometryType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__.GeometryType),
-/* harmony export */   "Point": () => (/* reexport safe */ _geometry_point__WEBPACK_IMPORTED_MODULE_26__.Point),
-/* harmony export */   "Polyline": () => (/* reexport safe */ _geometry_polyline__WEBPACK_IMPORTED_MODULE_27__.Polyline),
-/* harmony export */   "Polygon": () => (/* reexport safe */ _geometry_polygon__WEBPACK_IMPORTED_MODULE_28__.Polygon),
-/* harmony export */   "MultiplePoint": () => (/* reexport safe */ _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_29__.MultiplePoint),
-/* harmony export */   "MultiplePolyline": () => (/* reexport safe */ _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_30__.MultiplePolyline),
-/* harmony export */   "MultiplePolygon": () => (/* reexport safe */ _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_31__.MultiplePolygon),
-/* harmony export */   "Graphic": () => (/* reexport safe */ _graphic_graphic__WEBPACK_IMPORTED_MODULE_32__.Graphic),
-/* harmony export */   "Layer": () => (/* reexport safe */ _layer_layer__WEBPACK_IMPORTED_MODULE_33__.Layer),
-/* harmony export */   "GraphicLayer": () => (/* reexport safe */ _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_34__.GraphicLayer),
-/* harmony export */   "FeatureLayer": () => (/* reexport safe */ _layer_feature_layer__WEBPACK_IMPORTED_MODULE_35__.FeatureLayer),
-/* harmony export */   "RasterLayer": () => (/* reexport safe */ _layer_raster_layer__WEBPACK_IMPORTED_MODULE_36__.RasterLayer),
-/* harmony export */   "FillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.FillSymbol),
-/* harmony export */   "LineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.LineSymbol),
-/* harmony export */   "PointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.PointSymbol),
-/* harmony export */   "SimpleFillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimpleFillSymbol),
-/* harmony export */   "SimpleLineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimpleLineSymbol),
-/* harmony export */   "SimpleMarkerSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimpleMarkerSymbol),
-/* harmony export */   "SimplePointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.SimplePointSymbol),
-/* harmony export */   "Symbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__.Symbol),
-/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_38__.Field),
-/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_38__.FieldType),
-/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_39__.Feature),
-/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_40__.FeatureClass),
-/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_41__.Adapter),
-/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_42__.GeoJSONAdapter),
-/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_43__.Renderer),
-/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_44__.SimpleRenderer),
-/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_45__.DotRenderer),
-/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_46__.CategoryRenderer),
-/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_46__.CategoryRendererItem),
-/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_47__.ClassRenderer),
-/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_47__.ClassRendererItem),
-/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_48__.Text),
-/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_49__.Collision),
-/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_49__.NullCollision),
-/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_49__.SimpleCollision),
-/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_50__.Label),
-/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_51__.Grid),
-/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_52__.Tile),
-/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_53__.Raster),
-/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_54__.Kriging),
-/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_55__.IDW),
-/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_56__.Heat),
-/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_57__.Map),
-/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_58__.Canvas),
-/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_59__.PosAnimation),
-/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_60__.DragHandler),
-/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_61__.ScrollWheelZoomHandler),
-/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_62__.DoubleClickZoomHandler)
+/* harmony export */   "IDObject": () => (/* reexport safe */ _base_id_object__WEBPACK_IMPORTED_MODULE_5__.IDObject),
+/* harmony export */   "OptionsObject": () => (/* reexport safe */ _base_options_object__WEBPACK_IMPORTED_MODULE_6__.OptionsObject),
+/* harmony export */   "EventedObject": () => (/* reexport safe */ _base_evented_object__WEBPACK_IMPORTED_MODULE_7__.EventedObject),
+/* harmony export */   "HandlerObject": () => (/* reexport safe */ _base_handler_object__WEBPACK_IMPORTED_MODULE_8__.HandlerObject),
+/* harmony export */   "DraggableObject": () => (/* reexport safe */ _base_draggable_object__WEBPACK_IMPORTED_MODULE_9__.DraggableObject),
+/* harmony export */   "DraggableOptions": () => (/* reexport safe */ _base_draggable_object__WEBPACK_IMPORTED_MODULE_9__.DraggableOptions),
+/* harmony export */   "LatLng": () => (/* reexport safe */ _common_latlng__WEBPACK_IMPORTED_MODULE_10__.LatLng),
+/* harmony export */   "LatLngBounds": () => (/* reexport safe */ _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_11__.LatLngBounds),
+/* harmony export */   "XYBounds": () => (/* reexport safe */ _common_bounds__WEBPACK_IMPORTED_MODULE_12__.XYBounds),
+/* harmony export */   "XY": () => (/* reexport safe */ _common_xy__WEBPACK_IMPORTED_MODULE_13__.XY),
+/* harmony export */   "PlaneXY": () => (/* reexport safe */ _common_plane_xy__WEBPACK_IMPORTED_MODULE_14__.PlaneXY),
+/* harmony export */   "ScreenXY": () => (/* reexport safe */ _common_screen_xy__WEBPACK_IMPORTED_MODULE_15__.ScreenXY),
+/* harmony export */   "PlaneBounds": () => (/* reexport safe */ _common_plane_bounds__WEBPACK_IMPORTED_MODULE_16__.PlaneBounds),
+/* harmony export */   "ScreenBounds": () => (/* reexport safe */ _common_screen_bounds__WEBPACK_IMPORTED_MODULE_17__.ScreenBounds),
+/* harmony export */   "CRS": () => (/* reexport safe */ _crs_crs__WEBPACK_IMPORTED_MODULE_18__.CRS),
+/* harmony export */   "Earth": () => (/* reexport safe */ _crs_crs_earth__WEBPACK_IMPORTED_MODULE_19__.Earth),
+/* harmony export */   "EPSG4326": () => (/* reexport safe */ _crs_crs_4326__WEBPACK_IMPORTED_MODULE_20__.EPSG4326),
+/* harmony export */   "EPSG3857": () => (/* reexport safe */ _crs_crs_3857__WEBPACK_IMPORTED_MODULE_21__.EPSG3857),
+/* harmony export */   "Projection": () => (/* reexport safe */ _crs_projection_projection__WEBPACK_IMPORTED_MODULE_22__.Projection),
+/* harmony export */   "LonLat": () => (/* reexport safe */ _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_23__.LonLat),
+/* harmony export */   "Mercator": () => (/* reexport safe */ _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_24__.Mercator),
+/* harmony export */   "SphericalMercator": () => (/* reexport safe */ _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_25__.SphericalMercator),
+/* harmony export */   "Transformation": () => (/* reexport safe */ _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_26__.Transformation),
+/* harmony export */   "CoordinateType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_27__.CoordinateType),
+/* harmony export */   "Geometry": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_27__.Geometry),
+/* harmony export */   "GeometryType": () => (/* reexport safe */ _geometry_geometry__WEBPACK_IMPORTED_MODULE_27__.GeometryType),
+/* harmony export */   "Point": () => (/* reexport safe */ _geometry_point__WEBPACK_IMPORTED_MODULE_28__.Point),
+/* harmony export */   "Polyline": () => (/* reexport safe */ _geometry_polyline__WEBPACK_IMPORTED_MODULE_29__.Polyline),
+/* harmony export */   "Polygon": () => (/* reexport safe */ _geometry_polygon__WEBPACK_IMPORTED_MODULE_30__.Polygon),
+/* harmony export */   "MultiplePoint": () => (/* reexport safe */ _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_31__.MultiplePoint),
+/* harmony export */   "MultiplePolyline": () => (/* reexport safe */ _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_32__.MultiplePolyline),
+/* harmony export */   "MultiplePolygon": () => (/* reexport safe */ _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_33__.MultiplePolygon),
+/* harmony export */   "Graphic": () => (/* reexport safe */ _graphic_graphic__WEBPACK_IMPORTED_MODULE_34__.Graphic),
+/* harmony export */   "Layer": () => (/* reexport safe */ _layer_layer__WEBPACK_IMPORTED_MODULE_35__.Layer),
+/* harmony export */   "GraphicLayer": () => (/* reexport safe */ _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_36__.GraphicLayer),
+/* harmony export */   "FeatureLayer": () => (/* reexport safe */ _layer_feature_layer__WEBPACK_IMPORTED_MODULE_37__.FeatureLayer),
+/* harmony export */   "RasterLayer": () => (/* reexport safe */ _layer_raster_layer__WEBPACK_IMPORTED_MODULE_38__.RasterLayer),
+/* harmony export */   "FillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.FillSymbol),
+/* harmony export */   "LineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.LineSymbol),
+/* harmony export */   "PointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.PointSymbol),
+/* harmony export */   "SimpleFillSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimpleFillSymbol),
+/* harmony export */   "SimpleLineSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimpleLineSymbol),
+/* harmony export */   "SimpleMarkerSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimpleMarkerSymbol),
+/* harmony export */   "SimplePointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimplePointSymbol),
+/* harmony export */   "Symbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.Symbol),
+/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_40__.Field),
+/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_40__.FieldType),
+/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_41__.Feature),
+/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_42__.FeatureClass),
+/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_43__.Adapter),
+/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_44__.GeoJSONAdapter),
+/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_45__.Renderer),
+/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_46__.SimpleRenderer),
+/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_47__.DotRenderer),
+/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_48__.CategoryRenderer),
+/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_48__.CategoryRendererItem),
+/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_49__.ClassRenderer),
+/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_49__.ClassRendererItem),
+/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_50__.Text),
+/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_51__.Collision),
+/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_51__.NullCollision),
+/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_51__.SimpleCollision),
+/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_52__.Label),
+/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_53__.Grid),
+/* harmony export */   "GridOptions": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_53__.GridOptions),
+/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_54__.Tile),
+/* harmony export */   "TileOptions": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_54__.TileOptions),
+/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_55__.Raster),
+/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_56__.Kriging),
+/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_57__.IDW),
+/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_58__.Heat),
+/* harmony export */   "Animation": () => (/* reexport safe */ _animation_animation__WEBPACK_IMPORTED_MODULE_59__.Animation),
+/* harmony export */   "PointAnimation": () => (/* reexport safe */ _animation_point_animation__WEBPACK_IMPORTED_MODULE_60__.PointAnimation),
+/* harmony export */   "LineAnimation": () => (/* reexport safe */ _animation_line_animation__WEBPACK_IMPORTED_MODULE_61__.LineAnimation),
+/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_62__.Map),
+/* harmony export */   "MapOptions": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_62__.MapOptions),
+/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_63__.Canvas),
+/* harmony export */   "CanvasOptions": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_63__.CanvasOptions),
+/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_64__.PosAnimation),
+/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_65__.DragHandler),
+/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_66__.ScrollWheelZoomHandler),
+/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_67__.DoubleClickZoomHandler)
 /* harmony export */ });
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/util */ "../dist/util/util.js");
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/browser */ "../dist/util/browser.js");
 /* harmony import */ var _util_dom_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/dom-util */ "../dist/util/dom-util.js");
 /* harmony import */ var _util_dom_event__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/dom-event */ "../dist/util/dom-event.js");
 /* harmony import */ var _base_base_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./base/base-object */ "../dist/base/base-object.js");
-/* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base/evented-object */ "../dist/base/evented-object.js");
-/* harmony import */ var _base_handler_object__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base/handler-object */ "../dist/base/handler-object.js");
-/* harmony import */ var _base_draggable_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base/draggable-object */ "../dist/base/draggable-object.js");
-/* harmony import */ var _common_latlng__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./common/latlng */ "../dist/common/latlng.js");
-/* harmony import */ var _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./common/latlng-bounds */ "../dist/common/latlng-bounds.js");
-/* harmony import */ var _common_bounds__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common/bounds */ "../dist/common/bounds.js");
-/* harmony import */ var _common_xy__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common/xy */ "../dist/common/xy.js");
-/* harmony import */ var _common_plane_xy__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common/plane-xy */ "../dist/common/plane-xy.js");
-/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common/screen-xy */ "../dist/common/screen-xy.js");
-/* harmony import */ var _common_plane_bounds__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./common/plane-bounds */ "../dist/common/plane-bounds.js");
-/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common/screen-bounds */ "../dist/common/screen-bounds.js");
-/* harmony import */ var _crs_crs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./crs/crs */ "../dist/crs/crs.js");
-/* harmony import */ var _crs_crs_earth__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./crs/crs-earth */ "../dist/crs/crs-earth.js");
-/* harmony import */ var _crs_crs_4326__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./crs/crs-4326 */ "../dist/crs/crs-4326.js");
-/* harmony import */ var _crs_crs_3857__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./crs/crs-3857 */ "../dist/crs/crs-3857.js");
-/* harmony import */ var _crs_projection_projection__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./crs/projection/projection */ "../dist/crs/projection/projection.js");
-/* harmony import */ var _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./crs/projection/projection-lonlat */ "../dist/crs/projection/projection-lonlat.js");
-/* harmony import */ var _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./crs/projection/projection-mercator */ "../dist/crs/projection/projection-mercator.js");
-/* harmony import */ var _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./crs/projection/projection-spherical-mercator */ "../dist/crs/projection/projection-spherical-mercator.js");
-/* harmony import */ var _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./crs/transformation/transformation */ "../dist/crs/transformation/transformation.js");
-/* harmony import */ var _geometry_geometry__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./geometry/geometry */ "../dist/geometry/geometry.js");
-/* harmony import */ var _geometry_point__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./geometry/point */ "../dist/geometry/point.js");
-/* harmony import */ var _geometry_polyline__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./geometry/polyline */ "../dist/geometry/polyline.js");
-/* harmony import */ var _geometry_polygon__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./geometry/polygon */ "../dist/geometry/polygon.js");
-/* harmony import */ var _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./geometry/multiple-point */ "../dist/geometry/multiple-point.js");
-/* harmony import */ var _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./geometry/multiple-polyline */ "../dist/geometry/multiple-polyline.js");
-/* harmony import */ var _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./geometry/multiple-polygon */ "../dist/geometry/multiple-polygon.js");
-/* harmony import */ var _graphic_graphic__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./graphic/graphic */ "../dist/graphic/graphic.js");
-/* harmony import */ var _layer_layer__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./layer/layer */ "../dist/layer/layer.js");
-/* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./layer/graphic-layer */ "../dist/layer/graphic-layer.js");
-/* harmony import */ var _layer_feature_layer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./layer/feature-layer */ "../dist/layer/feature-layer.js");
-/* harmony import */ var _layer_raster_layer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./layer/raster-layer */ "../dist/layer/raster-layer.js");
-/* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./symbol/symbol */ "../dist/symbol/symbol.js");
-/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
-/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
-/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
-/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
-/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
-/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
-/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
-/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
-/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
-/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
-/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
-/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
-/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
-/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
-/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
-/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
-/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
-/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
-/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
-/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
-/* harmony import */ var _map_canvas__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./map/canvas */ "../dist/map/canvas.js");
-/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
-/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
-/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
-/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+/* harmony import */ var _base_id_object__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./base/id-object */ "../dist/base/id-object.js");
+/* harmony import */ var _base_options_object__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base/options-object */ "../dist/base/options-object.js");
+/* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base/evented-object */ "../dist/base/evented-object.js");
+/* harmony import */ var _base_handler_object__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./base/handler-object */ "../dist/base/handler-object.js");
+/* harmony import */ var _base_draggable_object__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./base/draggable-object */ "../dist/base/draggable-object.js");
+/* harmony import */ var _common_latlng__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./common/latlng */ "../dist/common/latlng.js");
+/* harmony import */ var _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./common/latlng-bounds */ "../dist/common/latlng-bounds.js");
+/* harmony import */ var _common_bounds__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./common/bounds */ "../dist/common/bounds.js");
+/* harmony import */ var _common_xy__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./common/xy */ "../dist/common/xy.js");
+/* harmony import */ var _common_plane_xy__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./common/plane-xy */ "../dist/common/plane-xy.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./common/screen-xy */ "../dist/common/screen-xy.js");
+/* harmony import */ var _common_plane_bounds__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./common/plane-bounds */ "../dist/common/plane-bounds.js");
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _crs_crs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./crs/crs */ "../dist/crs/crs.js");
+/* harmony import */ var _crs_crs_earth__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./crs/crs-earth */ "../dist/crs/crs-earth.js");
+/* harmony import */ var _crs_crs_4326__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./crs/crs-4326 */ "../dist/crs/crs-4326.js");
+/* harmony import */ var _crs_crs_3857__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./crs/crs-3857 */ "../dist/crs/crs-3857.js");
+/* harmony import */ var _crs_projection_projection__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./crs/projection/projection */ "../dist/crs/projection/projection.js");
+/* harmony import */ var _crs_projection_projection_lonlat__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./crs/projection/projection-lonlat */ "../dist/crs/projection/projection-lonlat.js");
+/* harmony import */ var _crs_projection_projection_mercator__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./crs/projection/projection-mercator */ "../dist/crs/projection/projection-mercator.js");
+/* harmony import */ var _crs_projection_projection_spherical_mercator__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./crs/projection/projection-spherical-mercator */ "../dist/crs/projection/projection-spherical-mercator.js");
+/* harmony import */ var _crs_transformation_transformation__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./crs/transformation/transformation */ "../dist/crs/transformation/transformation.js");
+/* harmony import */ var _geometry_geometry__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./geometry/geometry */ "../dist/geometry/geometry.js");
+/* harmony import */ var _geometry_point__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./geometry/point */ "../dist/geometry/point.js");
+/* harmony import */ var _geometry_polyline__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./geometry/polyline */ "../dist/geometry/polyline.js");
+/* harmony import */ var _geometry_polygon__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./geometry/polygon */ "../dist/geometry/polygon.js");
+/* harmony import */ var _geometry_multiple_point__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./geometry/multiple-point */ "../dist/geometry/multiple-point.js");
+/* harmony import */ var _geometry_multiple_polyline__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./geometry/multiple-polyline */ "../dist/geometry/multiple-polyline.js");
+/* harmony import */ var _geometry_multiple_polygon__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./geometry/multiple-polygon */ "../dist/geometry/multiple-polygon.js");
+/* harmony import */ var _graphic_graphic__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./graphic/graphic */ "../dist/graphic/graphic.js");
+/* harmony import */ var _layer_layer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./layer/layer */ "../dist/layer/layer.js");
+/* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./layer/graphic-layer */ "../dist/layer/graphic-layer.js");
+/* harmony import */ var _layer_feature_layer__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./layer/feature-layer */ "../dist/layer/feature-layer.js");
+/* harmony import */ var _layer_raster_layer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./layer/raster-layer */ "../dist/layer/raster-layer.js");
+/* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./symbol/symbol */ "../dist/symbol/symbol.js");
+/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
+/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
+/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
+/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
+/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
+/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
+/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
+/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
+/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
+/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
+/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
+/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
+/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
+/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
+/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
+/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
+/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
+/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
+/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
+/* harmony import */ var _animation_animation__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./animation/animation */ "../dist/animation/animation.js");
+/* harmony import */ var _animation_point_animation__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./animation/point-animation */ "../dist/animation/point-animation.js");
+/* harmony import */ var _animation_line_animation__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./animation/line-animation */ "../dist/animation/line-animation.js");
+/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
+/* harmony import */ var _map_canvas__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./map/canvas */ "../dist/map/canvas.js");
+/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
+/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
+/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
+/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+
+
+
+
+
 
 
 
@@ -6098,6 +6415,11 @@ class GraphicLayer extends _layer__WEBPACK_IMPORTED_MODULE_0__.Layer {
         graphic.next = null;
         delete this._graphics[graphic.id];
     }
+    clearGraphics() {
+        this._first = null;
+        this._last = null;
+        this._graphics = {};
+    }
     transform(origin, zoom) {
         let graphic = this._first;
         while (graphic) {
@@ -6315,6 +6637,7 @@ class RasterLayer extends _layer__WEBPACK_IMPORTED_MODULE_0__.Layer {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "CanvasOptions": () => (/* binding */ CanvasOptions),
 /* harmony export */   "Canvas": () => (/* binding */ Canvas)
 /* harmony export */ });
 /* harmony import */ var _util_dom_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/dom-util */ "../dist/util/dom-util.js");
@@ -6324,6 +6647,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../base/evented-object */ "../dist/base/evented-object.js");
 /* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
 /* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../layer/graphic-layer */ "../dist/layer/graphic-layer.js");
+/* harmony import */ var _base_options_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base/options-object */ "../dist/base/options-object.js");
+
 
 
 
@@ -6362,26 +6687,30 @@ __webpack_require__.r(__webpack_exports__);
  * var circle = L.circle( center, { renderer: myRenderer } );
  * ```
  */
+class CanvasOptions extends _base_options_object__WEBPACK_IMPORTED_MODULE_7__.OptionsObject {
+    constructor() {
+        super(...arguments);
+        this.pane = 'overlayPane';
+        // @option padding: Number = 0.1
+        // How much to extend the clip area around the map view (relative to its size)
+        // e.g. 0.1 would be 10% of map view in each direction
+        this.padding = 0.1;
+        // @option tolerance: Number = 0
+        // How much to extend click tolerance round a path/object on the map
+        this.tolerance = 0;
+    }
+}
 class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObject {
     constructor(map, options) {
         super();
-        this.options = {
-            // @option padding: Number = 0.1
-            // How much to extend the clip area around the map view (relative to its size)
-            // e.g. 0.1 would be 10% of map view in each direction
-            padding: 0.1,
-            // @option tolerance: Number = 0
-            // How much to extend click tolerance round a path/object on the map
-            tolerance: 0,
-        };
-        // _layers: any = {};
+        this.options = new CanvasOptions();
         this._graphicLayer = new _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_6__.GraphicLayer();
         this._map = map;
         this._graphicLayer.crs = map.getCRS();
         this._graphicLayers = [];
         this._featureLayers = [];
         this._rasterLayers = [];
-        _util_util__WEBPACK_IMPORTED_MODULE_3__.setOptions(this, options);
+        this.options.assign(options);
     }
     init() {
         const container = this._container = document.createElement('canvas');
@@ -6390,7 +6719,7 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(container, 'mouseout', this._handleMouseOut, this);
         this._ctx = container.getContext('2d');
         if (this._container) {
-            this._map.getPane('overlayPane').appendChild(this._container);
+            this._map.getPane(this.options.pane).appendChild(this._container);
             // this._update();
             // this.on('update', this._updateGeometry, this);
             _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.addClass(this._container, 'leaflet-zoom-animated');
@@ -6398,14 +6727,14 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._map.on('viewreset', this._reset, this);
         this._map.on('zoom', this._onZoom, this);
         this._map.on('zoomanim', this._onAnimZoom, this);
-        this._map.on('moveend', this._update, this);
+        this._map.on('moveend', this._updateCanvas, this);
         this._map.on('zoomend', this._onZoomEnd, this);
     }
     destroy() {
         this._map.off('viewreset', this._reset, this);
         this._map.off('zoom', this._onZoom, this);
         this._map.off('zoomanim', this._onAnimZoom, this);
-        this._map.off('moveend', this._update, this);
+        this._map.off('moveend', this._updateCanvas, this);
         this._map.off('zoomend', this._onZoomEnd, this);
         if (this._redrawRequest) {
             _util_util__WEBPACK_IMPORTED_MODULE_3__.cancelAnimFrame(this._redrawRequest);
@@ -6455,7 +6784,7 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._redraw();
     }
     // update center/zoom/bounds/position
-    _update() {
+    _updateCanvas() {
         if (this._map._animatingZoom && this._bounds) {
             return;
         }
@@ -6500,10 +6829,18 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._graphicLayer.removeGraphic(graphic);
         this._requestRedraw(graphic.geometry);
     }
+    clearGraphics() {
+        this._graphicLayer.clearGraphics();
+        this._updateGeometry();
+    }
     addGraphicLayer(graphicLayer) {
         graphicLayer.transform(this._origin, this._zoom);
         this._graphicLayers.push(graphicLayer);
         this._updateGeometry();
+    }
+    removeGraphicLayer(graphicLayer) {
+        const index = this._graphicLayers.findIndex(layer => layer.id == graphicLayer.id);
+        this._graphicLayers.splice(index, 1);
     }
     clearGraphicLayers() {
         this._graphicLayers = [];
@@ -6514,6 +6851,10 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._featureLayers.push(featureLayer);
         this._updateGeometry();
     }
+    removeFeatureLayer(featureLayer) {
+        const index = this._featureLayers.findIndex(layer => layer.id == featureLayer.id);
+        this._featureLayers.splice(index, 1);
+    }
     clearFeatureLayers() {
         this._featureLayers = [];
         this._updateGeometry();
@@ -6523,17 +6864,20 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._rasterLayers.push(rasterLayer);
         this._updateGeometry();
     }
+    removeRasterLayer(rasterLayer) {
+        const index = this._rasterLayers.findIndex(layer => layer.id == rasterLayer.id);
+        this._rasterLayers.splice(index, 1);
+    }
     clearRasterLayers() {
         this._rasterLayers = [];
         this._updateGeometry();
     }
-    _requestRedraw(geometry, redraw = true) {
+    _requestRedraw(geometry) {
         if (!this._map) {
             return;
         }
         this._extendRedrawBounds(geometry);
-        if (redraw)
-            this._redrawRequest = this._redrawRequest || _util_util__WEBPACK_IMPORTED_MODULE_3__.requestAnimFrame(this._redraw, this);
+        this._redrawRequest = this._redrawRequest || _util_util__WEBPACK_IMPORTED_MODULE_3__.requestAnimFrame(this._redraw, this);
     }
     _extendRedrawBounds(geometry) {
         if (geometry.screenBounds) {
@@ -6603,6 +6947,7 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
     // so we emulate that by calculating what's under the mouse on mousemove/click manually
     _onClick(e) {
         let screenXY = this._map.mouseEventToCanvasPixel(e);
+        // spatial query graphic && feature
         let elements = this._graphicLayer.query(screenXY, this._zoom, this._bounds);
         this._graphicLayers.forEach(layer => {
             elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
@@ -6623,12 +6968,11 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._handleMouseHover(e, point);
     }
     _handleMouseOut(e) {
-        var layer = this._hoveredLayer;
-        if (layer) {
-            // if we're leaving the layer, fire mouseout
+        if (this._hoveredElement) {
+            // if we're leaving, fire mouseout
             _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.removeClass(this._container, 'leaflet-interactive');
-            this._fireEvent([layer], e, 'mouseout');
-            this._hoveredLayer = null;
+            this._fireEvent([this._hoveredElement], e, 'mouseout');
+            this._hoveredElement = null;
             this._mouseHoverThrottled = false;
         }
     }
@@ -6636,7 +6980,7 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         if (this._mouseHoverThrottled) {
             return;
         }
-        let candidateHoveredLayer;
+        // spatial query graphic && feature
         let elements = this._graphicLayer.query(screenXY, this._zoom, this._bounds);
         this._graphicLayers.forEach(layer => {
             elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
@@ -6644,18 +6988,562 @@ class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedOb
         this._featureLayers.forEach(layer => {
             elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
         });
-        candidateHoveredLayer = elements.length > 0 ? elements[0] : null;
-        if (candidateHoveredLayer !== this._hoveredLayer) {
+        let candidateHoveredElement = elements.length > 0 ? elements[0] : null;
+        if (candidateHoveredElement !== this._hoveredElement) {
             this._handleMouseOut(e);
-            if (candidateHoveredLayer) {
+            if (candidateHoveredElement) {
                 _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.addClass(this._container, 'leaflet-interactive'); // change cursor
-                this._fireEvent([candidateHoveredLayer], e, 'mouseover');
-                this._hoveredLayer = candidateHoveredLayer;
+                this._fireEvent([candidateHoveredElement], e, 'mouseover');
+                this._hoveredElement = candidateHoveredElement;
             }
         }
-        if (this._hoveredLayer) {
-            this._fireEvent([this._hoveredLayer], e);
+        if (this._hoveredElement) {
+            this._fireEvent([this._hoveredElement], e);
         }
+        // throttle 
+        this._mouseHoverThrottled = true;
+        setTimeout(() => {
+            this._mouseHoverThrottled = false;
+        }, 32);
+    }
+    _fireEvent(layers, e, type) {
+        this._map._fireDOMEvent(e, type || e.type, layers);
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/map/canvas/animater.js":
+/*!**************************************!*\
+  !*** ../dist/map/canvas/animater.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AnimaterOptions": () => (/* binding */ AnimaterOptions),
+/* harmony export */   "Animater": () => (/* binding */ Animater)
+/* harmony export */ });
+/* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canvas */ "../dist/map/canvas/canvas.js");
+
+class AnimaterOptions extends _canvas__WEBPACK_IMPORTED_MODULE_0__.CanvasOptions {
+    constructor() {
+        super(...arguments);
+        this.pane = 'animatePane';
+    }
+}
+class Animater extends _canvas__WEBPACK_IMPORTED_MODULE_0__.Canvas {
+    constructor(map, options) {
+        super(map, options);
+        this.options = new AnimaterOptions();
+        this._animations = [];
+    }
+    _onZoomEnd() {
+        super._onZoomEnd();
+        this._animations.forEach(animation => {
+            animation.transform(this._origin, this._zoom);
+        });
+    }
+    addAnimation(animation) {
+        animation.transform(this._origin, this._zoom);
+        this._animations.push(animation);
+    }
+    // removeAnimation(animation: Animation) {
+    //   const index = this._animations.findIndex(item => item.id == animation.id);
+    //   this._animations.splice(index, 1);
+    //   this._updateGeometry();
+    // }
+    // clearGraphicLayers() {
+    //   this._graphicLayers = [];
+    //   this._updateGeometry();
+    // }
+    _draw() {
+        if (this._ctx) {
+            let bounds = this._redrawBounds;
+            this._ctx.save();
+            if (bounds) {
+                var size = bounds.getSize();
+                this._ctx.beginPath();
+                this._ctx.rect(bounds.min.x, bounds.min.y, size.x, size.y);
+                this._ctx.clip();
+            }
+            this._drawing = true;
+            // console.time("draw");
+            this._frame && window.cancelAnimationFrame(this._frame);
+            this._start = undefined;
+            //this上下文绑定
+            this._animate = this._animate.bind(this);
+            //动画循环
+            this._frame = window.requestAnimationFrame(this._animate);
+            // console.timeEnd("draw");
+            this._drawing = false;
+            this._ctx.restore(); // Restore state before clipping.
+        }
+    }
+    /**
+       * 动画循环
+       * @param {number} timestamp - 时间戳
+       */
+    _animate(timestamp) {
+        if (this._start === undefined) {
+            this._start = timestamp;
+        }
+        //计算逝去时间，毫秒
+        const elapsed = timestamp - this._start;
+        this._ctx.save();
+        this._ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this._ctx.clearRect(0, 0, this._container.width, this._container.height);
+        this._ctx.restore();
+        //遍历所以动画效果，执行动画
+        this._animations.forEach(animation => {
+            animation.animate(elapsed, this._ctx);
+        });
+        //循环，下一帧
+        this._frame = window.requestAnimationFrame(this._animate);
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/map/canvas/canvas.js":
+/*!************************************!*\
+  !*** ../dist/map/canvas/canvas.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "CanvasOptions": () => (/* binding */ CanvasOptions),
+/* harmony export */   "Canvas": () => (/* binding */ Canvas)
+/* harmony export */ });
+/* harmony import */ var _util_dom_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/dom-util */ "../dist/util/dom-util.js");
+/* harmony import */ var _util_dom_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/dom-event */ "../dist/util/dom-event.js");
+/* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/browser */ "../dist/util/browser.js");
+/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/util */ "../dist/util/util.js");
+/* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../base/evented-object */ "../dist/base/evented-object.js");
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _base_options_object__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../base/options-object */ "../dist/base/options-object.js");
+
+
+
+
+
+
+
+/*
+ * @class Canvas
+ * @inherits Renderer
+ * @aka L.Canvas
+ *
+ * Allows vector layers to be displayed with [`<canvas>`](https://developer.mozilla.org/docs/Web/API/Canvas_API).
+ * Inherits `Renderer`.
+ *
+ * Due to [technical limitations](http://caniuse.com/#search=canvas), Canvas is not
+ * available in all web browsers, notably IE8, and overlapping geometries might
+ * not display properly in some edge cases.
+ *
+ * @example
+ *
+ * Use Canvas by default for all paths in the map:
+ *
+ * ```js
+ * var map = L.map('map', {
+ * 	renderer: L.canvas()
+ * });
+ * ```
+ *
+ * Use a Canvas renderer with extra padding for specific vector geometries:
+ *
+ * ```js
+ * var map = L.map('map');
+ * var myRenderer = L.canvas({ padding: 0.5 });
+ * var line = L.polyline( coordinates, { renderer: myRenderer } );
+ * var circle = L.circle( center, { renderer: myRenderer } );
+ * ```
+ */
+class CanvasOptions extends _base_options_object__WEBPACK_IMPORTED_MODULE_6__.OptionsObject {
+    constructor() {
+        super(...arguments);
+        this.pane = 'overlayPane';
+        // @option padding: Number = 0.1
+        // How much to extend the clip area around the map view (relative to its size)
+        // e.g. 0.1 would be 10% of map view in each direction
+        this.padding = 0.1;
+        // @option tolerance: Number = 0
+        // How much to extend click tolerance round a path/object on the map
+        this.tolerance = 0;
+    }
+}
+class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObject {
+    constructor(map, options) {
+        super();
+        this.options = new CanvasOptions();
+        this._map = map;
+        this.options.assign(options);
+    }
+    init() {
+        const container = this._container = document.createElement('canvas');
+        this._ctx = container.getContext('2d');
+        if (this._container) {
+            this._map.getPane(this.options.pane).appendChild(this._container);
+            // this._update();
+            // this.on('update', this._updateGeometry, this);
+            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.addClass(this._container, 'leaflet-zoom-animated');
+        }
+        this._map.on('viewreset', this._reset, this);
+        this._map.on('zoom', this._onZoom, this);
+        this._map.on('zoomanim', this._onAnimZoom, this);
+        this._map.on('moveend', this._updateCanvas, this);
+        this._map.on('zoomend', this._onZoomEnd, this);
+    }
+    destroy() {
+        this._map.off('viewreset', this._reset, this);
+        this._map.off('zoom', this._onZoom, this);
+        this._map.off('zoomanim', this._onAnimZoom, this);
+        this._map.off('moveend', this._updateCanvas, this);
+        this._map.off('zoomend', this._onZoomEnd, this);
+        if (this._redrawRequest) {
+            _util_util__WEBPACK_IMPORTED_MODULE_3__.cancelAnimFrame(this._redrawRequest);
+        }
+        delete this._ctx;
+        if (this._container) {
+            // this.off('update', this._updateGeometry, this);
+            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.remove(this._container);
+            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.off(this._container);
+            delete this._container;
+        }
+    }
+    _onZoomEnd() {
+        this._zoom = this._map.getZoom();
+        this._origin = this._map.getPixelOrigin();
+    }
+    _onAnimZoom(ev) {
+        this._updateTransform(ev.center, ev.zoom);
+    }
+    _onZoom() {
+        this._updateTransform(this._map.getCenter(), this._map.getZoom());
+    }
+    _updateTransform(center, zoom) {
+        if (!this._container)
+            return;
+        let scale = this._map.getZoomScale(zoom, this._zoom), position = _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.getPosition(this._container), viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding), currentCenterPoint = this._map.latLngToWorldPixel(this._center || this._map.getCenter(), zoom), destCenterPoint = this._map.latLngToWorldPixel(center, zoom), centerOffset = destCenterPoint.subtract(currentCenterPoint), topLeftOffset = viewHalf.multiplyBy(-scale).add(position).add(viewHalf).subtract(centerOffset);
+        if (_util_browser__WEBPACK_IMPORTED_MODULE_2__.any3d) {
+            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.setTransform(this._container, topLeftOffset, scale);
+        }
+        else {
+            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.setPosition(this._container, topLeftOffset);
+        }
+    }
+    // update geometry
+    _updateGeometry() {
+        this._redrawBounds = null;
+        this._redraw();
+    }
+    // update center/zoom/bounds/position
+    _updateCanvas() {
+        if (this._map._animatingZoom && this._bounds) {
+            return;
+        }
+        // Update pixel bounds of renderer container (for positioning/sizing/clipping later)
+        // Subclasses are responsible of firing the 'update' event.
+        const p = this.options.padding, size = this._map.getSize(), min = this._map.containerPixelToCanvasPixel(size.multiplyBy(-p)).round();
+        this._bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__.ScreenBounds(min, min.add(size.multiplyBy(1 + p * 2)).round());
+        this._center = this._map.getCenter();
+        this._zoom = this._map.getZoom();
+        this._origin = this._map.getPixelOrigin();
+        const b = this._bounds, container = this._container, bsize = b.getSize(), m = _util_browser__WEBPACK_IMPORTED_MODULE_2__.retina ? 2 : 1;
+        if (container) {
+            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.setPosition(container, b.min);
+            // set canvas size (also clearing it); use double size on retina
+            container.width = m * bsize.x;
+            container.height = m * bsize.y;
+            container.style.width = bsize.x + 'px';
+            container.style.height = bsize.y + 'px';
+        }
+        if (this._ctx) {
+            if (_util_browser__WEBPACK_IMPORTED_MODULE_2__.retina) {
+                this._ctx.scale(2, 2);
+            }
+            // translate so we use the same path coordinates after canvas element moves
+            this._ctx.translate(-b.min.x, -b.min.y);
+        }
+        // Tell paths to redraw themselves
+        this._updateGeometry();
+        this.fire('update');
+    }
+    _reset() {
+        // this._update();
+        this._updateTransform(this._center, this._zoom);
+        this._updateGeometry();
+    }
+    _requestRedraw(geometry) {
+        if (!this._map) {
+            return;
+        }
+        this._extendRedrawBounds(geometry);
+        this._redrawRequest = this._redrawRequest || _util_util__WEBPACK_IMPORTED_MODULE_3__.requestAnimFrame(this._redraw, this);
+    }
+    _extendRedrawBounds(geometry) {
+        if (geometry.screenBounds) {
+            // var padding = (layer.options.weight || 0) + 1;
+            this._redrawBounds = this._redrawBounds || new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__.ScreenBounds();
+            // this._redrawBounds.extend(layer.screenBounds.min.subtract(new ScreenXY(padding, padding)));
+            // this._redrawBounds.extend(layer.screenBounds.max.add(new ScreenXY(padding, padding)));
+            this._redrawBounds.extend(geometry.screenBounds.min);
+            this._redrawBounds.extend(geometry.screenBounds.max);
+        }
+    }
+    _redraw() {
+        this._redrawRequest = null;
+        if (this._redrawBounds) {
+            this._redrawBounds.min.floor(false);
+            this._redrawBounds.max.ceil(false);
+        }
+        this._clear(); // clear layers in redraw bounds
+        this._draw(); // draw layers
+        this._redrawBounds = null;
+    }
+    _clear() {
+        if (this._ctx) {
+            const bounds = this._redrawBounds;
+            if (bounds) {
+                const size = bounds.getSize();
+                this._ctx.clearRect(bounds.min.x, bounds.min.y, size.x, size.y);
+            }
+            else {
+                if (this._container) {
+                    this._ctx.save();
+                    this._ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    this._ctx.clearRect(0, 0, this._container.width, this._container.height);
+                    this._ctx.restore();
+                }
+            }
+        }
+    }
+    _draw() {
+        if (this._ctx) {
+            let bounds = this._redrawBounds;
+            this._ctx.save();
+            if (bounds) {
+                var size = bounds.getSize();
+                this._ctx.beginPath();
+                this._ctx.rect(bounds.min.x, bounds.min.y, size.x, size.y);
+                this._ctx.clip();
+            }
+            this._drawing = true;
+            // console.time("draw");
+            // console.timeEnd("draw");
+            this._drawing = false;
+            this._ctx.restore(); // Restore state before clipping.
+        }
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/map/canvas/viewer.js":
+/*!************************************!*\
+  !*** ../dist/map/canvas/viewer.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ViewerOptions": () => (/* binding */ ViewerOptions),
+/* harmony export */   "Viewer": () => (/* binding */ Viewer)
+/* harmony export */ });
+/* harmony import */ var _util_dom_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/dom-util */ "../dist/util/dom-util.js");
+/* harmony import */ var _util_dom_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/dom-event */ "../dist/util/dom-event.js");
+/* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../layer/graphic-layer */ "../dist/layer/graphic-layer.js");
+/* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./canvas */ "../dist/map/canvas/canvas.js");
+
+
+
+
+class ViewerOptions extends _canvas__WEBPACK_IMPORTED_MODULE_3__.CanvasOptions {
+    constructor() {
+        super(...arguments);
+        this.pane = 'overlayPane';
+    }
+}
+class Viewer extends _canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas {
+    constructor(map, options) {
+        super(map, options);
+        this.options = new ViewerOptions();
+        this._graphicLayer = new _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_2__.GraphicLayer();
+        this._graphicLayer.crs = map.getCRS();
+        this._graphicLayers = [];
+        this._featureLayers = [];
+        this._rasterLayers = [];
+        // this.options.assign(options);
+    }
+    init() {
+        super.init();
+        if (this._container) {
+            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(this._container, 'mousemove', this._onMouseMove, this);
+            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(this._container, 'click dblclick mousedown mouseup contextmenu', this._onClick, this);
+            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(this._container, 'mouseout', this._handleMouseOut, this);
+        }
+    }
+    destroy() {
+        if (this._container) {
+            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.off(this._container);
+        }
+        super.destroy();
+    }
+    _onZoomEnd() {
+        super._onZoomEnd();
+        this._graphicLayer.transform(this._origin, this._zoom);
+        this._graphicLayers.forEach(layer => {
+            layer.transform(this._origin, this._zoom);
+        });
+        this._featureLayers.forEach(layer => {
+            layer.transform(this._origin, this._zoom);
+        });
+        this._rasterLayers.forEach(layer => {
+            layer.transform(this._origin, this._zoom);
+        });
+    }
+    addGraphic(graphic) {
+        this._graphicLayer.addGraphic(graphic);
+        graphic.transform(this._origin, this._zoom);
+        this._requestRedraw(graphic.geometry);
+    }
+    removeGraphic(graphic) {
+        this._graphicLayer.removeGraphic(graphic);
+        this._requestRedraw(graphic.geometry);
+    }
+    clearGraphics() {
+        this._graphicLayer.clearGraphics();
+        this._updateGeometry();
+    }
+    addGraphicLayer(graphicLayer) {
+        graphicLayer.transform(this._origin, this._zoom);
+        this._graphicLayers.push(graphicLayer);
+        this._updateGeometry();
+    }
+    removeGraphicLayer(graphicLayer) {
+        const index = this._graphicLayers.findIndex(layer => layer.id == graphicLayer.id);
+        this._graphicLayers.splice(index, 1);
+    }
+    clearGraphicLayers() {
+        this._graphicLayers = [];
+        this._updateGeometry();
+    }
+    addFeatureLayer(featureLayer) {
+        featureLayer.transform(this._origin, this._zoom);
+        this._featureLayers.push(featureLayer);
+        this._updateGeometry();
+    }
+    removeFeatureLayer(featureLayer) {
+        const index = this._featureLayers.findIndex(layer => layer.id == featureLayer.id);
+        this._featureLayers.splice(index, 1);
+    }
+    clearFeatureLayers() {
+        this._featureLayers = [];
+        this._updateGeometry();
+    }
+    addRasterLayer(rasterLayer) {
+        rasterLayer.transform(this._origin, this._zoom);
+        this._rasterLayers.push(rasterLayer);
+        this._updateGeometry();
+    }
+    removeRasterLayer(rasterLayer) {
+        const index = this._rasterLayers.findIndex(layer => layer.id == rasterLayer.id);
+        this._rasterLayers.splice(index, 1);
+    }
+    clearRasterLayers() {
+        this._rasterLayers = [];
+        this._updateGeometry();
+    }
+    _draw() {
+        if (this._ctx) {
+            let bounds = this._redrawBounds;
+            this._ctx.save();
+            if (bounds) {
+                var size = bounds.getSize();
+                this._ctx.beginPath();
+                this._ctx.rect(bounds.min.x, bounds.min.y, size.x, size.y);
+                this._ctx.clip();
+            }
+            this._drawing = true;
+            // console.time("draw");
+            this._rasterLayers.forEach(layer => {
+                layer.draw(this._ctx, this._zoom, bounds || this._bounds);
+            });
+            this._featureLayers.forEach(layer => {
+                layer.draw(this._ctx, this._zoom, bounds || this._bounds);
+            });
+            this._graphicLayers.forEach(layer => {
+                layer.draw(this._ctx, this._zoom, bounds || this._bounds);
+            });
+            this._graphicLayer.draw(this._ctx, this._zoom, bounds || this._bounds);
+            // console.timeEnd("draw");
+            this._drawing = false;
+            this._ctx.restore(); // Restore state before clipping.
+        }
+    }
+    // Canvas obviously doesn't have mouse events for individual drawn objects,
+    // so we emulate that by calculating what's under the mouse on mousemove/click manually
+    _onClick(e) {
+        let screenXY = this._map.mouseEventToCanvasPixel(e);
+        // spatial query graphic && feature
+        let elements = this._graphicLayer.query(screenXY, this._zoom, this._bounds);
+        this._graphicLayers.forEach(layer => {
+            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
+        });
+        this._featureLayers.forEach(layer => {
+            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
+        });
+        if (elements.length > 0) {
+            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.fakeStop(e);
+            this._fireEvent(elements, e);
+        }
+    }
+    _onMouseMove(e) {
+        if (!this._map || !this._map.dragging || this._map.dragging.moving() || this._map._animatingZoom) {
+            return;
+        }
+        const point = this._map.mouseEventToCanvasPixel(e);
+        this._handleMouseHover(e, point);
+    }
+    _handleMouseOut(e) {
+        if (this._hoveredElement) {
+            // if we're leaving, fire mouseout
+            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.removeClass(this._container, 'leaflet-interactive');
+            this._fireEvent([this._hoveredElement], e, 'mouseout');
+            this._hoveredElement = null;
+            this._mouseHoverThrottled = false;
+        }
+    }
+    _handleMouseHover(e, screenXY) {
+        if (this._mouseHoverThrottled) {
+            return;
+        }
+        // spatial query graphic && feature
+        let elements = this._graphicLayer.query(screenXY, this._zoom, this._bounds);
+        this._graphicLayers.forEach(layer => {
+            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
+        });
+        this._featureLayers.forEach(layer => {
+            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
+        });
+        let candidateHoveredElement = elements.length > 0 ? elements[0] : null;
+        if (candidateHoveredElement !== this._hoveredElement) {
+            this._handleMouseOut(e);
+            if (candidateHoveredElement) {
+                _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.addClass(this._container, 'leaflet-interactive'); // change cursor
+                this._fireEvent([candidateHoveredElement], e, 'mouseover');
+                this._hoveredElement = candidateHoveredElement;
+            }
+        }
+        if (this._hoveredElement) {
+            this._fireEvent([this._hoveredElement], e);
+        }
+        // throttle 
         this._mouseHoverThrottled = true;
         setTimeout(() => {
             this._mouseHoverThrottled = false;
@@ -6963,6 +7851,7 @@ class ScrollWheelZoomHandler extends _base_handler_object__WEBPACK_IMPORTED_MODU
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "MapOptions": () => (/* binding */ MapOptions),
 /* harmony export */   "Map": () => (/* binding */ Map)
 /* harmony export */ });
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
@@ -6975,11 +7864,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
 /* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
 /* harmony import */ var _crs_crs_3857__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../crs/crs-3857 */ "../dist/crs/crs-3857.js");
-/* harmony import */ var _canvas__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./canvas */ "../dist/map/canvas.js");
-/* harmony import */ var _position_animation__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./position-animation */ "../dist/map/position-animation.js");
-/* harmony import */ var _handler_map_drag__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./handler/map-drag */ "../dist/map/handler/map-drag.js");
-/* harmony import */ var _handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
-/* harmony import */ var _handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+/* harmony import */ var _position_animation__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./position-animation */ "../dist/map/position-animation.js");
+/* harmony import */ var _handler_map_drag__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./handler/map-drag */ "../dist/map/handler/map-drag.js");
+/* harmony import */ var _handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
+/* harmony import */ var _handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+/* harmony import */ var _base_options_object__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../base/options-object */ "../dist/base/options-object.js");
+/* harmony import */ var _canvas_viewer__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./canvas/viewer */ "../dist/map/canvas/viewer.js");
+/* harmony import */ var _canvas_animater__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./canvas/animater */ "../dist/map/canvas/animater.js");
+
+
 
 
 
@@ -7014,126 +7907,127 @@ __webpack_require__.r(__webpack_exports__);
  * ```
  *
  */
+class MapOptions extends _base_options_object__WEBPACK_IMPORTED_MODULE_14__.OptionsObject {
+    constructor() {
+        // @section Map State Options
+        // @option crs: CRS = L.CRS.EPSG3857
+        // The [Coordinate Reference System](#crs) to use. Don't change this if you're not
+        // sure what it means.
+        // crs: Earth = new EPSG3857();
+        super(...arguments);
+        // @option center: LatLng = undefined
+        // Initial geographic center of the map
+        this.center = undefined;
+        // @option zoom: Number = undefined
+        // Initial map zoom level
+        this.zoom = undefined;
+        // @option minZoom: Number = *
+        // Minimum zoom level of the map.
+        // If not specified and at least one `GridLayer` or `TileLayer` is in the map,
+        // the lowest of their `minZoom` options will be used instead.
+        this.minZoom = 1;
+        // @option maxZoom: Number = *
+        // Maximum zoom level of the map.
+        // If not specified and at least one `GridLayer` or `TileLayer` is in the map,
+        // the highest of their `maxZoom` options will be used instead.
+        this.maxZoom = 20;
+        // @section Animation Options
+        // @option zoomAnimation: Boolean = true
+        // Whether the map zoom animation is enabled. By default it's enabled
+        // in all browsers that support CSS3 Transitions except Android.
+        this.zoomAnimation = true;
+        // @option zoomAnimationThreshold: Number = 4
+        // Won't animate zoom if the zoom difference exceeds this value.
+        this.zoomAnimationThreshold = 4;
+        // @option fadeAnimation: Boolean = true
+        // Whether the tile fade animation is enabled. By default it's enabled
+        // in all browsers that support CSS3 Transitions except Android.
+        this.fadeAnimation = true;
+        // @option markerZoomAnimation: Boolean = true
+        // Whether markers animate their zoom with the zoom animation, if disabled
+        // they will disappear for the length of the animation. By default it's
+        // enabled in all browsers that support CSS3 Transitions except Android.
+        this.markerZoomAnimation = true;
+        // @option transform3DLimit: Number = 2^23
+        // Defines the maximum size of a CSS translation transform. The default
+        // value should not be changed unless a web browser positions layers in
+        // the wrong place after doing a large `panBy`.
+        this.transform3DLimit = 8388608; // Precision limit of a 32-bit float
+        // @section Interaction Options
+        // @option zoomSnap: Number = 1
+        // Forces the map's zoom level to always be a multiple of this, particularly
+        // right after a [`fitBounds()`](#map-fitbounds) or a pinch-zoom.
+        // By default, the zoom level snaps to the nearest integer; lower values
+        // (e.g. `0.5` or `0.1`) allow for greater granularity. A value of `0`
+        // means the zoom level will not be snapped after `fitBounds` or a pinch-zoom.
+        this.zoomSnap = 1;
+        // @option zoomDelta: Number = 1
+        // Controls how much the map's zoom level will change after a
+        // [`zoomIn()`](#map-zoomin), [`zoomOut()`](#map-zoomout), pressing `+`
+        // or `-` on the keyboard, or using the [zoom controls](#control-zoom).
+        // Values smaller than `1` (e.g. `0.5`) allow for greater granularity.
+        this.zoomDelta = 1;
+        // @option trackResize: Boolean = true
+        // Whether the map automatically handles browser window resize to update itself.
+        this.trackResize = true;
+        // @section Mouse wheel options
+        // @option scrollWheelZoom: Boolean|String = true
+        // Whether the map can be zoomed by using the mouse wheel. If passed `'center'`,
+        // it will zoom to the center of the view regardless of where the mouse was.
+        this.scrollWheelZoom = true;
+        // @option wheelDebounceTime: Number = 40
+        // Limits the rate at which a wheel can fire (in milliseconds). By default
+        // user can't zoom via wheel more often than once per 40 ms.
+        this.wheelDebounceTime = 40;
+        // @option wheelPxPerZoomLevel: Number = 60
+        // How many scroll pixels (as reported by [L.DomEvent.getWheelDelta](#domevent-getwheeldelta))
+        // mean a change of one full zoom level. Smaller values will make wheel-zooming
+        // faster (and vice versa).
+        this.wheelPxPerZoomLevel = 60;
+        // @option dragging: Boolean = true
+        // Whether the map be draggable with mouse/touch or not.
+        this.dragging = true;
+        // @section Panning Inertia Options
+        // @option inertia: Boolean = *
+        // If enabled, panning of the map will have an inertia effect where
+        // the map builds momentum while dragging and continues moving in
+        // the same direction for some time. Feels especially nice on touch
+        // devices. Enabled by default unless running on old Android devices.
+        this.inertia = !_util_browser__WEBPACK_IMPORTED_MODULE_1__.android23;
+        // @option inertiaDeceleration: Number = 3000
+        // The rate with which the inertial movement slows down, in pixels/second².
+        this.inertiaDeceleration = 3400; // px/s^2
+        // @option inertiaMaxSpeed: Number = Infinity
+        // Max speed of the inertial movement, in pixels/second.
+        this.inertiaMaxSpeed = Infinity; // px/s
+        // @option easeLinearity: Number = 0.2
+        this.easeLinearity = 0.2;
+        // TODO refactor, move to CRS
+        // @option worldCopyJump: Boolean = false
+        // With this option enabled, the map tracks when you pan to another "copy"
+        // of the world and seamlessly jumps to the original one so that all overlays
+        // like markers and vector layers are still visible.
+        this.worldCopyJump = false;
+        // @option maxBoundsViscosity: Number = 0.0
+        // If `maxBounds` is set, this option will control how solid the bounds
+        // are when dragging the map around. The default value of `0.0` allows the
+        // user to drag outside the bounds at normal speed, higher values will
+        // slow down map dragging outside bounds, and `1.0` makes the bounds fully
+        // solid, preventing the user from dragging outside the bounds.
+        this.maxBounds = undefined;
+        this.maxBoundsViscosity = 0.0;
+        // @option doubleClickZoom: Boolean|String = true
+        // Whether the map can be zoomed in by double clicking on it and
+        // zoomed out by double clicking while holding shift. If passed
+        // `'center'`, double-click zoom will zoom to the center of the
+        //  view regardless of where the mouse was.
+        this.doubleClickZoom = true;
+    }
+}
 class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObject {
     constructor(id, options) {
         super();
-        this.options = {
-            // @section Map State Options
-            // @option crs: CRS = L.CRS.EPSG3857
-            // The [Coordinate Reference System](#crs) to use. Don't change this if you're not
-            // sure what it means.
-            crs: new _crs_crs_3857__WEBPACK_IMPORTED_MODULE_9__.EPSG3857(),
-            // @option center: LatLng = undefined
-            // Initial geographic center of the map
-            center: undefined,
-            // @option zoom: Number = undefined
-            // Initial map zoom level
-            zoom: undefined,
-            // @option minZoom: Number = *
-            // Minimum zoom level of the map.
-            // If not specified and at least one `GridLayer` or `TileLayer` is in the map,
-            // the lowest of their `minZoom` options will be used instead.
-            minZoom: 1,
-            // @option maxZoom: Number = *
-            // Maximum zoom level of the map.
-            // If not specified and at least one `GridLayer` or `TileLayer` is in the map,
-            // the highest of their `maxZoom` options will be used instead.
-            maxZoom: 20,
-            // @option renderer: Renderer = *
-            // The default method for drawing vector layers on the map. `L.SVG`
-            // or `L.Canvas` by default depending on browser support.
-            renderer: undefined,
-            // @section Animation Options
-            // @option zoomAnimation: Boolean = true
-            // Whether the map zoom animation is enabled. By default it's enabled
-            // in all browsers that support CSS3 Transitions except Android.
-            zoomAnimation: true,
-            // @option zoomAnimationThreshold: Number = 4
-            // Won't animate zoom if the zoom difference exceeds this value.
-            zoomAnimationThreshold: 4,
-            // @option fadeAnimation: Boolean = true
-            // Whether the tile fade animation is enabled. By default it's enabled
-            // in all browsers that support CSS3 Transitions except Android.
-            fadeAnimation: true,
-            // @option markerZoomAnimation: Boolean = true
-            // Whether markers animate their zoom with the zoom animation, if disabled
-            // they will disappear for the length of the animation. By default it's
-            // enabled in all browsers that support CSS3 Transitions except Android.
-            markerZoomAnimation: true,
-            // @option transform3DLimit: Number = 2^23
-            // Defines the maximum size of a CSS translation transform. The default
-            // value should not be changed unless a web browser positions layers in
-            // the wrong place after doing a large `panBy`.
-            transform3DLimit: 8388608,
-            // @section Interaction Options
-            // @option zoomSnap: Number = 1
-            // Forces the map's zoom level to always be a multiple of this, particularly
-            // right after a [`fitBounds()`](#map-fitbounds) or a pinch-zoom.
-            // By default, the zoom level snaps to the nearest integer; lower values
-            // (e.g. `0.5` or `0.1`) allow for greater granularity. A value of `0`
-            // means the zoom level will not be snapped after `fitBounds` or a pinch-zoom.
-            zoomSnap: 1,
-            // @option zoomDelta: Number = 1
-            // Controls how much the map's zoom level will change after a
-            // [`zoomIn()`](#map-zoomin), [`zoomOut()`](#map-zoomout), pressing `+`
-            // or `-` on the keyboard, or using the [zoom controls](#control-zoom).
-            // Values smaller than `1` (e.g. `0.5`) allow for greater granularity.
-            zoomDelta: 1,
-            // @option trackResize: Boolean = true
-            // Whether the map automatically handles browser window resize to update itself.
-            trackResize: true,
-            // @section Mouse wheel options
-            // @option scrollWheelZoom: Boolean|String = true
-            // Whether the map can be zoomed by using the mouse wheel. If passed `'center'`,
-            // it will zoom to the center of the view regardless of where the mouse was.
-            scrollWheelZoom: true,
-            // @option wheelDebounceTime: Number = 40
-            // Limits the rate at which a wheel can fire (in milliseconds). By default
-            // user can't zoom via wheel more often than once per 40 ms.
-            wheelDebounceTime: 40,
-            // @option wheelPxPerZoomLevel: Number = 60
-            // How many scroll pixels (as reported by [L.DomEvent.getWheelDelta](#domevent-getwheeldelta))
-            // mean a change of one full zoom level. Smaller values will make wheel-zooming
-            // faster (and vice versa).
-            wheelPxPerZoomLevel: 60,
-            // @option dragging: Boolean = true
-            // Whether the map be draggable with mouse/touch or not.
-            dragging: true,
-            // @section Panning Inertia Options
-            // @option inertia: Boolean = *
-            // If enabled, panning of the map will have an inertia effect where
-            // the map builds momentum while dragging and continues moving in
-            // the same direction for some time. Feels especially nice on touch
-            // devices. Enabled by default unless running on old Android devices.
-            inertia: !_util_browser__WEBPACK_IMPORTED_MODULE_1__.android23,
-            // @option inertiaDeceleration: Number = 3000
-            // The rate with which the inertial movement slows down, in pixels/second².
-            inertiaDeceleration: 3400,
-            // @option inertiaMaxSpeed: Number = Infinity
-            // Max speed of the inertial movement, in pixels/second.
-            inertiaMaxSpeed: Infinity,
-            // @option easeLinearity: Number = 0.2
-            easeLinearity: 0.2,
-            // TODO refactor, move to CRS
-            // @option worldCopyJump: Boolean = false
-            // With this option enabled, the map tracks when you pan to another "copy"
-            // of the world and seamlessly jumps to the original one so that all overlays
-            // like markers and vector layers are still visible.
-            worldCopyJump: false,
-            // @option maxBoundsViscosity: Number = 0.0
-            // If `maxBounds` is set, this option will control how solid the bounds
-            // are when dragging the map around. The default value of `0.0` allows the
-            // user to drag outside the bounds at normal speed, higher values will
-            // slow down map dragging outside bounds, and `1.0` makes the bounds fully
-            // solid, preventing the user from dragging outside the bounds.
-            maxBoundsViscosity: 0.0,
-            // @option doubleClickZoom: Boolean|String = true
-            // Whether the map can be zoomed in by double clicking on it and
-            // zoomed out by double clicking while holding shift. If passed
-            // `'center'`, double-click zoom will zoom to the center of the
-            //  view regardless of where the mouse was.
-            doubleClickZoom: true
-        };
+        this.options = new MapOptions();
         this._loaded = false;
         // container size changed
         this._sizeChanged = true;
@@ -7147,7 +8041,7 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         // handlers
         this._handlers = [];
         this._mouseEvents = ['click', 'dblclick', 'mouseover', 'mouseout', 'contextmenu'];
-        options = _util_util__WEBPACK_IMPORTED_MODULE_0__.setOptions(this, options);
+        this.options.assign(options);
         // Make sure to assign internal flags at the beginning,
         // to avoid inconsistent state in some edge cases.
         this._layers = {};
@@ -7156,14 +8050,18 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         // hack for https://github.com/Leaflet/Leaflet/issues/1980
         // this._onResize = Util.bind(this._onResize, this);
         this._initEvents();
-        if (options.zoom !== undefined) {
-            this._zoom = this._limitZoom(options.zoom);
+        if (this.options.zoom !== undefined) {
+            this._zoom = this._limitZoom(this.options.zoom);
         }
-        this._crs = options.crs || new _crs_crs_3857__WEBPACK_IMPORTED_MODULE_9__.EPSG3857();
-        this._canvas = new _canvas__WEBPACK_IMPORTED_MODULE_10__.Canvas(this);
-        this._canvas.init();
-        if (options.center && options.zoom !== undefined) {
-            this.setView(options.center, options.zoom, { reset: true });
+        this._crs = new _crs_crs_3857__WEBPACK_IMPORTED_MODULE_9__.EPSG3857();
+        // this._canvas = new Canvas(this);
+        // this._canvas.init();
+        this._viewer = new _canvas_viewer__WEBPACK_IMPORTED_MODULE_15__.Viewer(this);
+        this._viewer.init();
+        this._animater = new _canvas_animater__WEBPACK_IMPORTED_MODULE_16__.Animater(this);
+        this._animater.init();
+        if (this.options.center && this.options.zoom !== undefined) {
+            this.setView(this.options.center, this.options.zoom, { reset: true });
         }
         // don't animate on browsers without hardware-accelerated transitions or old Android/Opera
         this._zoomAnimated = _util_dom_util__WEBPACK_IMPORTED_MODULE_2__.TRANSITION && _util_browser__WEBPACK_IMPORTED_MODULE_1__.any3d && !_util_browser__WEBPACK_IMPORTED_MODULE_1__.mobileOpera &&
@@ -7175,11 +8073,11 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
             _util_dom_event__WEBPACK_IMPORTED_MODULE_3__.on(this._proxy, _util_dom_util__WEBPACK_IMPORTED_MODULE_2__.TRANSITION_END, this._catchTransitionEnd, this);
         }
         if (this.options.dragging)
-            this.addHandler('dragging', new _handler_map_drag__WEBPACK_IMPORTED_MODULE_12__.DragHandler(this));
+            this.addHandler('dragging', new _handler_map_drag__WEBPACK_IMPORTED_MODULE_11__.DragHandler(this));
         if (this.options.scrollWheelZoom)
-            this.addHandler('scrollWheelZoom', new _handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_13__.ScrollWheelZoomHandler(this));
+            this.addHandler('scrollWheelZoom', new _handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_12__.ScrollWheelZoomHandler(this));
         if (this.options.doubleClickZoom)
-            this.addHandler('doubleClickZoom', new _handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_14__.DoubleClickZoomHandler(this));
+            this.addHandler('doubleClickZoom', new _handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_13__.DoubleClickZoomHandler(this));
     }
     get loaded() {
         return this._loaded;
@@ -7295,7 +8193,7 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
             return this;
         }
         if (!this._panAnim) {
-            this._panAnim = new _position_animation__WEBPACK_IMPORTED_MODULE_11__.PosAnimation(this._mapPane);
+            this._panAnim = new _position_animation__WEBPACK_IMPORTED_MODULE_10__.PosAnimation(this._mapPane);
             this._panAnim.on({
                 'step': this._onPanTransitionStep,
                 'end': this._onPanTransitionEnd
@@ -7411,7 +8309,9 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
     remove() {
         this._initEvents(true);
         this._stop();
-        this._canvas.destroy();
+        // this._canvas.destroy();
+        this._viewer.destroy();
+        this._animater.destroy();
         _util_dom_util__WEBPACK_IMPORTED_MODULE_2__.remove(this._mapPane);
         if (this._resizeRequest) {
             _util_util__WEBPACK_IMPORTED_MODULE_0__.cancelAnimFrame(this._resizeRequest);
@@ -7433,7 +8333,9 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         this._layers = {};
         this._panes = {};
         delete this._mapPane;
-        delete this._canvas;
+        // delete this._canvas;
+        delete this._viewer;
+        delete this._animater;
         return this;
     }
     // @section Other Methods
@@ -7703,6 +8605,8 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         // @pane overlayPane: HTMLElement = 400
         // Pane for vectors (`Path`s, like `Polyline`s and `Polygon`s), `ImageOverlay`s and `VideoOverlay`s
         this.createPane('overlayPane');
+        // @pane overlayPane: HTMLElement = 500
+        this.createPane('animatePane');
         // @pane shadowPane: HTMLElement = 500
         // Pane for overlay shadows (e.g. `Marker` shadows)
         // this.createPane('shadowPane');
@@ -8127,26 +9031,31 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
             this._moveEnd(true);
         }, this);
     }
-    getCanvas() {
-        return this._canvas;
-    }
     getCRS() {
         return this._crs;
     }
     addGraphic(graphic) {
-        this._canvas.addGraphic(graphic);
+        // this._canvas.addGraphic(graphic);
+        this._viewer.addGraphic(graphic);
     }
     addGraphicLayer(graphicLayer) {
         graphicLayer.crs = this._crs;
-        this._canvas.addGraphicLayer(graphicLayer);
+        // this._canvas.addGraphicLayer(graphicLayer);
+        this._viewer.addGraphicLayer(graphicLayer);
     }
     addFeatureLayer(featureLayer) {
         featureLayer.crs = this._crs;
-        this._canvas.addFeatureLayer(featureLayer);
+        // this._canvas.addFeatureLayer(featureLayer);
+        this._viewer.addFeatureLayer(featureLayer);
     }
     addRasterLayer(rasterLayer) {
         rasterLayer.crs = this._crs;
-        this._canvas.addRasterLayer(rasterLayer);
+        // this._canvas.addRasterLayer(rasterLayer);
+        this._viewer.addRasterLayer(rasterLayer);
+    }
+    addAnimation(animation) {
+        animation.project(this._crs);
+        this._animater.addAnimation(animation);
     }
     addHandler(name, handler) {
         this._handlers.push(handler);
@@ -10082,7 +10991,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "formatNum": () => (/* binding */ formatNum),
 /* harmony export */   "trim": () => (/* binding */ trim),
 /* harmony export */   "splitWords": () => (/* binding */ splitWords),
-/* harmony export */   "setOptions": () => (/* binding */ setOptions),
 /* harmony export */   "emptyImageUrl": () => (/* binding */ emptyImageUrl),
 /* harmony export */   "requestFn": () => (/* binding */ requestFn),
 /* harmony export */   "cancelFn": () => (/* binding */ cancelFn),
@@ -10137,17 +11045,6 @@ function trim(str) {
 // Trims and splits the string on whitespace and returns the array of parts.
 function splitWords(str) {
     return trim(str).split(/\s+/);
-}
-// @function setOptions(obj: Object, options: Object): Object
-// Merges the given properties to the `options` of the `obj` object, returning the resulting options. See `Class options`. Has an `L.setOptions` shortcut.
-function setOptions(obj, options) {
-    if (!Object.prototype.hasOwnProperty.call(obj, 'options')) {
-        obj.options = obj.options ? Object.create(obj.options) : {};
-    }
-    for (let i in options) {
-        obj.options[i] = options[i];
-    }
-    return obj.options;
 }
 // @property emptyImageUrl: String
 // Data URI string containing a base64-encoded empty GIF image.
@@ -10257,9 +11154,9 @@ function template(str, data) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!********************!*\
-  !*** ./geojson.js ***!
-  \********************/
+/*!**********************!*\
+  !*** ./animation.js ***!
+  \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dist */ "../dist/index.js");
 
@@ -10275,28 +11172,23 @@ window.load = async () => {
 
   map.setView(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), 12);
 
-  const geojsonAdapter = new _dist__WEBPACK_IMPORTED_MODULE_0__.GeoJSONAdapter(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polygon, "https://raw.githubusercontent.com/shengzheng1981/green-leaf/master/demo/assets/geojson/beijing.json");
-  // const geojsonAdapter = new GeoJSONAdapter(GeometryType.Polygon, "assets/geojson/beijing.json");
-  //新建要素类
-  const featureClass = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureClass(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polygon);
-  //新建字段
-  const field = new _dist__WEBPACK_IMPORTED_MODULE_0__.Field("name", _dist__WEBPACK_IMPORTED_MODULE_0__.FieldType.String);
-  featureClass.addField(field);
-  await featureClass.load(geojsonAdapter);
-  //新建矢量图层
-  const featureLayer = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
-  featureLayer.featureClass = featureClass;
-  //设置渲染方式——分类渲染
-  const renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.CategoryRenderer();
-  renderer.generate(featureClass, field);
-  featureLayer.renderer = renderer;
-  featureLayer.zoom = [5, 20];
-  //响应点击事件
-  featureLayer.on("click", (event) => {
-    console.log(event.target);
-  });
-  //添加矢量图层
-  map.addFeatureLayer(featureLayer);
+  const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411));
+  const animation = new _dist__WEBPACK_IMPORTED_MODULE_0__.PointAnimation(point);
+  map.addAnimation(animation);
+
+  const polyline1 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(18.271, 109.519)]);
+  const polyline2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(18.271, 119.519)]);
+  const polyline3 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(48.271, 119.519)]);
+  const polyline4 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(48.271, 109.519)]);
+  const animation1 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline1);
+  const animation2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline2);
+  const animation3 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline3);
+  const animation4 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline4);
+  map.addAnimation(animation1);
+  map.addAnimation(animation2);
+  map.addAnimation(animation3);
+  map.addAnimation(animation4);
+
 }
 })();
 

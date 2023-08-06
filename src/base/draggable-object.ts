@@ -4,6 +4,7 @@ import * as DomUtil from '../util/dom-util';
 import * as Util from '../util/util';
 import { EventedObject } from './evented-object';
 import { ScreenXY } from '../common/screen-xy';
+import { OptionsObject } from './options-object';
 
 /*
  * @class Draggable
@@ -35,21 +36,23 @@ const MOVE = {
 	MSPointerDown: 'touchmove'
 };
 
+export class DraggableOptions extends OptionsObject {
+  // @section
+  // @aka Draggable options
+  // @option clickTolerance: Number = 3
+  // The max number of pixels a user can shift the mouse pointer during a click
+  // for it to be considered a valid click (as opposed to a mouse drag).
+  clickTolerance: number = 3; 
+
+  preventOutline: boolean = false;
+}
 
 export class DraggableObject extends EventedObject {
 	static _dragging: DraggableObject;
-	options: any = {
-		// @section
-		// @aka Draggable options
-		// @option clickTolerance: Number = 3
-		// The max number of pixels a user can shift the mouse pointer during a click
-		// for it to be considered a valid click (as opposed to a mouse drag).
-		clickTolerance: 3
-	};
+  options: DraggableOptions = new DraggableOptions();
 
 	_element: HTMLElement;
 	_dragStartTarget: HTMLElement;
-	_preventOutline: boolean;
 	_enabled: boolean;
 	_moved: boolean;
 
@@ -67,13 +70,12 @@ export class DraggableObject extends EventedObject {
 
 	// @constructor L.Draggable(el: HTMLElement, dragHandle?: HTMLElement, preventOutline?: Boolean, options?: Draggable options)
 	// Creates a `Draggable` object for moving `el` when you start dragging the `dragHandle` element (equals `el` itself by default).
-	constructor(element: HTMLElement, dragStartTarget?: HTMLElement, preventOutline?: boolean, options?) {
+	constructor(element: HTMLElement, dragStartTarget?: HTMLElement, options?: any) {
 		super();
-		Util.setOptions(this, options);
+    this.options.assign(options);
 
 		this._element = element;
 		this._dragStartTarget = dragStartTarget || element;
-		this._preventOutline = preventOutline;
 	}
 
 	// @method enable()

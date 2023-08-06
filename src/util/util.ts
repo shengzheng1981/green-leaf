@@ -55,18 +55,6 @@ export function splitWords(str: string) {
 	return trim(str).split(/\s+/);
 }
 
-// @function setOptions(obj: Object, options: Object): Object
-// Merges the given properties to the `options` of the `obj` object, returning the resulting options. See `Class options`. Has an `L.setOptions` shortcut.
-export function setOptions(obj: any, options: any) {
-	if (!Object.prototype.hasOwnProperty.call(obj, 'options')) {
-		obj.options = obj.options ? Object.create(obj.options) : {};
-	}
-	for (let i in options) {
-		obj.options[i] = options[i];
-	}
-	return obj.options;
-}
-
 // @property emptyImageUrl: String
 // Data URI string containing a base64-encoded empty GIF image.
 // Used as a hack to free memory from unused images on WebKit-powered

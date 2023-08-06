@@ -1,6 +1,6 @@
 module.exports = {
     mode: "development",
-    entry: "./geojson.js",
+    entry: "./animation.js",
     output: {
         filename: "bundle.js"
     },

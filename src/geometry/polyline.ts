@@ -115,6 +115,7 @@ export class Polyline extends Geometry{
 		this._screenXYs = this._planeXYs.map(planeXY => {
 			return this._crs.planeXYToScreenXY(planeXY, zoom).round(false).subtract(origin);
 		})
+    symbol = symbol || new SimpleLineSymbol();
 		this._screenBounds = symbol.getScreenBounds(this._screenXYs);
 	}
 

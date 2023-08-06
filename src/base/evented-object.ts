@@ -1,7 +1,7 @@
-import { BaseObject } from "./base-object";
 import * as Util from '../util/util';
+import { IDObject } from "./id-object";
 
-export abstract class EventedObject extends BaseObject { 
+export abstract class EventedObject extends IDObject { 
 
   private _events: any = {};
   private _eventParents: any = {};

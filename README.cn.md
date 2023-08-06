@@ -110,4 +110,4 @@
 10. [Label Demo](https://stackblitz.com/edit/typescript-zawabd)
 11. [IDW Demo](https://stackblitz.com/edit/typescript-wwl1pg)
 12. [Heat Demo](https://stackblitz.com/edit/typescript-x16ccq)
-
+13. [Animation Demo](https://stackblitz.com/edit/typescript-1c3xdc)

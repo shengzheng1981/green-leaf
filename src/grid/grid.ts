@@ -6,6 +6,7 @@ import { Map } from '../map/map';
 import { ScreenXY } from '../common/screen-xy';
 import { ScreenBounds } from '../common/screen-bounds';
 import { LatLngBounds } from '../common/latlng-bounds';
+import { OptionsObject } from '../base/options-object';
 
 /*
  * @class GridLayer
@@ -71,63 +72,57 @@ import { LatLngBounds } from '../common/latlng-bounds';
  *
  * @section
  */
-
-
-export class Grid extends EventedObject {
-
-	// @section
-	// @aka GridLayer options
-	options: any = {
-		// @option tileSize: Number|Point = 256
+export class GridOptions extends OptionsObject {
+  // @option tileSize: Number|Point = 256
 		// Width and height of tiles in the grid. Use a number if width and height are equal, or `L.point(width, height)` otherwise.
-		tileSize: 256,
+		tileSize: number = 256;
 
 		// @option opacity: Number = 1.0
 		// Opacity of the tiles. Can be used in the `createTile()` function.
-		opacity: 1,
+		opacity: number = 1;
 
 		// @option updateWhenIdle: Boolean = (depends)
 		// Load new tiles only when panning ends.
 		// `true` by default on mobile browsers, in order to avoid too many requests and keep smooth navigation.
 		// `false` otherwise in order to display new tiles _during_ panning, since it is easy to pan outside the
 		// [`keepBuffer`](#gridlayer-keepbuffer) option in desktop browsers.
-		updateWhenIdle: Browser.mobile,
+		updateWhenIdle: boolean = Browser.mobile;
 
 		// @option updateWhenZooming: Boolean = true
 		// By default, a smooth zoom animation (during a [touch zoom](#map-touchzoom) or a [`flyTo()`](#map-flyto)) will update grid layers every integer zoom level. Setting this option to `false` will update the grid layer only when the smooth animation ends.
-		updateWhenZooming: true,
+		updateWhenZooming: boolean = true;
 
 		// @option updateInterval: Number = 200
 		// Tiles will not update more than once every `updateInterval` milliseconds when panning.
-		updateInterval: 200,
+		updateInterval: number = 200;
 
 		// @option zIndex: Number = 1
 		// The explicit zIndex of the tile layer.
-		zIndex: 1,
+		zIndex: number = 1;
 
 		// @option bounds: LatLngBounds = undefined
 		// If set, tiles will only be loaded inside the set `LatLngBounds`.
-		bounds: null,
+		bounds: LatLngBounds = null;
 
 		// @option minZoom: Number = 0
 		// The minimum zoom level down to which this layer will be displayed (inclusive).
-		minZoom: 0,
+		minZoom: number = 0;
 
 		// @option maxZoom: Number = undefined
 		// The maximum zoom level up to which this layer will be displayed (inclusive).
-		maxZoom: 18,
+		maxZoom: number = 18;
 
 		// @option maxNativeZoom: Number = undefined
 		// Maximum zoom number the tile source has available. If it is specified,
 		// the tiles on all zoom levels higher than `maxNativeZoom` will be loaded
 		// from `maxNativeZoom` level and auto-scaled.
-		maxNativeZoom: undefined,
+		maxNativeZoom: number = undefined;
 
 		// @option minNativeZoom: Number = undefined
 		// Minimum zoom number the tile source has available. If it is specified,
 		// the tiles on all zoom levels lower than `minNativeZoom` will be loaded
 		// from `minNativeZoom` level and auto-scaled.
-		minNativeZoom: undefined,
+		minNativeZoom: number = undefined;
 
 		// @option noWrap: Boolean = false
 		// Whether the layer is wrapped around the antimeridian. If `true`, the
@@ -135,28 +130,28 @@ export class Grid extends EventedObject {
 		// effect when the [map CRS](#map-crs) doesn't wrap around. Can be used
 		// in combination with [`bounds`](#gridlayer-bounds) to prevent requesting
 		// tiles outside the CRS limits.
-		noWrap: false,
+		noWrap: boolean = false;
 
 		// @option pane: String = 'tilePane'
 		// `Map pane` where the grid layer will be added.
-		pane: 'tilePane',
+		pane: string = 'tilePane';
 
 		// @option className: String = ''
 		// A custom class name to assign to the tile layer. Empty by default.
-		className: '',
+		className: string = '';
 
 		// @option keepBuffer: Number = 2
 		// When panning the map, keep this many rows and columns of tiles before unloading them.
-		keepBuffer: 2,
+		keepBuffer: number = 2;
 
     // @option zoomOffset: Number = 0
 		// The zoom number used in tile URLs will be offset with this value.
-		zoomOffset: 0,
+		zoomOffset: number = 0;
+}
 
-    crossOrigin: false,
+export class Grid extends EventedObject {
 
-    subdomains: ['a', 'b', 'c']
-	};
+  options: GridOptions = new GridOptions();
 
   _map: Map;
   _container: HTMLElement;
@@ -170,10 +165,9 @@ export class Grid extends EventedObject {
   _level: any;
   _globalTileRange: ScreenBounds;
 
-	constructor(options?: any) {
+	constructor(options?: Object) {
 		super();
-	
-		Util.setOptions(this, options);
+    this.options.assign(options);
 	}
 
   addTo(map: Map) {
@@ -275,8 +269,7 @@ export class Grid extends EventedObject {
 	// @method getTileSize: Point
 	// Normalizes the [tileSize option](#gridlayer-tilesize) into a point. Used by the `createTile()` method.
 	getTileSize() {
-		const s = this.options.tileSize;
-		return s instanceof ScreenXY ? s : new ScreenXY(s, s);
+		return new ScreenXY(this.options.tileSize, this.options.tileSize);
 	}
 
 	_updateOpacity() {
@@ -565,8 +558,7 @@ export class Grid extends EventedObject {
 	}
 
 	_resetGrid() {
-		let map = this._map,
-		    crs = map.options.crs,
+		let crs = this._map.getCRS(),
 		    tileSize = this._tileSize = this.getTileSize(),
 		    tileZoom = this._tileZoom;
 
@@ -670,7 +662,7 @@ export class Grid extends EventedObject {
 	}
 
 	_isValidTile(coords) {
-		var crs = this._map.options.crs;
+		const crs = this._map.getCRS();
 
 		if (!crs.infinite) {
 			// don't load tile if it's out of bounds and not wrapped

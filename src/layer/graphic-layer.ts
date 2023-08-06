@@ -61,6 +61,12 @@ export class GraphicLayer extends Layer {
     delete this._graphics[graphic.id];
   }
 
+  clearGraphics() {
+    this._first = null;
+    this._last = null;
+    this._graphics = {};
+  }
+
   transform(origin: ScreenXY, zoom: number) {
     let graphic = this._first;
     while (graphic) {

@@ -1,7 +1,7 @@
 import { Map } from "../map/map";
-import { BaseObject } from "./base-object";
+import { IDObject } from "./id-object";
 
-export class HandlerObject extends BaseObject {
+export class HandlerObject extends IDObject {
   protected _map: Map;
   protected _enabled: boolean = false;
 

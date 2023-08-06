@@ -2,7 +2,7 @@ import * as Browser from '../util/browser';
 import * as Util from '../util/util';
 import * as DomEvent from '../util/dom-event';
 import * as DomUtil from '../util/dom-util';
-import { Grid } from './grid';
+import { Grid, GridOptions } from './grid';
 
 
 /*
@@ -34,58 +34,48 @@ import { Grid } from './grid';
  * L.tileLayer('http://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
  * ```
  */
-
-
-export class Tile extends Grid {
-
-	// @section
-	// @aka TileLayer options
-	tile_options: any = {
-		// @option minZoom: Number = 0
-		// The minimum zoom level down to which this layer will be displayed (inclusive).
-		minZoom: 0,
-
-		// @option maxZoom: Number = 18
-		// The maximum zoom level up to which this layer will be displayed (inclusive).
-		maxZoom: 18,
-
+export class TileOptions extends GridOptions {
 		// @option subdomains: String|String[] = 'abc'
 		// Subdomains of the tile service. Can be passed in the form of one string (where each letter is a subdomain name) or an array of strings.
-		subdomains: ['a', 'b', 'c'],
+		subdomains: string[] = ['a', 'b', 'c'];
 
 		// @option errorTileUrl: String = ''
 		// URL to the tile image to show in place of the tile that failed to load.
-		errorTileUrl: '',
+		errorTileUrl: string = '';
 
 		// @option zoomOffset: Number = 0
 		// The zoom number used in tile URLs will be offset with this value.
-		zoomOffset: 0,
+		zoomOffset: number = 0;
 
 		// @option tms: Boolean = false
 		// If `true`, inverses Y axis numbering for tiles (turn this on for [TMS](https://en.wikipedia.org/wiki/Tile_Map_Service) services).
-		tms: false,
+		tms: boolean = false;
 
 		// @option zoomReverse: Boolean = false
 		// If set to true, the zoom number used in tile URLs will be reversed (`maxZoom - zoom` instead of `zoom`)
-		zoomReverse: false,
+		zoomReverse: boolean = false;
 
 		// @option detectRetina: Boolean = false
 		// If `true` and user is on a retina display, it will request four tiles of half the specified size and a bigger zoom level in place of one to utilize the high resolution.
-		detectRetina: false,
+		detectRetina: boolean = false;
 
 		// @option crossOrigin: Boolean|String = false
 		// Whether the crossOrigin attribute will be added to the tiles.
 		// If a String is provided, all tiles will have their crossOrigin attribute set to the String provided. This is needed if you want to access tile pixel data.
 		// Refer to [CORS Settings](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes) for valid String values.
-		crossOrigin: false
-	};
+		crossOrigin: boolean | string = false;
+}
+
+export class Tile extends Grid {
+
+  options: TileOptions = new TileOptions();
 
   _url: string;
 
-  constructor(url, options?: any) {
+  constructor(url, options?: Object) {
 		super();
     this._url = url;
-		Util.setOptions(this, options);
+    this.options.assign(options);
 	}
 
 	// @method setUrl(url: String, noRedraw?: Boolean): this
@@ -147,15 +137,15 @@ export class Tile extends Grid {
 	// Called only internally, returns the URL for a tile given its coordinates.
 	// Classes extending `TileLayer` can override this function to provide custom tile URL naming schemes.
 	getTileUrl(coords) {
-		var data = {
+		const data = {
 			r: Browser.retina ? '@2x' : '',
 			s: this._getSubdomain(coords),
 			x: coords.x,
 			y: coords.y,
 			z: this._getZoomForUrl()
 		};
-		if (this._map && !this._map.options.crs.infinite) {
-			var invertedY = this._globalTileRange.max.y - coords.y;
+		if (this._map && !this._map.getCRS().infinite) {
+			const invertedY = this._globalTileRange.max.y - coords.y;
 			if (this.options.tms) {
 				data['y'] = invertedY;
 			}
