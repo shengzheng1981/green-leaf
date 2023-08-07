@@ -16,6 +16,7 @@ import { Polyline } from "../geometry/polyline";
 
   private _control: number[];
   private _percent = 0;
+  private _gradient;
   /**
    * 线宽
    */
@@ -89,19 +90,26 @@ import { Polyline } from "../geometry/polyline";
       //地理坐标 转回 屏幕坐标
       // ctx.setTransform(1,0,0,1,0,0);
 
+      // if (!this._gradient) {
+      //   this._gradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
+      //   this._gradient.addColorStop(0, this.startColor);
+      //   // lineGradient.addColorStop(0.3, '#fff');
+      //   this._gradient.addColorStop(1, this.endColor);
+      // }
+      // ctx.strokeStyle = this._gradient;    //设置线条样式
       const lineGradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
       lineGradient.addColorStop(0, this.startColor);
-      // lineGradient.addColorStop(0.3, '#fff');
       lineGradient.addColorStop(1, this.endColor);
       ctx.strokeStyle = lineGradient;    //设置线条样式
 
       this._drawCurvePath(ctx, this._start, this._control, this._end, this._percent);
 
-      this._percent += 0.8; //进程增加,这个控制动画速度
+      this._percent += 0.8; //控制动画速度
 
       if (this._percent >= 100) { //没有画完接着调用,画完的话重置进度
           this._percent = 0;
       }
+      ctx.restore();
   }
 
   _drawCurvePath(ctx, start, point, end, percent) {

@@ -1,9 +1,9 @@
-import {SimpleFillSymbol, SimpleLineSymbol, SimplePointSymbol, Symbol} from "../symbol/symbol";
-import {Field} from "../feature/field";
-import {FeatureClass} from "../feature/feature-class";
-import {GeometryType} from "../geometry/geometry";
-import {Color} from "../util/color";
-import {Feature} from "../feature/feature";
+import { SimpleFillSymbol, SimpleLineSymbol, SimplePointSymbol, Symbol } from "../symbol/symbol";
+import { Field } from "../feature/field";
+import { FeatureClass } from "../feature/feature-class";
+import { GeometryType } from "../geometry/geometry";
+import { Color } from "../util/color";
+import { Feature } from "../feature/feature";
 import { Renderer } from "./renderer";
 
 /**

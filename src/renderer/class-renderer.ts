@@ -1,9 +1,10 @@
-import {SimpleFillSymbol, SimpleLineSymbol, SimplePointSymbol, Symbol} from "../symbol/symbol";
-import {Field} from "../feature/field";
-import {FeatureClass} from "../feature/feature-class";
-import {GeometryType} from "../geometry/geometry";
-import {Color} from "../util/color";
-import {Feature} from "../feature/feature";
+import { SimpleFillSymbol, SimpleLineSymbol, SimplePointSymbol, Symbol } from "../symbol/symbol";
+import { Field } from "../feature/field";
+import { FeatureClass } from "../feature/feature-class";
+import { GeometryType } from "../geometry/geometry";
+import { Color } from "../util/color";
+import { Feature } from "../feature/feature";
+import { Renderer } from "./renderer";
 
 /**
  * 分级渲染项
@@ -42,7 +43,7 @@ export class ClassRendererItem {
  * 一般可通过设置分级字段，再调用generate自动生成分级渲染项
  * 也可通过手动添加和定义分级渲染项，完成分级渲染设置，通过items.push()
  */
-export class ClassRenderer {
+export class ClassRenderer extends Renderer {
     /**
      * 分级字段
      * @remarks

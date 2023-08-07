@@ -92,14 +92,18 @@ export class FeatureLayer extends Layer {
    */
   draw(ctx: CanvasRenderingContext2D, zoom: number, redrawBounds?: ScreenBounds) {
     if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom) return;
-
+    // before draw
+    this._renderer.init();
     let feature = this._featureClass.first;
     // let count = 0;
     const features = [];
     while (feature) {
       if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
-        feature.draw(ctx, this._renderer.getSymbol(feature));       
-        features.push(feature);
+        const symbol = this._renderer.getSymbol(feature);
+        if (symbol) {
+          feature.draw(ctx, symbol);       
+          features.push(feature);
+        }
         // count += 1;
       }
       feature = feature.next;

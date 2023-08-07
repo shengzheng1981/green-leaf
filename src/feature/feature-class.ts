@@ -52,6 +52,7 @@ export class FeatureClass {
   get features(): Feature[] {
     return Object.values(this._features);
   }
+
   /**
    * 属性字段集合
    */
@@ -66,6 +67,9 @@ export class FeatureClass {
     this._type = type;
   }
 
+  getFeature(id: string) {
+    return this._features[id];
+  }
   /**
    * 添加要素
    * @param {Feature} feature - 空间矢量要素

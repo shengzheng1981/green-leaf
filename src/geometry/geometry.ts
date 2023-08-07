@@ -164,7 +164,7 @@ export abstract class Geometry {
    * @param {Projection} projection - 坐标投影转换
    * @return {number} 距离
    */
-  distance(geometry: Geometry, type: CoordinateType) {
+  distance(geometry: Geometry, type: CoordinateType = CoordinateType.Screen) {
     if (type == CoordinateType.Screen || type == CoordinateType.Plane) {
       const center: XY = this.getCenter(type) as XY;
       const center2: XY = geometry.getCenter(type) as XY;

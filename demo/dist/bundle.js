@@ -1274,16 +1274,23 @@ class LineAnimation extends Animation {
         //keep size
         //地理坐标 转回 屏幕坐标
         // ctx.setTransform(1,0,0,1,0,0);
+        // if (!this._gradient) {
+        //   this._gradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
+        //   this._gradient.addColorStop(0, this.startColor);
+        //   // lineGradient.addColorStop(0.3, '#fff');
+        //   this._gradient.addColorStop(1, this.endColor);
+        // }
+        // ctx.strokeStyle = this._gradient;    //设置线条样式
         const lineGradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
         lineGradient.addColorStop(0, this.startColor);
-        // lineGradient.addColorStop(0.3, '#fff');
         lineGradient.addColorStop(1, this.endColor);
         ctx.strokeStyle = lineGradient; //设置线条样式
         this._drawCurvePath(ctx, this._start, this._control, this._end, this._percent);
-        this._percent += 0.8; //进程增加,这个控制动画速度
+        this._percent += 0.8; //控制动画速度
         if (this._percent >= 100) { //没有画完接着调用,画完的话重置进度
             this._percent = 0;
         }
+        ctx.restore();
     }
     _drawCurvePath(ctx, start, point, end, percent) {
         ctx.beginPath();
@@ -3455,6 +3462,9 @@ class FeatureClass {
     get fields() {
         return this._fields;
     }
+    getFeature(id) {
+        return this._features[id];
+    }
     /**
      * 添加要素
      * @param {Feature} feature - 空间矢量要素
@@ -3760,7 +3770,7 @@ class Geometry {
      * @param {Projection} projection - 坐标投影转换
      * @return {number} 距离
      */
-    distance(geometry, type) {
+    distance(geometry, type = CoordinateType.Screen) {
         if (type == CoordinateType.Screen || type == CoordinateType.Plane) {
             const center = this.getCenter(type);
             const center2 = geometry.getCenter(type);
@@ -5833,43 +5843,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SimpleMarkerSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimpleMarkerSymbol),
 /* harmony export */   "SimplePointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimplePointSymbol),
 /* harmony export */   "Symbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.Symbol),
-/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_40__.Field),
-/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_40__.FieldType),
-/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_41__.Feature),
-/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_42__.FeatureClass),
-/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_43__.Adapter),
-/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_44__.GeoJSONAdapter),
-/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_45__.Renderer),
-/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_46__.SimpleRenderer),
-/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_47__.DotRenderer),
-/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_48__.CategoryRenderer),
-/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_48__.CategoryRendererItem),
-/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_49__.ClassRenderer),
-/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_49__.ClassRendererItem),
-/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_50__.Text),
-/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_51__.Collision),
-/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_51__.NullCollision),
-/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_51__.SimpleCollision),
-/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_52__.Label),
-/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_53__.Grid),
-/* harmony export */   "GridOptions": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_53__.GridOptions),
-/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_54__.Tile),
-/* harmony export */   "TileOptions": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_54__.TileOptions),
-/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_55__.Raster),
-/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_56__.Kriging),
-/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_57__.IDW),
-/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_58__.Heat),
-/* harmony export */   "Animation": () => (/* reexport safe */ _animation_animation__WEBPACK_IMPORTED_MODULE_59__.Animation),
-/* harmony export */   "PointAnimation": () => (/* reexport safe */ _animation_point_animation__WEBPACK_IMPORTED_MODULE_60__.PointAnimation),
-/* harmony export */   "LineAnimation": () => (/* reexport safe */ _animation_line_animation__WEBPACK_IMPORTED_MODULE_61__.LineAnimation),
-/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_62__.Map),
-/* harmony export */   "MapOptions": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_62__.MapOptions),
-/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_63__.Canvas),
-/* harmony export */   "CanvasOptions": () => (/* reexport safe */ _map_canvas__WEBPACK_IMPORTED_MODULE_63__.CanvasOptions),
-/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_64__.PosAnimation),
-/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_65__.DragHandler),
-/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_66__.ScrollWheelZoomHandler),
-/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_67__.DoubleClickZoomHandler)
+/* harmony export */   "ClusterSymbol": () => (/* reexport safe */ _symbol_cluster_symbol__WEBPACK_IMPORTED_MODULE_40__.ClusterSymbol),
+/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_41__.Field),
+/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_41__.FieldType),
+/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_42__.Feature),
+/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_43__.FeatureClass),
+/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_44__.Adapter),
+/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_45__.GeoJSONAdapter),
+/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_46__.Renderer),
+/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_47__.SimpleRenderer),
+/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_48__.DotRenderer),
+/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_49__.CategoryRenderer),
+/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_49__.CategoryRendererItem),
+/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_50__.ClassRenderer),
+/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_50__.ClassRendererItem),
+/* harmony export */   "ClusterRenderer": () => (/* reexport safe */ _renderer_cluster_renderer__WEBPACK_IMPORTED_MODULE_51__.ClusterRenderer),
+/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_52__.Text),
+/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_53__.Collision),
+/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_53__.NullCollision),
+/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_53__.SimpleCollision),
+/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_54__.Label),
+/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_55__.Grid),
+/* harmony export */   "GridOptions": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_55__.GridOptions),
+/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_56__.Tile),
+/* harmony export */   "TileOptions": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_56__.TileOptions),
+/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_57__.Raster),
+/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_58__.Kriging),
+/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_59__.IDW),
+/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_60__.Heat),
+/* harmony export */   "Animation": () => (/* reexport safe */ _animation_animation__WEBPACK_IMPORTED_MODULE_61__.Animation),
+/* harmony export */   "PointAnimation": () => (/* reexport safe */ _animation_point_animation__WEBPACK_IMPORTED_MODULE_62__.PointAnimation),
+/* harmony export */   "LineAnimation": () => (/* reexport safe */ _animation_line_animation__WEBPACK_IMPORTED_MODULE_63__.LineAnimation),
+/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_64__.Canvas),
+/* harmony export */   "CanvasOptions": () => (/* reexport safe */ _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_64__.CanvasOptions),
+/* harmony export */   "Viewer": () => (/* reexport safe */ _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_65__.Viewer),
+/* harmony export */   "ViewerOptions": () => (/* reexport safe */ _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_65__.ViewerOptions),
+/* harmony export */   "Animater": () => (/* reexport safe */ _map_canvas_animater__WEBPACK_IMPORTED_MODULE_66__.Animater),
+/* harmony export */   "AnimaterOptions": () => (/* reexport safe */ _map_canvas_animater__WEBPACK_IMPORTED_MODULE_66__.AnimaterOptions),
+/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_67__.Map),
+/* harmony export */   "MapOptions": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_67__.MapOptions),
+/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_68__.PosAnimation),
+/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_69__.DragHandler),
+/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_70__.ScrollWheelZoomHandler),
+/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_71__.DoubleClickZoomHandler)
 /* harmony export */ });
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/util */ "../dist/util/util.js");
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/browser */ "../dist/util/browser.js");
@@ -5911,34 +5927,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _layer_feature_layer__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./layer/feature-layer */ "../dist/layer/feature-layer.js");
 /* harmony import */ var _layer_raster_layer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./layer/raster-layer */ "../dist/layer/raster-layer.js");
 /* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./symbol/symbol */ "../dist/symbol/symbol.js");
-/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
-/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
-/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
-/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
-/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
-/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
-/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
-/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
-/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
-/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
-/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
-/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
-/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
-/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
-/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
-/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
-/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
-/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
-/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
-/* harmony import */ var _animation_animation__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./animation/animation */ "../dist/animation/animation.js");
-/* harmony import */ var _animation_point_animation__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./animation/point-animation */ "../dist/animation/point-animation.js");
-/* harmony import */ var _animation_line_animation__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./animation/line-animation */ "../dist/animation/line-animation.js");
-/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
-/* harmony import */ var _map_canvas__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./map/canvas */ "../dist/map/canvas.js");
-/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
-/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
-/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
-/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+/* harmony import */ var _symbol_cluster_symbol__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./symbol/cluster-symbol */ "../dist/symbol/cluster-symbol.js");
+/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
+/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
+/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
+/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
+/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
+/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
+/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
+/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
+/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
+/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
+/* harmony import */ var _renderer_cluster_renderer__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./renderer/cluster-renderer */ "../dist/renderer/cluster-renderer.js");
+/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
+/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
+/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
+/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
+/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
+/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
+/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
+/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
+/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
+/* harmony import */ var _animation_animation__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./animation/animation */ "../dist/animation/animation.js");
+/* harmony import */ var _animation_point_animation__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./animation/point-animation */ "../dist/animation/point-animation.js");
+/* harmony import */ var _animation_line_animation__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./animation/line-animation */ "../dist/animation/line-animation.js");
+/* harmony import */ var _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./map/canvas/canvas */ "../dist/map/canvas/canvas.js");
+/* harmony import */ var _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./map/canvas/viewer */ "../dist/map/canvas/viewer.js");
+/* harmony import */ var _map_canvas_animater__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./map/canvas/animater */ "../dist/map/canvas/animater.js");
+/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
+/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
+/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
+/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
+/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+
+
+
+
 
 
 
@@ -6310,13 +6334,18 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
     draw(ctx, zoom, redrawBounds) {
         if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom)
             return;
+        // before draw
+        this._renderer.init();
         let feature = this._featureClass.first;
         // let count = 0;
         const features = [];
         while (feature) {
             if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
-                feature.draw(ctx, this._renderer.getSymbol(feature));
-                features.push(feature);
+                const symbol = this._renderer.getSymbol(feature);
+                if (symbol) {
+                    feature.draw(ctx, symbol);
+                    features.push(feature);
+                }
                 // count += 1;
             }
             feature = feature.next;
@@ -6623,391 +6652,6 @@ class RasterLayer extends _layer__WEBPACK_IMPORTED_MODULE_0__.Layer {
         if (!this.raster.screenBounds || this.raster.screenBounds.intersects(redrawBounds)) {
             this.raster && this.raster.draw(ctx);
         }
-    }
-}
-
-
-/***/ }),
-
-/***/ "../dist/map/canvas.js":
-/*!*****************************!*\
-  !*** ../dist/map/canvas.js ***!
-  \*****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "CanvasOptions": () => (/* binding */ CanvasOptions),
-/* harmony export */   "Canvas": () => (/* binding */ Canvas)
-/* harmony export */ });
-/* harmony import */ var _util_dom_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/dom-util */ "../dist/util/dom-util.js");
-/* harmony import */ var _util_dom_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/dom-event */ "../dist/util/dom-event.js");
-/* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/browser */ "../dist/util/browser.js");
-/* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
-/* harmony import */ var _base_evented_object__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../base/evented-object */ "../dist/base/evented-object.js");
-/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
-/* harmony import */ var _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../layer/graphic-layer */ "../dist/layer/graphic-layer.js");
-/* harmony import */ var _base_options_object__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base/options-object */ "../dist/base/options-object.js");
-
-
-
-
-
-
-
-
-/*
- * @class Canvas
- * @inherits Renderer
- * @aka L.Canvas
- *
- * Allows vector layers to be displayed with [`<canvas>`](https://developer.mozilla.org/docs/Web/API/Canvas_API).
- * Inherits `Renderer`.
- *
- * Due to [technical limitations](http://caniuse.com/#search=canvas), Canvas is not
- * available in all web browsers, notably IE8, and overlapping geometries might
- * not display properly in some edge cases.
- *
- * @example
- *
- * Use Canvas by default for all paths in the map:
- *
- * ```js
- * var map = L.map('map', {
- * 	renderer: L.canvas()
- * });
- * ```
- *
- * Use a Canvas renderer with extra padding for specific vector geometries:
- *
- * ```js
- * var map = L.map('map');
- * var myRenderer = L.canvas({ padding: 0.5 });
- * var line = L.polyline( coordinates, { renderer: myRenderer } );
- * var circle = L.circle( center, { renderer: myRenderer } );
- * ```
- */
-class CanvasOptions extends _base_options_object__WEBPACK_IMPORTED_MODULE_7__.OptionsObject {
-    constructor() {
-        super(...arguments);
-        this.pane = 'overlayPane';
-        // @option padding: Number = 0.1
-        // How much to extend the clip area around the map view (relative to its size)
-        // e.g. 0.1 would be 10% of map view in each direction
-        this.padding = 0.1;
-        // @option tolerance: Number = 0
-        // How much to extend click tolerance round a path/object on the map
-        this.tolerance = 0;
-    }
-}
-class Canvas extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObject {
-    constructor(map, options) {
-        super();
-        this.options = new CanvasOptions();
-        this._graphicLayer = new _layer_graphic_layer__WEBPACK_IMPORTED_MODULE_6__.GraphicLayer();
-        this._map = map;
-        this._graphicLayer.crs = map.getCRS();
-        this._graphicLayers = [];
-        this._featureLayers = [];
-        this._rasterLayers = [];
-        this.options.assign(options);
-    }
-    init() {
-        const container = this._container = document.createElement('canvas');
-        _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(container, 'mousemove', this._onMouseMove, this);
-        _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(container, 'click dblclick mousedown mouseup contextmenu', this._onClick, this);
-        _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.on(container, 'mouseout', this._handleMouseOut, this);
-        this._ctx = container.getContext('2d');
-        if (this._container) {
-            this._map.getPane(this.options.pane).appendChild(this._container);
-            // this._update();
-            // this.on('update', this._updateGeometry, this);
-            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.addClass(this._container, 'leaflet-zoom-animated');
-        }
-        this._map.on('viewreset', this._reset, this);
-        this._map.on('zoom', this._onZoom, this);
-        this._map.on('zoomanim', this._onAnimZoom, this);
-        this._map.on('moveend', this._updateCanvas, this);
-        this._map.on('zoomend', this._onZoomEnd, this);
-    }
-    destroy() {
-        this._map.off('viewreset', this._reset, this);
-        this._map.off('zoom', this._onZoom, this);
-        this._map.off('zoomanim', this._onAnimZoom, this);
-        this._map.off('moveend', this._updateCanvas, this);
-        this._map.off('zoomend', this._onZoomEnd, this);
-        if (this._redrawRequest) {
-            _util_util__WEBPACK_IMPORTED_MODULE_3__.cancelAnimFrame(this._redrawRequest);
-        }
-        delete this._ctx;
-        if (this._container) {
-            // this.off('update', this._updateGeometry, this);
-            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.remove(this._container);
-            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.off(this._container);
-            delete this._container;
-        }
-    }
-    _onZoomEnd() {
-        this._zoom = this._map.getZoom();
-        this._origin = this._map.getPixelOrigin();
-        this._graphicLayer.transform(this._origin, this._zoom);
-        this._graphicLayers.forEach(layer => {
-            layer.transform(this._origin, this._zoom);
-        });
-        this._featureLayers.forEach(layer => {
-            layer.transform(this._origin, this._zoom);
-        });
-        this._rasterLayers.forEach(layer => {
-            layer.transform(this._origin, this._zoom);
-        });
-    }
-    _onAnimZoom(ev) {
-        this._updateTransform(ev.center, ev.zoom);
-    }
-    _onZoom() {
-        this._updateTransform(this._map.getCenter(), this._map.getZoom());
-    }
-    _updateTransform(center, zoom) {
-        if (!this._container)
-            return;
-        let scale = this._map.getZoomScale(zoom, this._zoom), position = _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.getPosition(this._container), viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding), currentCenterPoint = this._map.latLngToWorldPixel(this._center || this._map.getCenter(), zoom), destCenterPoint = this._map.latLngToWorldPixel(center, zoom), centerOffset = destCenterPoint.subtract(currentCenterPoint), topLeftOffset = viewHalf.multiplyBy(-scale).add(position).add(viewHalf).subtract(centerOffset);
-        if (_util_browser__WEBPACK_IMPORTED_MODULE_2__.any3d) {
-            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.setTransform(this._container, topLeftOffset, scale);
-        }
-        else {
-            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.setPosition(this._container, topLeftOffset);
-        }
-    }
-    // update geometry
-    _updateGeometry() {
-        this._redrawBounds = null;
-        this._redraw();
-    }
-    // update center/zoom/bounds/position
-    _updateCanvas() {
-        if (this._map._animatingZoom && this._bounds) {
-            return;
-        }
-        // Update pixel bounds of renderer container (for positioning/sizing/clipping later)
-        // Subclasses are responsible of firing the 'update' event.
-        const p = this.options.padding, size = this._map.getSize(), min = this._map.containerPixelToCanvasPixel(size.multiplyBy(-p)).round();
-        this._bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__.ScreenBounds(min, min.add(size.multiplyBy(1 + p * 2)).round());
-        this._center = this._map.getCenter();
-        this._zoom = this._map.getZoom();
-        this._origin = this._map.getPixelOrigin();
-        const b = this._bounds, container = this._container, bsize = b.getSize(), m = _util_browser__WEBPACK_IMPORTED_MODULE_2__.retina ? 2 : 1;
-        if (container) {
-            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.setPosition(container, b.min);
-            // set canvas size (also clearing it); use double size on retina
-            container.width = m * bsize.x;
-            container.height = m * bsize.y;
-            container.style.width = bsize.x + 'px';
-            container.style.height = bsize.y + 'px';
-        }
-        if (this._ctx) {
-            if (_util_browser__WEBPACK_IMPORTED_MODULE_2__.retina) {
-                this._ctx.scale(2, 2);
-            }
-            // translate so we use the same path coordinates after canvas element moves
-            this._ctx.translate(-b.min.x, -b.min.y);
-        }
-        // Tell paths to redraw themselves
-        this._updateGeometry();
-        this.fire('update');
-    }
-    _reset() {
-        // this._update();
-        this._updateTransform(this._center, this._zoom);
-        this._updateGeometry();
-    }
-    addGraphic(graphic) {
-        this._graphicLayer.addGraphic(graphic);
-        graphic.transform(this._origin, this._zoom);
-        this._requestRedraw(graphic.geometry);
-    }
-    removeGraphic(graphic) {
-        this._graphicLayer.removeGraphic(graphic);
-        this._requestRedraw(graphic.geometry);
-    }
-    clearGraphics() {
-        this._graphicLayer.clearGraphics();
-        this._updateGeometry();
-    }
-    addGraphicLayer(graphicLayer) {
-        graphicLayer.transform(this._origin, this._zoom);
-        this._graphicLayers.push(graphicLayer);
-        this._updateGeometry();
-    }
-    removeGraphicLayer(graphicLayer) {
-        const index = this._graphicLayers.findIndex(layer => layer.id == graphicLayer.id);
-        this._graphicLayers.splice(index, 1);
-    }
-    clearGraphicLayers() {
-        this._graphicLayers = [];
-        this._updateGeometry();
-    }
-    addFeatureLayer(featureLayer) {
-        featureLayer.transform(this._origin, this._zoom);
-        this._featureLayers.push(featureLayer);
-        this._updateGeometry();
-    }
-    removeFeatureLayer(featureLayer) {
-        const index = this._featureLayers.findIndex(layer => layer.id == featureLayer.id);
-        this._featureLayers.splice(index, 1);
-    }
-    clearFeatureLayers() {
-        this._featureLayers = [];
-        this._updateGeometry();
-    }
-    addRasterLayer(rasterLayer) {
-        rasterLayer.transform(this._origin, this._zoom);
-        this._rasterLayers.push(rasterLayer);
-        this._updateGeometry();
-    }
-    removeRasterLayer(rasterLayer) {
-        const index = this._rasterLayers.findIndex(layer => layer.id == rasterLayer.id);
-        this._rasterLayers.splice(index, 1);
-    }
-    clearRasterLayers() {
-        this._rasterLayers = [];
-        this._updateGeometry();
-    }
-    _requestRedraw(geometry) {
-        if (!this._map) {
-            return;
-        }
-        this._extendRedrawBounds(geometry);
-        this._redrawRequest = this._redrawRequest || _util_util__WEBPACK_IMPORTED_MODULE_3__.requestAnimFrame(this._redraw, this);
-    }
-    _extendRedrawBounds(geometry) {
-        if (geometry.screenBounds) {
-            // var padding = (layer.options.weight || 0) + 1;
-            this._redrawBounds = this._redrawBounds || new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_5__.ScreenBounds();
-            // this._redrawBounds.extend(layer.screenBounds.min.subtract(new ScreenXY(padding, padding)));
-            // this._redrawBounds.extend(layer.screenBounds.max.add(new ScreenXY(padding, padding)));
-            this._redrawBounds.extend(geometry.screenBounds.min);
-            this._redrawBounds.extend(geometry.screenBounds.max);
-        }
-    }
-    _redraw() {
-        this._redrawRequest = null;
-        if (this._redrawBounds) {
-            this._redrawBounds.min.floor(false);
-            this._redrawBounds.max.ceil(false);
-        }
-        this._clear(); // clear layers in redraw bounds
-        this._draw(); // draw layers
-        this._redrawBounds = null;
-    }
-    _clear() {
-        if (this._ctx) {
-            const bounds = this._redrawBounds;
-            if (bounds) {
-                const size = bounds.getSize();
-                this._ctx.clearRect(bounds.min.x, bounds.min.y, size.x, size.y);
-            }
-            else {
-                if (this._container) {
-                    this._ctx.save();
-                    this._ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    this._ctx.clearRect(0, 0, this._container.width, this._container.height);
-                    this._ctx.restore();
-                }
-            }
-        }
-    }
-    _draw() {
-        if (this._ctx) {
-            let bounds = this._redrawBounds;
-            this._ctx.save();
-            if (bounds) {
-                var size = bounds.getSize();
-                this._ctx.beginPath();
-                this._ctx.rect(bounds.min.x, bounds.min.y, size.x, size.y);
-                this._ctx.clip();
-            }
-            this._drawing = true;
-            // console.time("draw");
-            this._rasterLayers.forEach(layer => {
-                layer.draw(this._ctx, this._zoom, bounds || this._bounds);
-            });
-            this._featureLayers.forEach(layer => {
-                layer.draw(this._ctx, this._zoom, bounds || this._bounds);
-            });
-            this._graphicLayers.forEach(layer => {
-                layer.draw(this._ctx, this._zoom, bounds || this._bounds);
-            });
-            this._graphicLayer.draw(this._ctx, this._zoom, bounds || this._bounds);
-            // console.timeEnd("draw");
-            this._drawing = false;
-            this._ctx.restore(); // Restore state before clipping.
-        }
-    }
-    // Canvas obviously doesn't have mouse events for individual drawn objects,
-    // so we emulate that by calculating what's under the mouse on mousemove/click manually
-    _onClick(e) {
-        let screenXY = this._map.mouseEventToCanvasPixel(e);
-        // spatial query graphic && feature
-        let elements = this._graphicLayer.query(screenXY, this._zoom, this._bounds);
-        this._graphicLayers.forEach(layer => {
-            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
-        });
-        this._featureLayers.forEach(layer => {
-            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
-        });
-        if (elements.length > 0) {
-            _util_dom_event__WEBPACK_IMPORTED_MODULE_1__.fakeStop(e);
-            this._fireEvent(elements, e);
-        }
-    }
-    _onMouseMove(e) {
-        if (!this._map || !this._map.dragging || this._map.dragging.moving() || this._map._animatingZoom) {
-            return;
-        }
-        const point = this._map.mouseEventToCanvasPixel(e);
-        this._handleMouseHover(e, point);
-    }
-    _handleMouseOut(e) {
-        if (this._hoveredElement) {
-            // if we're leaving, fire mouseout
-            _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.removeClass(this._container, 'leaflet-interactive');
-            this._fireEvent([this._hoveredElement], e, 'mouseout');
-            this._hoveredElement = null;
-            this._mouseHoverThrottled = false;
-        }
-    }
-    _handleMouseHover(e, screenXY) {
-        if (this._mouseHoverThrottled) {
-            return;
-        }
-        // spatial query graphic && feature
-        let elements = this._graphicLayer.query(screenXY, this._zoom, this._bounds);
-        this._graphicLayers.forEach(layer => {
-            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
-        });
-        this._featureLayers.forEach(layer => {
-            elements = elements.concat(layer.query(screenXY, this._zoom, this._bounds));
-        });
-        let candidateHoveredElement = elements.length > 0 ? elements[0] : null;
-        if (candidateHoveredElement !== this._hoveredElement) {
-            this._handleMouseOut(e);
-            if (candidateHoveredElement) {
-                _util_dom_util__WEBPACK_IMPORTED_MODULE_0__.addClass(this._container, 'leaflet-interactive'); // change cursor
-                this._fireEvent([candidateHoveredElement], e, 'mouseover');
-                this._hoveredElement = candidateHoveredElement;
-            }
-        }
-        if (this._hoveredElement) {
-            this._fireEvent([this._hoveredElement], e);
-        }
-        // throttle 
-        this._mouseHoverThrottled = true;
-        setTimeout(() => {
-            this._mouseHoverThrottled = false;
-        }, 32);
-    }
-    _fireEvent(layers, e, type) {
-        this._map._fireDOMEvent(e, type || e.type, layers);
     }
 }
 
@@ -8056,10 +7700,10 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         this._crs = new _crs_crs_3857__WEBPACK_IMPORTED_MODULE_9__.EPSG3857();
         // this._canvas = new Canvas(this);
         // this._canvas.init();
-        this._viewer = new _canvas_viewer__WEBPACK_IMPORTED_MODULE_15__.Viewer(this);
-        this._viewer.init();
         this._animater = new _canvas_animater__WEBPACK_IMPORTED_MODULE_16__.Animater(this);
         this._animater.init();
+        this._viewer = new _canvas_viewer__WEBPACK_IMPORTED_MODULE_15__.Viewer(this);
+        this._viewer.init();
         if (this.options.center && this.options.zoom !== undefined) {
             this.setView(this.options.center, this.options.zoom, { reset: true });
         }
@@ -9393,6 +9037,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../symbol/symbol */ "../dist/symbol/symbol.js");
 /* harmony import */ var _geometry_geometry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../geometry/geometry */ "../dist/geometry/geometry.js");
 /* harmony import */ var _util_color__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/color */ "../dist/util/color.js");
+/* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./renderer */ "../dist/renderer/renderer.js");
+
 
 
 
@@ -9415,8 +9061,9 @@ class ClassRendererItem {
  * 一般可通过设置分级字段，再调用generate自动生成分级渲染项
  * 也可通过手动添加和定义分级渲染项，完成分级渲染设置，通过items.push()
  */
-class ClassRenderer {
+class ClassRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_3__.Renderer {
     constructor() {
+        super(...arguments);
         /**
          * 所有分级渲染项集合
          */
@@ -9501,6 +9148,89 @@ class ClassRenderer {
 
 /***/ }),
 
+/***/ "../dist/renderer/cluster-renderer.js":
+/*!********************************************!*\
+  !*** ../dist/renderer/cluster-renderer.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ClusterRenderer": () => (/* binding */ ClusterRenderer)
+/* harmony export */ });
+/* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../symbol/symbol */ "../dist/symbol/symbol.js");
+/* harmony import */ var _renderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./renderer */ "../dist/renderer/renderer.js");
+/* harmony import */ var _geometry_geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../geometry/geometry */ "../dist/geometry/geometry.js");
+/* harmony import */ var _symbol_cluster_symbol__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../symbol/cluster-symbol */ "../dist/symbol/cluster-symbol.js");
+
+
+
+
+/**
+ * 聚合渲染
+ */
+class ClusterRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_1__.Renderer {
+    constructor() {
+        super(...arguments);
+        this._defaultSymbol = new _symbol_symbol__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+        this._tolerance = 50; //distance 50px
+        this._features = {}; // Map<id, count>
+    }
+    set featureClass(value) {
+        if (value.type == _geometry_geometry__WEBPACK_IMPORTED_MODULE_2__.GeometryType.Point) {
+            this._featureClass = value;
+        }
+    }
+    set defaultSymbol(value) {
+        this._defaultSymbol = value;
+    }
+    set Tolerance(value) {
+        this._tolerance = value;
+    }
+    init() {
+        this._features = {};
+        if (!this._featureClass)
+            return;
+        let feature = this._featureClass.first;
+        while (feature) {
+            let exist = false;
+            const keys = Object.keys(this._features);
+            for (let i = 0; i < keys.length; i++) {
+                const id = keys[i];
+                const item = this._featureClass.getFeature(id);
+                if (item) {
+                    const p1 = feature.geometry;
+                    const p2 = item.geometry;
+                    if (p1.distance(p2) <= this._tolerance) {
+                        exist = true;
+                        this._features[id] += 1;
+                        break;
+                    }
+                }
+            }
+            if (!exist) {
+                this._features[feature.id] = 1;
+            }
+            feature = feature.next;
+        }
+    }
+    getSymbol(feature) {
+        const count = this._features[feature.id];
+        if (!count) {
+            return null;
+        }
+        else if (count == 1) {
+            return this._defaultSymbol;
+        }
+        else {
+            return new _symbol_cluster_symbol__WEBPACK_IMPORTED_MODULE_3__.ClusterSymbol(count);
+        }
+    }
+}
+
+
+/***/ }),
+
 /***/ "../dist/renderer/dot-renderer.js":
 /*!****************************************!*\
   !*** ../dist/renderer/dot-renderer.js ***!
@@ -9551,6 +9281,10 @@ __webpack_require__.r(__webpack_exports__);
  * 渲染方式基类
  */
 class Renderer {
+    init() {
+        //do something before layer draw; 
+        //etc ClusterRenderer
+    }
 }
 
 
@@ -9574,6 +9308,163 @@ __webpack_require__.r(__webpack_exports__);
 class SimpleRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_0__.Renderer {
     getSymbol(feature) {
         return this.symbol;
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/symbol/cluster-symbol.js":
+/*!****************************************!*\
+  !*** ../dist/symbol/cluster-symbol.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ClusterSymbol": () => (/* binding */ ClusterSymbol)
+/* harmony export */ });
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
+/* harmony import */ var _util_color__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/color */ "../dist/util/color.js");
+/* harmony import */ var _symbol__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./symbol */ "../dist/symbol/symbol.js");
+
+
+
+
+/**
+ * 聚合符号
+ * @remarks
+ * 限制用于点图层
+ */
+class ClusterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_3__.PointSymbol {
+    /**
+     * 创建聚合符号
+     * @param {number} count - 聚合数量
+     */
+    constructor(count) {
+        super();
+        /**
+         * 聚合数量
+         */
+        this._count = 2;
+        /**
+         * 聚合符号的默认半径
+         */
+        this.radius = 10;
+        /**
+         * 重写描边样式
+         */
+        this.strokeStyle = "#ffffff"; //#ff0000
+        /**
+         * 聚合外圈填充样式
+         */
+        this.outerFillStyle = "#ffffff"; //#ff0000
+        /**
+         * 聚合数量字体颜色
+         */
+        this.fontColor = "#ffffff";
+        /**
+         * 聚合数量字体
+         */
+        this.fontFamily = "YaHei";
+        /**
+         * 聚合数量字体粗细
+         */
+        this.fontWeight = "Bold";
+        /**
+         * 色带起始色
+         */
+        this.startColor = "#19caad";
+        /**
+         * 色带终止色
+         */
+        this.endColor = "#f4606c";
+        this._count = count;
+    }
+    /**
+     * 聚合数量文本
+     * @remarks
+     * 大于99，标记为99+
+     */
+    get text() {
+        return this._count <= 99 ? this._count.toString() : "99+";
+    }
+    /**
+     * 内圈半径
+     */
+    get inner() {
+        return this._count <= 15 ? this.radius + this._count : this.radius + 15;
+    }
+    /**
+     * 外圈半径
+     */
+    get outer() {
+        return this.inner + 4;
+    }
+    /**
+     * 字体随数量递增，同时控制为非无限递增
+     */
+    get fontSize() {
+        if (this._count < 10) {
+            return 12;
+        }
+        else if (this._count >= 10 && this._count < 30) {
+            return 14;
+        }
+        else if (this._count >= 30 && this._count < 50) {
+            return 16;
+        }
+        else if (this._count >= 30 && this._count < 50) {
+            return 18;
+        }
+        else if (this._count > 50) {
+            return 20;
+        }
+    }
+    /**
+     * 聚合的内圈填充样式
+     * @remarks
+     * 采用色带，色带可自定义扩展
+     */
+    get innerFillStyle() {
+        //TODO 优化 setter hex, getter color
+        const colors = _util_color__WEBPACK_IMPORTED_MODULE_2__.Color.ramp(_util_color__WEBPACK_IMPORTED_MODULE_2__.Color.fromHex(this.startColor), _util_color__WEBPACK_IMPORTED_MODULE_2__.Color.fromHex(this.endColor), 16);
+        return colors[this._count <= 15 ? this._count : 15].toString();
+    }
+    /**
+     * 绘制聚合符号
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     * @param {number} screenX - 屏幕坐标X
+     * @param {number} screenY - 屏幕坐标Y
+     */
+    draw(ctx, screenXY) {
+        ctx.save();
+        // ctx.setTransform(1,0,0,1,0,0);
+        ctx.strokeStyle = this.strokeStyle;
+        ctx.fillStyle = this.outerFillStyle;
+        ctx.lineWidth = this.lineWidth;
+        ctx.beginPath(); //Start path
+        //keep size 画外圈
+        ctx.arc(screenXY.x, screenXY.y, this.outer, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = this.innerFillStyle;
+        ctx.beginPath(); //Start path
+        //keep size 画内圈
+        ctx.arc(screenXY.x, screenXY.y, this.inner, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.stroke();
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillStyle = this.fontColor;
+        ctx.font = this.fontSize + "px/1 " + this.fontFamily + " " + this.fontWeight;
+        ctx.fillText(this.text, screenXY.x, screenXY.y);
+        ctx.restore();
+    }
+    getScreenBounds(screenXY) {
+        let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
+        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
     }
 }
 
@@ -11154,9 +11045,9 @@ function template(str, data) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!**********************!*\
-  !*** ./animation.js ***!
-  \**********************/
+/*!***************************!*\
+  !*** ./class-renderer.js ***!
+  \***************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dist */ "../dist/index.js");
 
@@ -11171,23 +11062,39 @@ window.load = async () => {
   tile.addTo(map);
 
   map.setView(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), 12);
+  //新建要素类
+  const featureClass = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureClass(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Point);
+  //新建字段
+  const field = new _dist__WEBPACK_IMPORTED_MODULE_0__.Field("rank", _dist__WEBPACK_IMPORTED_MODULE_0__.FieldType.Number);
+  featureClass.addField(field);
+  //新建矢量图层
+  const layer = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
+  layer.featureClass = featureClass;
 
-  const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411));
-  const animation = new _dist__WEBPACK_IMPORTED_MODULE_0__.PointAnimation(point);
-  map.addAnimation(animation);
-
-  const polyline1 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(18.271, 109.519)]);
-  const polyline2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(18.271, 119.519)]);
-  const polyline3 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(48.271, 119.519)]);
-  const polyline4 = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(48.271, 109.519)]);
-  const animation1 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline1);
-  const animation2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline2);
-  const animation3 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline3);
-  const animation4 = new _dist__WEBPACK_IMPORTED_MODULE_0__.LineAnimation(polyline4);
-  map.addAnimation(animation1);
-  map.addAnimation(animation2);
-  map.addAnimation(animation3);
-  map.addAnimation(animation4);
+  //设置渲染符号
+  const symbol2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+  symbol2.strokeStyle = "#3388FF";
+  symbol2.fillStyle = "#3388FF80";
+  const symbol3 = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+  symbol3.strokeStyle = "#88FF33";
+  symbol3.fillStyle = "#88FF3380";
+  const symbol4 = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+  symbol4.strokeStyle = "#FF8833";
+  symbol4.fillStyle = "#FF883380";
+  //设置渲染方式——分级渲染
+  layer.renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRenderer();
+  layer.renderer.field = field;
+  layer.renderer.items.push(new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRendererItem(0, 3, symbol2));
+  layer.renderer.items.push(new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRendererItem(4, 6, symbol3));
+  layer.renderer.items.push(new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRendererItem(7, 10, symbol4));
+  //生成随机数据
+  for (let i = 1; i <= 200; i++) {
+    const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1));
+    const feature = new _dist__WEBPACK_IMPORTED_MODULE_0__.Feature(point, { rank: parseInt(Math.random() * 10) });
+    featureClass.addFeature(feature);
+  }
+  //添加矢量图层
+  map.addFeatureLayer(layer);
 
 }
 })();

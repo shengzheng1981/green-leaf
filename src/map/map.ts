@@ -9,8 +9,6 @@ import { ScreenBounds } from '../common/screen-bounds';
 import { ScreenXY } from '../common/screen-xy';
 import { Earth } from '../crs/crs-earth';
 import { EPSG3857 } from '../crs/crs-3857';
-
-import { Canvas } from './canvas';
 import { PosAnimation } from './position-animation';
 import { HandlerObject } from '../base/handler-object';
 import { DragHandler } from './handler/map-drag';
@@ -214,7 +212,7 @@ export class Map extends EventedObject {
   _zoom: number;
   _lastCenter: LatLng;
 
-  _canvas: Canvas;
+  // _canvas: Canvas;
   _viewer: Viewer;
   _animater: Animater;
   _layers: any = {};
@@ -264,10 +262,10 @@ export class Map extends EventedObject {
     this._crs = new EPSG3857();
     // this._canvas = new Canvas(this);
     // this._canvas.init();
-    this._viewer = new Viewer(this);
-    this._viewer.init();
     this._animater = new Animater(this);
     this._animater.init();
+    this._viewer = new Viewer(this);
+    this._viewer.init();
 
     if (this.options.center && this.options.zoom !== undefined) {
       this.setView(this.options.center, this.options.zoom, { reset: true });
@@ -941,11 +939,12 @@ export class Map extends EventedObject {
     // @pane tilePane: HTMLElement = 200
     // Pane for `GridLayer`s and `TileLayer`s
     this.createPane('tilePane');
+    // @pane animatePane: HTMLElement = 300
+    this.createPane('animatePane');
     // @pane overlayPane: HTMLElement = 400
     // Pane for vectors (`Path`s, like `Polyline`s and `Polygon`s), `ImageOverlay`s and `VideoOverlay`s
     this.createPane('overlayPane');
-    // @pane overlayPane: HTMLElement = 500
-    this.createPane('animatePane');
+
     // @pane shadowPane: HTMLElement = 500
     // Pane for overlay shadows (e.g. `Marker` shadows)
     // this.createPane('shadowPane');

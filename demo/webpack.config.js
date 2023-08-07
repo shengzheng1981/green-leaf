@@ -1,6 +1,6 @@
 module.exports = {
     mode: "development",
-    entry: "./animation.js",
+    entry: "./class-renderer.js",
     output: {
         filename: "bundle.js"
     },
