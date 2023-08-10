@@ -28,29 +28,31 @@ export class ClusterRenderer extends Renderer {
     this._tolerance = value;
   }
 
-  init() {
+  init(redrawBounds?: ScreenBounds) {
     this._features = {};
     if (!this._featureClass) return;
     let feature = this._featureClass.first;
     while (feature) {
-      let exist = false;
-      const keys = Object.keys(this._features);
-      for (let i = 0; i < keys.length; i++) {
-        const id = keys[i];
-        const item = this._featureClass.getFeature(id);
-        if (item) {
-          const p1: Point = feature.geometry as Point;
-          const p2: Point = item.geometry as Point;
-          if (p1.distance(p2) <= this._tolerance) {
-            exist = true;
-            this._features[id] += 1;
-            break;
+      if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
+        let exist = false;
+        const keys = Object.keys(this._features);
+        for (let i = 0; i < keys.length; i++) {
+          const id = keys[i];
+          const item = this._featureClass.getFeature(id);
+          if (item) {
+            const p1: Point = feature.geometry as Point;
+            const p2: Point = item.geometry as Point;
+            if (p1.distance(p2) <= this._tolerance) {
+              exist = true;
+              this._features[id] += 1;
+              break;
+            }
           }
         }
-      }
-      if (!exist) {
-        this._features[feature.id] = 1;
-      }
+        if (!exist) {
+          this._features[feature.id] = 1;
+        }
+      } 
       feature = feature.next;
     }
   }

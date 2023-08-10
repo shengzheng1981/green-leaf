@@ -180,7 +180,7 @@ export class Grid extends EventedObject {
 			this._updateOpacity();
 		}
 
-		this._map.getPane('tilePane').appendChild(this._container);
+		this._map.getPane(this.options.pane).appendChild(this._container);
 
     this._levels = {};
     this._tiles = {};
@@ -261,7 +261,7 @@ export class Grid extends EventedObject {
 	// Called only internally, must be overridden by classes extending `GridLayer`.
 	// Returns the `HTMLElement` corresponding to the given `coords`. If the `done` callback
 	// is specified, it must be called when the tile has finished loading and drawing.
-	createTile(coords, done) {
+	createTile(coords, done): HTMLElement {
 		return document.createElement('div');
 	}
 

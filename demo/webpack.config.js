@@ -1,6 +1,6 @@
 module.exports = {
     mode: "development",
-    entry: "./class-renderer.js",
+    entry: "./cluster-renderer.js",
     output: {
         filename: "bundle.js"
     },

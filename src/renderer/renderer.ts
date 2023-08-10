@@ -6,7 +6,7 @@ import { Symbol } from "../symbol/symbol";
  */
 export abstract class Renderer {
   
-  init() {
+  init(redrawBounds?: ScreenBounds) {
     //do something before layer draw; 
     //etc ClusterRenderer
   }

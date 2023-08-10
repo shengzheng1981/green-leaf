@@ -4936,7 +4936,7 @@ class Grid extends _base_evented_object__WEBPACK_IMPORTED_MODULE_3__.EventedObje
         if (this.options.opacity < 1) {
             this._updateOpacity();
         }
-        this._map.getPane('tilePane').appendChild(this._container);
+        this._map.getPane(this.options.pane).appendChild(this._container);
         this._levels = {};
         this._tiles = {};
         if (this._map.loaded)
@@ -5844,48 +5844,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SimplePointSymbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.SimplePointSymbol),
 /* harmony export */   "Symbol": () => (/* reexport safe */ _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__.Symbol),
 /* harmony export */   "ClusterSymbol": () => (/* reexport safe */ _symbol_cluster_symbol__WEBPACK_IMPORTED_MODULE_40__.ClusterSymbol),
-/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_41__.Field),
-/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_41__.FieldType),
-/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_42__.Feature),
-/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_43__.FeatureClass),
-/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_44__.Adapter),
-/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_45__.GeoJSONAdapter),
-/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_46__.Renderer),
-/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_47__.SimpleRenderer),
-/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_48__.DotRenderer),
-/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_49__.CategoryRenderer),
-/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_49__.CategoryRendererItem),
-/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_50__.ClassRenderer),
-/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_50__.ClassRendererItem),
-/* harmony export */   "ClusterRenderer": () => (/* reexport safe */ _renderer_cluster_renderer__WEBPACK_IMPORTED_MODULE_51__.ClusterRenderer),
-/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_52__.Text),
-/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_53__.Collision),
-/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_53__.NullCollision),
-/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_53__.SimpleCollision),
-/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_54__.Label),
-/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_55__.Grid),
-/* harmony export */   "GridOptions": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_55__.GridOptions),
-/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_56__.Tile),
-/* harmony export */   "TileOptions": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_56__.TileOptions),
-/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_57__.Raster),
-/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_58__.Kriging),
-/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_59__.IDW),
-/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_60__.Heat),
-/* harmony export */   "Animation": () => (/* reexport safe */ _animation_animation__WEBPACK_IMPORTED_MODULE_61__.Animation),
-/* harmony export */   "PointAnimation": () => (/* reexport safe */ _animation_point_animation__WEBPACK_IMPORTED_MODULE_62__.PointAnimation),
-/* harmony export */   "LineAnimation": () => (/* reexport safe */ _animation_line_animation__WEBPACK_IMPORTED_MODULE_63__.LineAnimation),
-/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_64__.Canvas),
-/* harmony export */   "CanvasOptions": () => (/* reexport safe */ _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_64__.CanvasOptions),
-/* harmony export */   "Viewer": () => (/* reexport safe */ _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_65__.Viewer),
-/* harmony export */   "ViewerOptions": () => (/* reexport safe */ _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_65__.ViewerOptions),
-/* harmony export */   "Animater": () => (/* reexport safe */ _map_canvas_animater__WEBPACK_IMPORTED_MODULE_66__.Animater),
-/* harmony export */   "AnimaterOptions": () => (/* reexport safe */ _map_canvas_animater__WEBPACK_IMPORTED_MODULE_66__.AnimaterOptions),
-/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_67__.Map),
-/* harmony export */   "MapOptions": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_67__.MapOptions),
-/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_68__.PosAnimation),
-/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_69__.DragHandler),
-/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_70__.ScrollWheelZoomHandler),
-/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_71__.DoubleClickZoomHandler)
+/* harmony export */   "LetterSymbol": () => (/* reexport safe */ _symbol_letter_symbol__WEBPACK_IMPORTED_MODULE_41__.LetterSymbol),
+/* harmony export */   "ArrowSymbol": () => (/* reexport safe */ _symbol_arrow_symbol__WEBPACK_IMPORTED_MODULE_42__.ArrowSymbol),
+/* harmony export */   "AnimatePointSymbol": () => (/* reexport safe */ _symbol_animate_symbol__WEBPACK_IMPORTED_MODULE_43__.AnimatePointSymbol),
+/* harmony export */   "SimpleAnimatePointSymbol": () => (/* reexport safe */ _symbol_animate_symbol__WEBPACK_IMPORTED_MODULE_43__.SimpleAnimatePointSymbol),
+/* harmony export */   "Field": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_44__.Field),
+/* harmony export */   "FieldType": () => (/* reexport safe */ _feature_field__WEBPACK_IMPORTED_MODULE_44__.FieldType),
+/* harmony export */   "Feature": () => (/* reexport safe */ _feature_feature__WEBPACK_IMPORTED_MODULE_45__.Feature),
+/* harmony export */   "FeatureClass": () => (/* reexport safe */ _feature_feature_class__WEBPACK_IMPORTED_MODULE_46__.FeatureClass),
+/* harmony export */   "Adapter": () => (/* reexport safe */ _adapter_adapter__WEBPACK_IMPORTED_MODULE_47__.Adapter),
+/* harmony export */   "GeoJSONAdapter": () => (/* reexport safe */ _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_48__.GeoJSONAdapter),
+/* harmony export */   "Renderer": () => (/* reexport safe */ _renderer_renderer__WEBPACK_IMPORTED_MODULE_49__.Renderer),
+/* harmony export */   "SimpleRenderer": () => (/* reexport safe */ _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_50__.SimpleRenderer),
+/* harmony export */   "DotRenderer": () => (/* reexport safe */ _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_51__.DotRenderer),
+/* harmony export */   "CategoryRenderer": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_52__.CategoryRenderer),
+/* harmony export */   "CategoryRendererItem": () => (/* reexport safe */ _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_52__.CategoryRendererItem),
+/* harmony export */   "ClassRenderer": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_53__.ClassRenderer),
+/* harmony export */   "ClassRendererItem": () => (/* reexport safe */ _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_53__.ClassRendererItem),
+/* harmony export */   "ClusterRenderer": () => (/* reexport safe */ _renderer_cluster_renderer__WEBPACK_IMPORTED_MODULE_54__.ClusterRenderer),
+/* harmony export */   "Text": () => (/* reexport safe */ _text_text__WEBPACK_IMPORTED_MODULE_55__.Text),
+/* harmony export */   "Collision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_56__.Collision),
+/* harmony export */   "NullCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_56__.NullCollision),
+/* harmony export */   "SimpleCollision": () => (/* reexport safe */ _label_collision__WEBPACK_IMPORTED_MODULE_56__.SimpleCollision),
+/* harmony export */   "Label": () => (/* reexport safe */ _label_label__WEBPACK_IMPORTED_MODULE_57__.Label),
+/* harmony export */   "Grid": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_58__.Grid),
+/* harmony export */   "GridOptions": () => (/* reexport safe */ _grid_grid__WEBPACK_IMPORTED_MODULE_58__.GridOptions),
+/* harmony export */   "Tile": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_59__.Tile),
+/* harmony export */   "TileOptions": () => (/* reexport safe */ _grid_tile__WEBPACK_IMPORTED_MODULE_59__.TileOptions),
+/* harmony export */   "Raster": () => (/* reexport safe */ _raster_raster__WEBPACK_IMPORTED_MODULE_60__.Raster),
+/* harmony export */   "Kriging": () => (/* reexport safe */ _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_61__.Kriging),
+/* harmony export */   "IDW": () => (/* reexport safe */ _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_62__.IDW),
+/* harmony export */   "Heat": () => (/* reexport safe */ _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_63__.Heat),
+/* harmony export */   "Animation": () => (/* reexport safe */ _animation_animation__WEBPACK_IMPORTED_MODULE_64__.Animation),
+/* harmony export */   "PointAnimation": () => (/* reexport safe */ _animation_point_animation__WEBPACK_IMPORTED_MODULE_65__.PointAnimation),
+/* harmony export */   "LineAnimation": () => (/* reexport safe */ _animation_line_animation__WEBPACK_IMPORTED_MODULE_66__.LineAnimation),
+/* harmony export */   "Canvas": () => (/* reexport safe */ _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_67__.Canvas),
+/* harmony export */   "CanvasOptions": () => (/* reexport safe */ _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_67__.CanvasOptions),
+/* harmony export */   "Viewer": () => (/* reexport safe */ _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_68__.Viewer),
+/* harmony export */   "ViewerOptions": () => (/* reexport safe */ _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_68__.ViewerOptions),
+/* harmony export */   "Animater": () => (/* reexport safe */ _map_canvas_animater__WEBPACK_IMPORTED_MODULE_69__.Animater),
+/* harmony export */   "AnimaterOptions": () => (/* reexport safe */ _map_canvas_animater__WEBPACK_IMPORTED_MODULE_69__.AnimaterOptions),
+/* harmony export */   "Map": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_70__.Map),
+/* harmony export */   "MapOptions": () => (/* reexport safe */ _map_map__WEBPACK_IMPORTED_MODULE_70__.MapOptions),
+/* harmony export */   "PosAnimation": () => (/* reexport safe */ _map_position_animation__WEBPACK_IMPORTED_MODULE_71__.PosAnimation),
+/* harmony export */   "DragHandler": () => (/* reexport safe */ _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_72__.DragHandler),
+/* harmony export */   "ScrollWheelZoomHandler": () => (/* reexport safe */ _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_73__.ScrollWheelZoomHandler),
+/* harmony export */   "DoubleClickZoomHandler": () => (/* reexport safe */ _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_74__.DoubleClickZoomHandler)
 /* harmony export */ });
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/util */ "../dist/util/util.js");
 /* harmony import */ var _util_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/browser */ "../dist/util/browser.js");
@@ -5928,37 +5932,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _layer_raster_layer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./layer/raster-layer */ "../dist/layer/raster-layer.js");
 /* harmony import */ var _symbol_symbol__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./symbol/symbol */ "../dist/symbol/symbol.js");
 /* harmony import */ var _symbol_cluster_symbol__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./symbol/cluster-symbol */ "../dist/symbol/cluster-symbol.js");
-/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
-/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
-/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
-/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
-/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
-/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
-/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
-/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
-/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
-/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
-/* harmony import */ var _renderer_cluster_renderer__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./renderer/cluster-renderer */ "../dist/renderer/cluster-renderer.js");
-/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
-/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
-/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
-/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
-/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
-/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
-/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
-/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
-/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
-/* harmony import */ var _animation_animation__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./animation/animation */ "../dist/animation/animation.js");
-/* harmony import */ var _animation_point_animation__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./animation/point-animation */ "../dist/animation/point-animation.js");
-/* harmony import */ var _animation_line_animation__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./animation/line-animation */ "../dist/animation/line-animation.js");
-/* harmony import */ var _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./map/canvas/canvas */ "../dist/map/canvas/canvas.js");
-/* harmony import */ var _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./map/canvas/viewer */ "../dist/map/canvas/viewer.js");
-/* harmony import */ var _map_canvas_animater__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./map/canvas/animater */ "../dist/map/canvas/animater.js");
-/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
-/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
-/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
-/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
-/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+/* harmony import */ var _symbol_letter_symbol__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./symbol/letter-symbol */ "../dist/symbol/letter-symbol.js");
+/* harmony import */ var _symbol_arrow_symbol__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./symbol/arrow-symbol */ "../dist/symbol/arrow-symbol.js");
+/* harmony import */ var _symbol_animate_symbol__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./symbol/animate-symbol */ "../dist/symbol/animate-symbol.js");
+/* harmony import */ var _feature_field__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./feature/field */ "../dist/feature/field.js");
+/* harmony import */ var _feature_feature__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./feature/feature */ "../dist/feature/feature.js");
+/* harmony import */ var _feature_feature_class__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./feature/feature-class */ "../dist/feature/feature-class.js");
+/* harmony import */ var _adapter_adapter__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./adapter/adapter */ "../dist/adapter/adapter.js");
+/* harmony import */ var _adapter_geojson_adapter__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./adapter/geojson-adapter */ "../dist/adapter/geojson-adapter.js");
+/* harmony import */ var _renderer_renderer__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./renderer/renderer */ "../dist/renderer/renderer.js");
+/* harmony import */ var _renderer_simple_renderer__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./renderer/simple-renderer */ "../dist/renderer/simple-renderer.js");
+/* harmony import */ var _renderer_dot_renderer__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./renderer/dot-renderer */ "../dist/renderer/dot-renderer.js");
+/* harmony import */ var _renderer_category_renderer__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./renderer/category-renderer */ "../dist/renderer/category-renderer.js");
+/* harmony import */ var _renderer_class_renderer__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./renderer/class-renderer */ "../dist/renderer/class-renderer.js");
+/* harmony import */ var _renderer_cluster_renderer__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./renderer/cluster-renderer */ "../dist/renderer/cluster-renderer.js");
+/* harmony import */ var _text_text__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./text/text */ "../dist/text/text.js");
+/* harmony import */ var _label_collision__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./label/collision */ "../dist/label/collision.js");
+/* harmony import */ var _label_label__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./label/label */ "../dist/label/label.js");
+/* harmony import */ var _grid_grid__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./grid/grid */ "../dist/grid/grid.js");
+/* harmony import */ var _grid_tile__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./grid/tile */ "../dist/grid/tile.js");
+/* harmony import */ var _raster_raster__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./raster/raster */ "../dist/raster/raster.js");
+/* harmony import */ var _analysis_interpolation_kriging__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./analysis/interpolation/kriging */ "../dist/analysis/interpolation/kriging.js");
+/* harmony import */ var _analysis_interpolation_idw__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./analysis/interpolation/idw */ "../dist/analysis/interpolation/idw.js");
+/* harmony import */ var _analysis_heat_heat__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./analysis/heat/heat */ "../dist/analysis/heat/heat.js");
+/* harmony import */ var _animation_animation__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./animation/animation */ "../dist/animation/animation.js");
+/* harmony import */ var _animation_point_animation__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./animation/point-animation */ "../dist/animation/point-animation.js");
+/* harmony import */ var _animation_line_animation__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./animation/line-animation */ "../dist/animation/line-animation.js");
+/* harmony import */ var _map_canvas_canvas__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./map/canvas/canvas */ "../dist/map/canvas/canvas.js");
+/* harmony import */ var _map_canvas_viewer__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(/*! ./map/canvas/viewer */ "../dist/map/canvas/viewer.js");
+/* harmony import */ var _map_canvas_animater__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(/*! ./map/canvas/animater */ "../dist/map/canvas/animater.js");
+/* harmony import */ var _map_map__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(/*! ./map/map */ "../dist/map/map.js");
+/* harmony import */ var _map_position_animation__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(/*! ./map/position-animation */ "../dist/map/position-animation.js");
+/* harmony import */ var _map_handler_map_drag__WEBPACK_IMPORTED_MODULE_72__ = __webpack_require__(/*! ./map/handler/map-drag */ "../dist/map/handler/map-drag.js");
+/* harmony import */ var _map_handler_map_scrollwheelzoom__WEBPACK_IMPORTED_MODULE_73__ = __webpack_require__(/*! ./map/handler/map-scrollwheelzoom */ "../dist/map/handler/map-scrollwheelzoom.js");
+/* harmony import */ var _map_handler_map_doubleclickzoom__WEBPACK_IMPORTED_MODULE_74__ = __webpack_require__(/*! ./map/handler/map-doubleclickzoom */ "../dist/map/handler/map-doubleclickzoom.js");
+
+
+
 
 
 
@@ -6335,9 +6345,9 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
         if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom)
             return;
         // before draw
-        this._renderer.init();
+        this._renderer.init(redrawBounds);
         let feature = this._featureClass.first;
-        // let count = 0;
+        let count = 0;
         const features = [];
         while (feature) {
             if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
@@ -6346,10 +6356,11 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
                     feature.draw(ctx, symbol);
                     features.push(feature);
                 }
-                // count += 1;
+                count += 1;
             }
             feature = feature.next;
         }
+        console.log(count);
         if (this.labeled) {
             this.label.draw(ctx, features);
         }
@@ -8246,11 +8257,13 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         // @pane tilePane: HTMLElement = 200
         // Pane for `GridLayer`s and `TileLayer`s
         this.createPane('tilePane');
+        // @pane vtilePane: HTMLElement = 250
+        this.createPane('vtilePane');
+        // @pane animatePane: HTMLElement = 300
+        this.createPane('animatePane');
         // @pane overlayPane: HTMLElement = 400
         // Pane for vectors (`Path`s, like `Polyline`s and `Polygon`s), `ImageOverlay`s and `VideoOverlay`s
         this.createPane('overlayPane');
-        // @pane overlayPane: HTMLElement = 500
-        this.createPane('animatePane');
         // @pane shadowPane: HTMLElement = 500
         // Pane for overlay shadows (e.g. `Marker` shadows)
         // this.createPane('shadowPane');
@@ -9187,29 +9200,31 @@ class ClusterRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_1__.Renderer {
     set Tolerance(value) {
         this._tolerance = value;
     }
-    init() {
+    init(redrawBounds) {
         this._features = {};
         if (!this._featureClass)
             return;
         let feature = this._featureClass.first;
         while (feature) {
-            let exist = false;
-            const keys = Object.keys(this._features);
-            for (let i = 0; i < keys.length; i++) {
-                const id = keys[i];
-                const item = this._featureClass.getFeature(id);
-                if (item) {
-                    const p1 = feature.geometry;
-                    const p2 = item.geometry;
-                    if (p1.distance(p2) <= this._tolerance) {
-                        exist = true;
-                        this._features[id] += 1;
-                        break;
+            if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
+                let exist = false;
+                const keys = Object.keys(this._features);
+                for (let i = 0; i < keys.length; i++) {
+                    const id = keys[i];
+                    const item = this._featureClass.getFeature(id);
+                    if (item) {
+                        const p1 = feature.geometry;
+                        const p2 = item.geometry;
+                        if (p1.distance(p2) <= this._tolerance) {
+                            exist = true;
+                            this._features[id] += 1;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!exist) {
-                this._features[feature.id] = 1;
+                if (!exist) {
+                    this._features[feature.id] = 1;
+                }
             }
             feature = feature.next;
         }
@@ -9281,7 +9296,7 @@ __webpack_require__.r(__webpack_exports__);
  * 渲染方式基类
  */
 class Renderer {
-    init() {
+    init(redrawBounds) {
         //do something before layer draw; 
         //etc ClusterRenderer
     }
@@ -9308,6 +9323,217 @@ __webpack_require__.r(__webpack_exports__);
 class SimpleRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_0__.Renderer {
     getSymbol(feature) {
         return this.symbol;
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/symbol/animate-symbol.js":
+/*!****************************************!*\
+  !*** ../dist/symbol/animate-symbol.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AnimatePointSymbol": () => (/* binding */ AnimatePointSymbol),
+/* harmony export */   "SimpleAnimatePointSymbol": () => (/* binding */ SimpleAnimatePointSymbol)
+/* harmony export */ });
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
+/* harmony import */ var _symbol__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./symbol */ "../dist/symbol/symbol.js");
+
+
+
+class AnimatePointSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
+}
+class SimpleAnimatePointSymbol extends AnimatePointSymbol {
+    constructor() {
+        super(...arguments);
+        /**
+         * 边宽
+         */
+        this.lineWidth = 3;
+        /**
+         * 颜色
+         */
+        this.color = "#ff0000";
+        /**
+         * 扩散速度
+         */
+        this.velocity = 10; //  px/s
+        /**
+         * 扩散的最大半径
+         */
+        this.limit = 30;
+        /**
+         * 扩散的光圈数
+         */
+        this.ring = 3;
+    }
+    draw(ctx, screenXY) {
+        this._screenXY = screenXY;
+        this._ctx = ctx;
+        this._frame && window.cancelAnimationFrame(this._frame);
+        this._start = undefined;
+        //this上下文绑定
+        this.animate = this.animate.bind(this);
+        //动画循环
+        this._frame = window.requestAnimationFrame(this.animate);
+    }
+    getScreenBounds(screenXY) {
+        let r = this.limit, w = this.stroke ? Math.ceil(this.weight / 2) : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
+        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
+    }
+    /**
+     * 动画效果
+     * @remarks
+     * 通过Animator中requestAnimationFrame循环调用，因此注意优化代码，保持帧数
+     * @param {number} elapsed - 已逝去的时间，毫秒
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     */
+    animate(timestamp) {
+        const screenXY = this._screenXY;
+        const ctx = this._ctx;
+        if (this._start === undefined) {
+            this._start = timestamp;
+        }
+        const elapsed = timestamp - this._start;
+        ctx.save();
+        const bounds = this.getScreenBounds(screenXY);
+        const size = bounds.getSize();
+        ctx.clearRect(bounds.min.x, bounds.min.y, size.x, size.y);
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.lineWidth;
+        //keep size
+        //地理坐标 转回 屏幕坐标
+        // ctx.setTransform(1,0,0,1,0,0);
+        /*ctx.arc(this._screenX, this._screenY, this.limit / this.ring, 0, Math.PI * 2, true);
+        ctx.fill();*/
+        for (let i = 0; i < this.ring; i++) {
+            ctx.beginPath(); //Start path
+            ctx.arc(screenXY.x, screenXY.y, (elapsed / 1000 * this.velocity + i * this.limit / this.ring) % this.limit, 0, Math.PI * 2, true);
+            //ctx.arc(this._screenX, this._screenY, this.limit / this.ring + ((elapsed/1000 + (this.limit - this.limit / this.ring) / this.velocity * (i/(this.ring - 1))) * this.velocity) % this.limit, 0, Math.PI * 2, true);
+            ctx.stroke();
+        }
+        ctx.restore();
+        //循环，下一帧
+        this._frame = window.requestAnimationFrame(this.animate);
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/symbol/arrow-symbol.js":
+/*!**************************************!*\
+  !*** ../dist/symbol/arrow-symbol.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ArrowSymbol": () => (/* binding */ ArrowSymbol)
+/* harmony export */ });
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _symbol__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./symbol */ "../dist/symbol/symbol.js");
+
+
+/**
+ * 箭头符号
+ */
+class ArrowSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.LineSymbol {
+    constructor() {
+        super(...arguments);
+        /**
+         * 线宽
+         */
+        this.lineWidth = 2;
+        /**
+         * 决定绘制箭头的最小线长
+         * @remarks 屏幕坐标，单位pixel
+         * 默认 >50pixels will draw arrow
+         */
+        this.minLength = 50;
+        /**
+         * 箭翼长度
+         */
+        this.arrowLength = 10;
+        /**
+         * 箭翼夹角
+         * @remarks 默认 angle 30 = Math.PI / 6
+         */
+        this.arrowAngle = Math.PI / 6;
+    }
+    /**
+     * 绘制线
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     * @param {number[][]} screen - 线对应坐标点的屏幕坐标集合
+     */
+    draw(ctx, screenXYs) {
+        ctx.save();
+        ctx.strokeStyle = this.strokeStyle;
+        ctx.lineWidth = this.lineWidth;
+        //keep lineWidth
+        // ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.beginPath();
+        screenXYs.forEach((screenXY, index) => {
+            const screenX = screenXY.x, screenY = screenXY.y;
+            if (index === 0) {
+                ctx.moveTo(screenX, screenY);
+            }
+            else {
+                ctx.lineTo(screenX, screenY);
+            }
+        });
+        ctx.stroke();
+        //已知 起点和终点  求沿线距起点定长的点
+        const _getPointAlongLine = (p1, p2, d) => {
+            //line length
+            let l = Math.sqrt((p2[0] - p1[0]) * (p2[0] - p1[0]) + (p2[1] - p1[1]) * (p2[1] - p1[1]));
+            let t = d / l;
+            return [(1 - t) * p1[0] + t * p2[0], (1 - t) * p1[1] + t * p2[1]];
+        };
+        //已知 起点 y = kx + b   求沿线距起点定长的点 两个点
+        const _getPointAlongLine2 = (k, b, p, d) => {
+            let x0 = p[0] + Math.sqrt((d * d) / (k * k + 1)), x1 = p[0] - Math.sqrt((d * d) / (k * k + 1));
+            return [[x0, k * x0 + b], [x1, k * x1 + b]];
+        };
+        screenXYs.reduce((prev, cur) => {
+            if (prev) {
+                const length = Math.sqrt((cur.x - prev.x) * (cur.x - prev.x) + (cur.y - prev.y) * (cur.y - prev.y));
+                if (length >= this.minLength) {
+                    //中点 即箭头
+                    const [middleX, middleY] = [(prev.x + cur.x) / 2, (prev.y + cur.y) / 2];
+                    //箭尾垂线的垂足
+                    const [footX, footY] = _getPointAlongLine([middleX, middleY], [prev.x, prev.y], Math.cos(this.arrowAngle) * this.arrowLength);
+                    const k = (cur.y - prev.y) / (cur.x - prev.x);
+                    // 1/k 垂线
+                    const points = _getPointAlongLine2(-1 / k, footY - footX * -1 / k, [footX, footY], Math.sin(this.arrowAngle) * this.arrowLength);
+                    //两点
+                    points.forEach(point => {
+                        ctx.beginPath();
+                        ctx.moveTo(middleX, middleY);
+                        ctx.lineTo(point[0], point[1]);
+                        ctx.stroke();
+                    });
+                }
+                return cur;
+            }
+            else {
+                return cur;
+            }
+        });
+        ctx.restore();
+    }
+    getScreenBounds(screenXYs) {
+        const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
+        screenXYs.forEach(screenXY => {
+            bounds.extend(screenXY);
+        });
+        // extend weight
+        return bounds;
     }
 }
 
@@ -9460,6 +9686,90 @@ class ClusterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_3__.PointSymbol {
         ctx.fillStyle = this.fontColor;
         ctx.font = this.fontSize + "px/1 " + this.fontFamily + " " + this.fontWeight;
         ctx.fillText(this.text, screenXY.x, screenXY.y);
+        ctx.restore();
+    }
+    getScreenBounds(screenXY) {
+        let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
+        return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
+    }
+}
+
+
+/***/ }),
+
+/***/ "../dist/symbol/letter-symbol.js":
+/*!***************************************!*\
+  !*** ../dist/symbol/letter-symbol.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LetterSymbol": () => (/* binding */ LetterSymbol)
+/* harmony export */ });
+/* harmony import */ var _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/screen-bounds */ "../dist/common/screen-bounds.js");
+/* harmony import */ var _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/screen-xy */ "../dist/common/screen-xy.js");
+/* harmony import */ var _symbol__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./symbol */ "../dist/symbol/symbol.js");
+
+
+
+/**
+ * 字符符号
+ * @remarks
+ * 中英文皆可，注意控制长度，推荐单个字符
+ */
+class LetterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
+    constructor() {
+        super(...arguments);
+        /**
+         * 外圈半径
+         */
+        this.radius = 10;
+        /**
+         * 字符，中英文皆可，推荐单个字符
+         */
+        this.letter = "";
+        /**
+         * 字体颜色
+         */
+        this.fontColor = "#ff0000";
+        /**
+         * 字体大小
+         */
+        this.fontSize = 12;
+        /**
+         * 字体
+         */
+        this.fontFamily = "YaHei";
+        /**
+         * 字体粗细
+         */
+        this.fontWeight = "Bold";
+    }
+    /**
+     * 绘制字符符号
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     * @param {number} screenX - 屏幕坐标X
+     * @param {number} screenY - 屏幕坐标Y
+     */
+    draw(ctx, screenXY) {
+        ctx.save();
+        ctx.strokeStyle = this.strokeStyle;
+        ctx.fillStyle = this.fillStyle;
+        ctx.lineWidth = this.lineWidth;
+        ctx.beginPath(); //Start path
+        //keep size
+        // ctx.setTransform(1, 0, 0, 1, 0, 0);
+        //绘制外圈
+        ctx.arc(screenXY.x, screenXY.y, this.radius, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.stroke();
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillStyle = this.fontColor;
+        ctx.font = this.fontSize + "px/1 " + this.fontFamily + " " + this.fontWeight;
+        //绘制字符
+        ctx.fillText(this.letter, screenXY.x, screenXY.y);
         ctx.restore();
     }
     getScreenBounds(screenXY) {
@@ -11045,9 +11355,9 @@ function template(str, data) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!***************************!*\
-  !*** ./class-renderer.js ***!
-  \***************************/
+/*!*****************************!*\
+  !*** ./cluster-renderer.js ***!
+  \*****************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dist */ "../dist/index.js");
 
@@ -11070,25 +11380,18 @@ window.load = async () => {
   //新建矢量图层
   const layer = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
   layer.featureClass = featureClass;
-
+  //设置渲染方式——聚合渲染
+  const renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.ClusterRenderer();
+  renderer.featureClass = featureClass;
   //设置渲染符号
-  const symbol2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
-  symbol2.strokeStyle = "#3388FF";
-  symbol2.fillStyle = "#3388FF80";
-  const symbol3 = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
-  symbol3.strokeStyle = "#88FF33";
-  symbol3.fillStyle = "#88FF3380";
-  const symbol4 = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
-  symbol4.strokeStyle = "#FF8833";
-  symbol4.fillStyle = "#FF883380";
-  //设置渲染方式——分级渲染
-  layer.renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRenderer();
-  layer.renderer.field = field;
-  layer.renderer.items.push(new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRendererItem(0, 3, symbol2));
-  layer.renderer.items.push(new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRendererItem(4, 6, symbol3));
-  layer.renderer.items.push(new _dist__WEBPACK_IMPORTED_MODULE_0__.ClassRendererItem(7, 10, symbol4));
+  const symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+  symbol.strokeStyle = "#3388FF";
+  symbol.fillStyle = "#3388FF80";
+  renderer.defaultSymbol = symbol;
+  layer.renderer = renderer;
+
   //生成随机数据
-  for (let i = 1; i <= 200; i++) {
+  for (let i = 1; i <= 20000; i++) {
     const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1));
     const feature = new _dist__WEBPACK_IMPORTED_MODULE_0__.Feature(point, { rank: parseInt(Math.random() * 10) });
     featureClass.addFeature(feature);

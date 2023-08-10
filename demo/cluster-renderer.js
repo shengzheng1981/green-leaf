@@ -33,7 +33,7 @@ window.load = async () => {
   layer.renderer = renderer;
 
   //生成随机数据
-  for (let i = 1; i <= 200; i++) {
+  for (let i = 1; i <= 20000; i++) {
     const point = new Point(new LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1));
     const feature = new Feature(point, { rank: parseInt(Math.random() * 10) });
     featureClass.addFeature(feature);

@@ -939,6 +939,8 @@ export class Map extends EventedObject {
     // @pane tilePane: HTMLElement = 200
     // Pane for `GridLayer`s and `TileLayer`s
     this.createPane('tilePane');
+    // @pane vtilePane: HTMLElement = 250
+    this.createPane('vtilePane');
     // @pane animatePane: HTMLElement = 300
     this.createPane('animatePane');
     // @pane overlayPane: HTMLElement = 400

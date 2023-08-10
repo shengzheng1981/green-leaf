@@ -97,6 +97,7 @@
 .leaflet-pane         { z-index: 400; }
 
 .leaflet-tile-pane    { z-index: 200; }
+.leaflet-vtile-pane   { z-index: 250; }
 .leaflet-animate-pane { z-index: 300; }
 .leaflet-overlay-pane { z-index: 400; }
 .leaflet-shadow-pane  { z-index: 500; }
