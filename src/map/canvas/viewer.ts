@@ -68,8 +68,10 @@ export class Viewer extends Canvas {
 
   addGraphic(graphic: Graphic) {
     this._graphicLayer.addGraphic(graphic);
-    graphic.transform(this._origin, this._zoom);
-    this._requestRedraw(graphic.geometry);
+    if (this._origin) {
+      graphic.transform(this._origin, this._zoom);
+      this._requestRedraw(graphic.geometry);
+    }
   }
 
   removeGraphic(graphic: Graphic) {
@@ -83,51 +85,72 @@ export class Viewer extends Canvas {
   }
 
   addGraphicLayer(graphicLayer: GraphicLayer) {
-    graphicLayer.transform(this._origin, this._zoom);
     this._graphicLayers.push(graphicLayer);
-    this._updateGeometry();
+    if (this._origin) {
+      graphicLayer.transform(this._origin, this._zoom);
+      this._updateGeometry();
+    }
   }
 
   removeGraphicLayer(graphicLayer: GraphicLayer) {
     const index = this._graphicLayers.findIndex(layer => layer.id == graphicLayer.id);
-    this._graphicLayers.splice(index, 1);
+    if (index != -1) {
+      this._graphicLayers.splice(index, 1);
+      this._updateGeometry();
+    }
   }
 
   clearGraphicLayers() {
-    this._graphicLayers = [];
-    this._updateGeometry();
+    if (this._graphicLayers.length > 0) {
+      this._graphicLayers = [];
+      this._updateGeometry();
+    }
   }
 
   addFeatureLayer(featureLayer: FeatureLayer) {
-    featureLayer.transform(this._origin, this._zoom);
     this._featureLayers.push(featureLayer);
-    this._updateGeometry();
+    if (this._origin) {
+      featureLayer.transform(this._origin, this._zoom);
+      this._updateGeometry();
+    }
   }
 
   removeFeatureLayer(featureLayer: FeatureLayer) {
     const index = this._featureLayers.findIndex(layer => layer.id == featureLayer.id);
-    this._featureLayers.splice(index, 1);
+    if (index != -1) {
+      this._featureLayers.splice(index, 1);
+      this._updateGeometry();
+    }
   }
 
   clearFeatureLayers() {
-    this._featureLayers = [];
-    this._updateGeometry();
+    if (this._featureLayers.length > 0) {
+      this._featureLayers = [];
+      this._updateGeometry();
+    }
   }
 
   addRasterLayer(rasterLayer: RasterLayer) {
-    rasterLayer.transform(this._origin, this._zoom);
     this._rasterLayers.push(rasterLayer);
-    this._updateGeometry();
+    if (this._origin) {
+      rasterLayer.transform(this._origin, this._zoom);
+      this._updateGeometry();
+    }
   }
 
   removeRasterLayer(rasterLayer: RasterLayer) {
     const index = this._rasterLayers.findIndex(layer => layer.id == rasterLayer.id);
-    this._rasterLayers.splice(index, 1);
+    if (index != -1) {
+      this._rasterLayers.splice(index, 1);
+      this._updateGeometry();
+    }
   }
 
   clearRasterLayers() {
-    this._rasterLayers = [];
-    this._updateGeometry();
+    if (this._rasterLayers.length > 0) {
+      this._rasterLayers = [];
+      this._updateGeometry();
+    }
   }
 
   _draw() {

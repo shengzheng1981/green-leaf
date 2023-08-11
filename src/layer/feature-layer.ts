@@ -95,7 +95,7 @@ export class FeatureLayer extends Layer {
     // before draw
     this._renderer.init(redrawBounds);
     let feature = this._featureClass.first;
-    let count = 0;
+    // let count = 0;
     const features = [];
     while (feature) {
       if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
@@ -104,11 +104,11 @@ export class FeatureLayer extends Layer {
           feature.draw(ctx, symbol);       
           features.push(feature);
         }
-        count += 1;
+        // count += 1;
       }
       feature = feature.next;
     }
-    console.log(count);
+    // console.log(count);
     if (this.labeled) {
       this.label.draw(ctx, features);
     }

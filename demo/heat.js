@@ -2,7 +2,7 @@
 import {
   LatLng, Map, Point, SimplePointSymbol,
   Feature, FeatureLayer, FeatureClass, GeometryType,
-  CategoryRenderer, CategoryRendererItem, Field, FieldType, Label,
+  SimpleRenderer, Field, FieldType, Label,
   RasterLayer, Heat, Tile
 } from "../dist";
 
@@ -23,6 +23,9 @@ window.load = async () => {
   //新建矢量图层
   const layer2 = new FeatureLayer();
   layer2.featureClass = featureClass;
+  //设置渲染方式——单一渲染
+  layer2.renderer = new SimpleRenderer();
+  layer2.renderer.symbol = new SimplePointSymbol();
   //设置图层标记
   const label = new Label();
   label.field = field;

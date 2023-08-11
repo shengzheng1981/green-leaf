@@ -6347,7 +6347,7 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
         // before draw
         this._renderer.init(redrawBounds);
         let feature = this._featureClass.first;
-        let count = 0;
+        // let count = 0;
         const features = [];
         while (feature) {
             if (!redrawBounds || (feature.geometry && feature.geometry.screenBounds && feature.geometry.screenBounds.intersects(redrawBounds))) {
@@ -6356,11 +6356,11 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
                     feature.draw(ctx, symbol);
                     features.push(feature);
                 }
-                count += 1;
+                // count += 1;
             }
             feature = feature.next;
         }
-        console.log(count);
+        // console.log(count);
         if (this.labeled) {
             this.label.draw(ctx, features);
         }
@@ -7064,8 +7064,10 @@ class Viewer extends _canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas {
     }
     addGraphic(graphic) {
         this._graphicLayer.addGraphic(graphic);
-        graphic.transform(this._origin, this._zoom);
-        this._requestRedraw(graphic.geometry);
+        if (this._origin) {
+            graphic.transform(this._origin, this._zoom);
+            this._requestRedraw(graphic.geometry);
+        }
     }
     removeGraphic(graphic) {
         this._graphicLayer.removeGraphic(graphic);
@@ -7076,43 +7078,64 @@ class Viewer extends _canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas {
         this._updateGeometry();
     }
     addGraphicLayer(graphicLayer) {
-        graphicLayer.transform(this._origin, this._zoom);
         this._graphicLayers.push(graphicLayer);
-        this._updateGeometry();
+        if (this._origin) {
+            graphicLayer.transform(this._origin, this._zoom);
+            this._updateGeometry();
+        }
     }
     removeGraphicLayer(graphicLayer) {
         const index = this._graphicLayers.findIndex(layer => layer.id == graphicLayer.id);
-        this._graphicLayers.splice(index, 1);
+        if (index != -1) {
+            this._graphicLayers.splice(index, 1);
+            this._updateGeometry();
+        }
     }
     clearGraphicLayers() {
-        this._graphicLayers = [];
-        this._updateGeometry();
+        if (this._graphicLayers.length > 0) {
+            this._graphicLayers = [];
+            this._updateGeometry();
+        }
     }
     addFeatureLayer(featureLayer) {
-        featureLayer.transform(this._origin, this._zoom);
         this._featureLayers.push(featureLayer);
-        this._updateGeometry();
+        if (this._origin) {
+            featureLayer.transform(this._origin, this._zoom);
+            this._updateGeometry();
+        }
     }
     removeFeatureLayer(featureLayer) {
         const index = this._featureLayers.findIndex(layer => layer.id == featureLayer.id);
-        this._featureLayers.splice(index, 1);
+        if (index != -1) {
+            this._featureLayers.splice(index, 1);
+            this._updateGeometry();
+        }
     }
     clearFeatureLayers() {
-        this._featureLayers = [];
-        this._updateGeometry();
+        if (this._featureLayers.length > 0) {
+            this._featureLayers = [];
+            this._updateGeometry();
+        }
     }
     addRasterLayer(rasterLayer) {
-        rasterLayer.transform(this._origin, this._zoom);
         this._rasterLayers.push(rasterLayer);
-        this._updateGeometry();
+        if (this._origin) {
+            rasterLayer.transform(this._origin, this._zoom);
+            this._updateGeometry();
+        }
     }
     removeRasterLayer(rasterLayer) {
         const index = this._rasterLayers.findIndex(layer => layer.id == rasterLayer.id);
-        this._rasterLayers.splice(index, 1);
+        if (index != -1) {
+            this._rasterLayers.splice(index, 1);
+            this._updateGeometry();
+        }
     }
     clearRasterLayers() {
-        this._rasterLayers = [];
-        this._updateGeometry();
+        if (this._rasterLayers.length > 0) {
+            this._rasterLayers = [];
+            this._updateGeometry();
+        }
     }
     _draw() {
         if (this._ctx) {
@@ -11355,9 +11378,9 @@ function template(str, data) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!*****************************!*\
-  !*** ./cluster-renderer.js ***!
-  \*****************************/
+/*!*****************!*\
+  !*** ./heat.js ***!
+  \*****************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dist */ "../dist/index.js");
 
@@ -11372,32 +11395,42 @@ window.load = async () => {
   tile.addTo(map);
 
   map.setView(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), 12);
-  //新建要素类
+
   const featureClass = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureClass(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Point);
   //新建字段
   const field = new _dist__WEBPACK_IMPORTED_MODULE_0__.Field("rank", _dist__WEBPACK_IMPORTED_MODULE_0__.FieldType.Number);
   featureClass.addField(field);
   //新建矢量图层
-  const layer = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
-  layer.featureClass = featureClass;
-  //设置渲染方式——聚合渲染
-  const renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.ClusterRenderer();
-  renderer.featureClass = featureClass;
-  //设置渲染符号
-  const symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
-  symbol.strokeStyle = "#3388FF";
-  symbol.fillStyle = "#3388FF80";
-  renderer.defaultSymbol = symbol;
-  layer.renderer = renderer;
-
+  const layer2 = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
+  layer2.featureClass = featureClass;
+  //设置渲染方式——单一渲染
+  layer2.renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimpleRenderer();
+  layer2.renderer.symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+  //设置图层标记
+  const label = new _dist__WEBPACK_IMPORTED_MODULE_0__.Label();
+  label.field = field;
+  layer2.label = label;
+  layer2.labeled = true;
   //生成随机数据
-  for (let i = 1; i <= 20000; i++) {
+  for (let i = 1; i <= 100; i++) {
     const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1));
     const feature = new _dist__WEBPACK_IMPORTED_MODULE_0__.Feature(point, { rank: parseInt(Math.random() * 10) });
+    feature.on("click", () => {
+      console.log(feature.properties["rank"]);
+    });
     featureClass.addFeature(feature);
   }
   //添加矢量图层
-  map.addFeatureLayer(layer);
+  map.addFeatureLayer(layer2);
+  //新建热力图
+  const raster = new _dist__WEBPACK_IMPORTED_MODULE_0__.Heat();
+  raster.honey = true;
+  raster.generate(featureClass, field);
+  //新建栅格图层
+  const rasterLayer = new _dist__WEBPACK_IMPORTED_MODULE_0__.RasterLayer();
+  rasterLayer.raster = raster;
+  //添加栅格图层
+  map.addRasterLayer(rasterLayer);
 
 }
 })();

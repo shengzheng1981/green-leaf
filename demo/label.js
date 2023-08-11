@@ -1,7 +1,7 @@
 
 import {
   LatLng, Map, Point, Feature, FeatureLayer, FeatureClass, GeometryType,
-  Field, FieldType, Label, SimpleRenderer, Tile
+  Field, FieldType, Label, SimpleRenderer, Tile, SimplePointSymbol
 } from "../dist";
 
 window.load = async () => {
@@ -22,6 +22,7 @@ window.load = async () => {
   layer2.featureClass = featureClass;
   //设置渲染方式——单一渲染
   layer2.renderer = new SimpleRenderer();
+  layer2.renderer.symbol = new SimplePointSymbol();
   //设置图层标记
   const label = new Label();
   label.field = field;
