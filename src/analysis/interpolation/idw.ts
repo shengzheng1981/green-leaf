@@ -7,18 +7,30 @@ import { GeometryType } from "../../geometry/geometry";
 import { Point } from "../../geometry/point";
 import { Raster } from "../../raster/raster";
 
-
 /*
  * 反距离加权法（Inverse Distance Weighted）插值
  */
 export class IDW extends Raster {
-
+  /**
+   * 数据源
+   */
   private _featureClass: FeatureClass;
+  /**
+   * 权值字段
+   */
   private _field: Field;
+  /**
+   * 数据值最小值
+   */
   private _min: number;
+  /**
+   * 数据值最大值
+   */
   private _max: number;
+  /**
+   * 0-255色带
+   */
   private _ramp: HTMLCanvasElement;
-  private _origin: ScreenXY;
 
   /**
    * 分辨率
@@ -65,25 +77,39 @@ export class IDW extends Raster {
   get dynamic(): boolean {
     return true;
   }
+  /**
+   * 数据值最小值
+   */
   get min(): number {
     return this._min;
   }
+  /**
+   * 数据值最小值
+   */
   set min(value: number) {
     this._min = value;
   }
+  /**
+   * 数据值最大值
+   */
   get max(): number {
     return this._max;
   }
+  /**
+   * 数据值最大值
+   */
   set max(value: number) {
     this._max = value;
   }
   /**
-   * 创建插值
+   * 构造函数
    */
   constructor() {
     super(0, 0, 0, 0);
   }
-
+  /**
+   * 数据投影
+   */
   project() {
     if (!this._crs) return;
     let feature = this._featureClass.first;
@@ -92,9 +118,12 @@ export class IDW extends Raster {
       feature = feature.next;
     }
   }
-
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   transform(origin: ScreenXY, zoom: number) {
-    this._origin = origin;
     let feature = this._featureClass.first;
     while (feature) {
       feature.geometry.transform(origin, zoom);
@@ -102,7 +131,7 @@ export class IDW extends Raster {
     }
   }
 
-  /*
+  /**
    * 初始化
    * @param {FeatureClass} featureClass - 点要素类
    * @param {Field} field - 值字段
@@ -131,9 +160,6 @@ export class IDW extends Raster {
    * @remarks
    * 遍历图形集合进行绘制
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {Projection} projection - 坐标投影转换
-   * @param {Bound} extent - 当前可视范围
-   * @param {number} zoom - 当前缩放级别
    */
   draw(ctx: CanvasRenderingContext2D) {
     if (!this._featureClass || !this._field) return;

@@ -35,7 +35,9 @@ const MOVE = {
 	pointerdown: 'touchmove',
 	MSPointerDown: 'touchmove'
 };
-
+/**
+ * 可拖拽选项
+ */
 export class DraggableOptions extends OptionsObject {
   // @section
   // @aka Draggable options
@@ -46,7 +48,9 @@ export class DraggableOptions extends OptionsObject {
 
   preventOutline: boolean = false;
 }
-
+/**
+ * 可拖拽类
+ */
 export class DraggableObject extends EventedObject {
 	static _dragging: DraggableObject;
   options: DraggableOptions = new DraggableOptions();

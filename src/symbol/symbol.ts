@@ -134,7 +134,6 @@ export class SimplePointSymbol extends PointSymbol {
     return new ScreenBounds(screenXY.subtract(p), screenXY.add(p));
   }
 
-  
 }
 
 /**
@@ -284,10 +283,6 @@ export class SimpleLineSymbol extends LineSymbol {
  */
 export class SimpleFillSymbol extends FillSymbol {
 
-  /**
-   * 重写线宽默认值，基类为1，按需设置，可省略
-   */
-  public lineWidth: number = 2;
   /**
    * 绘制面
    * @remarks

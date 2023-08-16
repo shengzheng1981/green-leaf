@@ -8,14 +8,27 @@ import { Point } from "../geometry/point";
 import { Polygon } from "../geometry/polygon";
 import { Polyline } from "../geometry/polyline";
 import { Adapter } from "./adapter";
-
+/**
+ * GeoJSON数据适配基类
+ */
 export class GeoJSONAdapter extends Adapter {
+  /**
+   * 数据文件地址
+   */
   private _url: string;
+  /**
+    * 构造函数
+    * @param {GeometryType} type - 矢量数据类型
+    * @param {string} url - 数据文件地址
+    */
   constructor(type: GeometryType, url: string) {
     super(type);
     this._url = url;
   }
-
+  /**
+   * 获取矢量数据
+   * @return {Promise<Feature[]>} 返回Promise
+   */
   async fetch(): Promise<Feature[]> {
     const response = await fetch(this._url);
     const data = await response.json();

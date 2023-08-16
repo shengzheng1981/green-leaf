@@ -8,7 +8,10 @@ import { Animation } from './animation';
  * 类似flashing效果，从中心点向外光环扩散效果
  */
 export class PointAnimation extends Animation {
-  protected _point: Point;
+  /**
+   * 点
+   */
+  private _point: Point;
 
   /**
    * 边宽
@@ -32,7 +35,7 @@ export class PointAnimation extends Animation {
   ring: number = 3;
   //radius: number = this.limit / this.ring;
   /**
-   * 创建动画效果
+   * 构造函数
    * @param {Point} geometry - 点
    */
   constructor(geometry: Point) {
@@ -40,13 +43,10 @@ export class PointAnimation extends Animation {
     this._point = geometry;
   }
   /**
-   * 动画效果初始化
-   * @remarks
-   * 一般情况下，把一次性逻辑放于此处，以及处理动画的初始状态
-   * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {Projection} projection - 坐标投影转换
+   * 数据投影
+   * @param {CRS} crs - 坐标系
    */
-   project(crs: CRS) {
+  project(crs: CRS) {
     this._point.crs = crs;
     /*ctx.save();
     ctx.strokeStyle = this.color;
@@ -59,6 +59,11 @@ export class PointAnimation extends Animation {
     ctx.stroke();
     ctx.restore();*/
   }
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   transform(origin: ScreenXY, zoom: number) {
     this._point.transform(origin, zoom);
   }

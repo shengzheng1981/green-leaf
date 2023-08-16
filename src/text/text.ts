@@ -3,7 +3,7 @@
  * @remarks
  * 常用于文本标注
  */
- export class Text {
+export class Text {
   /**
    * 边框宽
    */
@@ -66,22 +66,22 @@
    * @remarks 按逆时针方向寻找合适位置
    */
   replacement() {
-      if (this.auto) {
-          switch (this.placement) {
-              case "BOTTOM":
-                  this.placement = "RIGHT";
-                  break;
-              case "RIGHT":
-                  this.placement = "TOP";
-                  break;
-              case "TOP":
-                  this.placement = "LEFT";
-                  break;
-              case "LEFT":
-                  this.placement = "BOTTOM";
-                  break;
-          }
+    if (this.auto) {
+      switch (this.placement) {
+        case "BOTTOM":
+          this.placement = "RIGHT";
+          break;
+        case "RIGHT":
+          this.placement = "TOP";
+          break;
+        case "TOP":
+          this.placement = "LEFT";
+          break;
+        case "LEFT":
+          this.placement = "BOTTOM";
+          break;
       }
+    }
   }
 
 }

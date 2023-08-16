@@ -1,34 +1,17 @@
 import { formatNum } from '../util/util';
 
-/*
- * @class Point
- * @aka L.Point
- *
- * Represents a point with `x` and `y` coordinates in pixels.
- *
- * @example
- *
- * ```js
- * var point = L.point(200, 300);
- * ```
- *
- * All Leaflet methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
- *
- * ```js
- * map.panBy([200, 300]);
- * map.panBy(L.point(200, 300));
- * ```
- *
- * Note that `Point` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 坐标
  */
-
 export abstract class XY {
 
 	public x: number;
 	public y: number;
-
+  /**
+    * 构造函数
+    * @param {number} x - X
+    * @param {number} y - Y
+    */
 	constructor(x: number = 0, y: number = 0) {
 		// @property x: Number; The `x` coordinate of the point
 		this.x = x;
@@ -36,16 +19,21 @@ export abstract class XY {
 		this.y = y;
 	}
 
-  // @method clone(): Point
-	// Returns a copy of the current point.
-	// clone(): XY {
-	// 	return new XY(this.x, this.y);
-	// }
+  /**
+   * 克隆坐标
+   * @return {XY} 返回坐标
+   */
   abstract clone(): XY;
 
 	// @method add(otherPoint: Point): Point
 	// Returns the result of addition of the current and the given points.
-	add(otherXY: XY, clone: boolean = true): XY {
+	/**
+   * 坐标相加
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  add(otherXY: XY, clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -58,7 +46,13 @@ export abstract class XY {
 
 	// @method subtract(otherPoint: Point): Point
 	// Returns the result of subtraction of the given point from the current.
-	subtract(otherXY: XY, clone: boolean = true): XY {
+	/**
+   * 坐标相减
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  subtract(otherXY: XY, clone: boolean = true): XY {
 		let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -71,7 +65,13 @@ export abstract class XY {
 
 	// @method divideBy(num: Number): Point
 	// Returns the result of division of the current point by the given number.
-	divideBy(num: number, clone: boolean = true): XY {
+	/**
+   * 坐标除以常数
+   * @param {number} num - 常数
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  divideBy(num: number, clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -84,7 +84,13 @@ export abstract class XY {
 
 	// @method multiplyBy(num: Number): Point
 	// Returns the result of multiplication of the current point by the given number.
-	multiplyBy(num: number, clone: boolean = true): XY {
+	/**
+   * 坐标乘以常数
+   * @param {number} num - 常数
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  multiplyBy(num: number, clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -100,7 +106,13 @@ export abstract class XY {
 	// `scale`. In linear algebra terms, multiply the point by the
 	// [scaling matrix](https://en.wikipedia.org/wiki/Scaling_%28geometry%29#Matrix_representation)
 	// defined by `scale`.
-	scaleBy(otherXY: XY, clone: boolean = true): XY {
+	/**
+   * 坐标相乘
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  scaleBy(otherXY: XY, clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -114,7 +126,13 @@ export abstract class XY {
 	// @method unscaleBy(scale: Point): Point
 	// Inverse of `scaleBy`. Divide each coordinate of the current point by
 	// each coordinate of `scale`.
-	unscaleBy(otherXY: XY, clone: boolean = true): XY {
+	/**
+   * 坐标相除
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  unscaleBy(otherXY: XY, clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -127,7 +145,12 @@ export abstract class XY {
 
 	// @method round(): Point
 	// Returns a copy of the current point with rounded coordinates.
-	round(clone: boolean = true): XY {
+	/**
+   * 坐标取整（四舍五入）
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  round(clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -140,7 +163,12 @@ export abstract class XY {
 
 	// @method floor(): Point
 	// Returns a copy of the current point with floored coordinates (rounded down).
-	floor(clone: boolean = true): XY {
+	/**
+   * 坐标向下取整
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  floor(clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -153,7 +181,12 @@ export abstract class XY {
 
 	// @method ceil(): Point
 	// Returns a copy of the current point with ceiled coordinates (rounded up).
-	ceil(clone: boolean = true): XY {
+	/**
+   * 坐标向上取整
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  ceil(clone: boolean = true): XY {
 		let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -166,7 +199,12 @@ export abstract class XY {
 
 	// @method trunc(): Point
 	// Returns a copy of the current point with truncated coordinates (rounded towards zero).
-	trunc(clone: boolean = true): XY {
+	/**
+   * 坐标直接取整（将数字的小数部分去掉）
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
+  trunc(clone: boolean = true): XY {
     let source: XY = this;
 		// non-destructive, returns a new point
     if (clone) {
@@ -179,7 +217,12 @@ export abstract class XY {
 
 	// @method distanceTo(otherPoint: Point): Number
 	// Returns the cartesian distance between the current and the given points.
-	distanceTo(point: XY): number {
+	/**
+   * 计算与另一点间欧式距离
+   * @param {XY} point - 另一点坐标
+   * @return {number} 返回距离
+   */
+  distanceTo(point: XY): number {
 		let x = point.x - this.x,
 		    y = point.y - this.y;
 
@@ -188,7 +231,12 @@ export abstract class XY {
 
 	// @method equals(otherPoint: Point): Boolean
 	// Returns `true` if the given point has the same coordinates.
-	equals(point: XY): boolean {
+	/**
+   * 判断坐标是否相等
+   * @param {XY} obj - 坐标
+   * @return {boolean} 返回是否相等
+   */
+  equals(point: XY): boolean {
 		if (!point) return false;
 		return point.x === this.x &&
 		       point.y === this.y;
@@ -196,17 +244,28 @@ export abstract class XY {
 
 	// @method contains(otherPoint: Point): Boolean
 	// Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
-	contains(point: XY): boolean {
+	/**
+   * 判断是否包含坐标
+   * @remark Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+   * @param {XY} obj - 坐标
+   * @return {boolean} 返回是否包含
+   */
+  contains(point: XY): boolean {
 		return Math.abs(point.x) <= Math.abs(this.x) &&
 		       Math.abs(point.y) <= Math.abs(this.y);
 	}
 
 	// @method toString(): String
 	// Returns a string representation of the point for debugging purposes.
-	toString(): string {
+	/**
+   * 输出字符串
+   * @param {number} precision - 保留精度
+   * @return {string} 返回字符串
+   */
+  toString(precision: number = 3): string {
 		return 'XY(' +
-		        formatNum(this.x) + ', ' +
-		        formatNum(this.y) + ')';
+		        formatNum(this.x, precision) + ', ' +
+		        formatNum(this.y, precision) + ')';
 	}
 
 }

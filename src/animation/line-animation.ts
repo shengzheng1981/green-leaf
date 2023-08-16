@@ -7,16 +7,18 @@ import { Polyline } from "../geometry/polyline";
  * @remarks
  * 类似航线效果
  */
- export class LineAnimation extends Animation {
-  protected _polyline: Polyline;
-  protected _screen: number[][];
+export class LineAnimation extends Animation {
+  /**
+   * 线
+   */
+  private _polyline: Polyline;
 
   private _start: number[];
   private _end: number[];
 
   private _control: number[];
   private _percent = 0;
-  private _gradient;
+
   /**
    * 线宽
    */
@@ -34,18 +36,25 @@ import { Polyline } from "../geometry/polyline";
    */
   angle: number = Math.PI / 4;
   /**
-   * 创建动画效果
+   * 构造函数
    * @param {Polyline} geometry - 线
    */
   constructor(geometry: Polyline) {
       super();
       this._polyline = geometry;
   }
-
+  /**
+   * 数据投影
+   * @param {CRS} crs - 坐标系
+   */
   project(crs: CRS) {
     this._polyline.crs = crs;
   }
-  
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   transform(origin: ScreenXY, zoom: number) {
     this._polyline.transform(origin, zoom);
     //TODO: polyline, not line; but now just line
@@ -90,13 +99,6 @@ import { Polyline } from "../geometry/polyline";
       //地理坐标 转回 屏幕坐标
       // ctx.setTransform(1,0,0,1,0,0);
 
-      // if (!this._gradient) {
-      //   this._gradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
-      //   this._gradient.addColorStop(0, this.startColor);
-      //   // lineGradient.addColorStop(0.3, '#fff');
-      //   this._gradient.addColorStop(1, this.endColor);
-      // }
-      // ctx.strokeStyle = this._gradient;    //设置线条样式
       const lineGradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
       lineGradient.addColorStop(0, this.startColor);
       lineGradient.addColorStop(1, this.endColor);

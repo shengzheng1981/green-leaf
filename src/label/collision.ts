@@ -6,35 +6,34 @@ import { Text } from "../text/text";
  * 冲突检测基类
  */
 export class Collision {
-    /**
-     * 冲突检测
-     * @param {Feature[]} features - 准备绘制标注的要素集合
-     * @param {Field} field - 标注字段
-     * @param {SimpleTextSymbol} symbol - 标注文本符号
-     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @return {Feature[]} 返回可绘制标注的要素集合
-     */
-    test(ctx: CanvasRenderingContext2D, features: Feature[], field: Field, text: Text): Feature[] { return []; }
+  /**
+   * 冲突检测
+   * @param {Feature[]} features - 准备绘制标注的要素集合
+   * @param {Field} field - 标注字段
+   * @param {SimpleTextSymbol} symbol - 标注文本符号
+   * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+   * @param {Projection} projection - 坐标投影转换
+   * @return {Feature[]} 返回可绘制标注的要素集合
+   */
+  test(ctx: CanvasRenderingContext2D, features: Feature[], field: Field, text: Text): Feature[] { return []; }
 }
 
 /**
  * 无检测机制
  */
 export class NullCollision {
-    /**
-     * 冲突检测
-     * @param {Feature[]} features - 准备绘制标注的要素集合
-     * @param {Field} field - 标注字段
-     * @param {SimpleTextSymbol} symbol - 标注文本符号
-     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @return {Feature[]} 返回可绘制标注的要素集合
-     */
-    test(ctx: CanvasRenderingContext2D, features: Feature[], field: Field, text: Text): Feature[] {
-        //没有任何检测逻辑，直接原样返回
-        return features;
-    }
+  /**
+   * 冲突检测
+   * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+   * @param {Feature[]} features - 准备绘制标注的要素集合
+   * @param {Field} field - 标注字段
+   * @param {Text} text - 标注文本符号
+   * @return {Feature[]} 返回可绘制标注的要素集合
+   */
+  test(ctx: CanvasRenderingContext2D, features: Feature[], field: Field, text: Text): Feature[] {
+    //没有任何检测逻辑，直接原样返回
+    return features;
+  }
 }
 
 
@@ -44,32 +43,31 @@ export class NullCollision {
  * 类似聚合，距离判断，速度快
  */
 export class SimpleCollision {
-    /**
-     * 检测距离
-     * @remarks
-     * 单位 pixel
-     */
-    public distance: number = 50;
-    /**
-     * 冲突检测
-     * @param {Feature[]} features - 准备绘制标注的要素集合
-     * @param {Field} field - 标注字段
-     * @param {SimpleTextSymbol} symbol - 标注文本符号
-     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @return {Feature[]} 返回可绘制标注的要素集合
-     */
-    test(ctx: CanvasRenderingContext2D, features: Feature[], field: Field, text: Text): Feature[] {
-        //根据距离聚合
-        return features.reduce( (acc, cur) => {
-            const item: any = acc.find((item: any) => {
-                const distance = cur.geometry.distance(item.geometry, CoordinateType.Screen);
-                return distance <= this.distance;
-            });
-            if (!item) acc.push(cur);
-            return acc;
-        }, []); // [feature]
-    }
+  /**
+   * 检测距离
+   * @remarks
+   * 单位 pixel
+   */
+  public distance: number = 50;
+  /**
+   * 冲突检测
+   * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+   * @param {Feature[]} features - 准备绘制标注的要素集合
+   * @param {Field} field - 标注字段
+   * @param {Text} text - 标注文本符号
+   * @return {Feature[]} 返回可绘制标注的要素集合
+   */
+  test(ctx: CanvasRenderingContext2D, features: Feature[], field: Field, text: Text): Feature[] {
+    //根据距离聚合
+    return features.reduce((acc, cur) => {
+      const item: any = acc.find((item: any) => {
+        const distance = cur.geometry.distance(item.geometry, CoordinateType.Screen);
+        return distance <= this.distance;
+      });
+      if (!item) acc.push(cur);
+      return acc;
+    }, []); // [feature]
+  }
 }
 
 // /**

@@ -22,16 +22,21 @@ export class Field {
   /**
    * 字段名称
    */
-  name: string;
+  public name: string;
   /**
    * 字段别名
    */
-  alias: string;
+  public alias: string;
   /**
    * 字段类型
    */
-  type: FieldType;
+  public type: FieldType;
 
+  /**
+   * 构造函数
+   * @param {string} name - 字段名称
+   * @param {FieldType} type - 字段类型
+   */
   constructor(name: string, type: FieldType) {
     this.name = name;
     this.type = type;

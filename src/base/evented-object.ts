@@ -1,6 +1,8 @@
 import * as Util from '../util/util';
 import { IDObject } from "./id-object";
-
+/**
+ * 可激发及监听事件基类
+ */
 export abstract class EventedObject extends IDObject { 
 
   private _events: any = {};

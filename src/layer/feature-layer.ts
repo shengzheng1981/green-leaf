@@ -23,47 +23,54 @@ export class FeatureLayer extends Layer {
    */
   private _label: Label;
   /**
+   * 图层显示坐标系
+   */
+  private _crs: CRS; 
+  /**
    * 是否显示标注
    */
   public labeled: boolean = false;
-  /**
-   * 是否聚合
-   */
-  // public cluster: boolean = false;
-
 
   /**
-   * 矢量要素类（数据源）
+   * 获取矢量要素类（数据源）
    */
   get featureClass(): FeatureClass {
     return this._featureClass;
   }
   /**
-   * 矢量要素类（数据源）
+   * 设置矢量要素类（数据源）
    */
   set featureClass(value: FeatureClass) {
     this._featureClass = value;
   }
   /**
-   * 图层标注设置
+   * 获取图层标注
    */
   get label(): Label {
     return this._label;
   }
+  /**
+   * 设置图层标注
+   */
   set label(value: Label) {
     this._label = value;
   }
   /**
-   * 图层渲染方式设置
+   * 获取图层渲染方式
    */
   get renderer(): Renderer {
     return this._renderer;
   }
+  /**
+   * 设置图层渲染方式
+   */
   set renderer(value: Renderer) {
     this._renderer = value;
   }
 
-  private _crs: CRS; 
+  /**
+   * 设置图层显示坐标系
+   */
   set crs(value: CRS) {
     this._crs = value;
     let feature = this._featureClass.first;

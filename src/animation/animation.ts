@@ -12,12 +12,16 @@ import { CRS } from "../crs/crs";
 export abstract class Animation {
 
   /**
-   * 投影变换虚函数
-   * @param {Projection} projection - 坐标投影转换
+   * 数据投影
+   * @param {CRS} crs - 坐标系
    */
   abstract project(crs: CRS);
 
-
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   abstract transform(origin: ScreenXY, zoom: number);
   /**
    * 动画效果

@@ -1,6 +1,8 @@
 import { Map } from "../map/map";
 import { IDObject } from "./id-object";
-
+/**
+ * 可处理Map事件基类
+ */
 export class HandlerObject extends IDObject {
   protected _map: Map;
   protected _enabled: boolean = false;

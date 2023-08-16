@@ -482,7 +482,7 @@ export class Kriging extends Raster {
    */
   public cellSize: number = 4;
   /**
-   * 创建克里金插值
+   * 构造函数
    * @param {number} xmin - 经度左值
    * @param {number} ymin - 纬度下值
    * @param {number} xmax - 经度右值
@@ -495,14 +495,20 @@ export class Kriging extends Raster {
     super(xmin, ymin, xmax, ymax, width, height);
     this.cellSize = cellsize;
   }
-
+  /**
+   * 数据投影
+   */
   project() {
     if (!this._crs) return;
     const plane1 = this._crs.projection.project(this.bounds.getSouthWest());
     const plane2 = this._crs.projection.project(this.bounds.getNorthEast());
     this._planeBounds = new ScreenBounds(plane1, plane2);
   }
-
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   transform(origin: ScreenXY, zoom: number) {
     if (!this._crs && !this._planeBounds) return;
     const screen1 = this._crs.planeXYToScreenXY(this._planeBounds.getBottomLeft(), zoom).round(false).subtract(origin);
@@ -510,7 +516,7 @@ export class Kriging extends Raster {
     this._screenBounds = new ScreenBounds(screen1, screen2);
   }
 
-  /*
+  /**
    * 生成插值
    * @param {FeatureClass} featureClass - 插值点要素类
    * @param {Field} field - 插值字段
@@ -532,9 +538,6 @@ export class Kriging extends Raster {
    * @remarks
    * 遍历图形集合进行绘制
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {Projection} projection - 坐标投影转换
-   * @param {Bound} extent - 当前可视范围
-   * @param {number} zoom - 当前缩放级别
    */
   draw(ctx: CanvasRenderingContext2D) {
     if (!this._screenBounds) return;
