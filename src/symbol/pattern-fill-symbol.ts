@@ -15,7 +15,7 @@ export abstract class PatternFillSymbol extends FillSymbol {
    * 奇偶填充
    * https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number[][][]} screen - 面对应坐标点的屏幕坐标集合
+   * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
    */
   draw(ctx: CanvasRenderingContext2D, screenXYs: ScreenXY[][]) {
     // ctx.save();
@@ -42,9 +42,15 @@ export abstract class PatternFillSymbol extends FillSymbol {
     ctx.stroke();
     // ctx.restore();
   }
-
+  /**
+   * 创建填充模式
+   * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+   */
   abstract createPattern(ctx: CanvasRenderingContext2D);
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
+   */
   getScreenBounds(screenXYs: ScreenXY[][]) {
     const bounds: ScreenBounds = new ScreenBounds();
     screenXYs.forEach(ring => {

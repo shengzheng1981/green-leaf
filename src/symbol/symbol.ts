@@ -48,15 +48,16 @@ export abstract class Symbol {
  */
 export abstract class PointSymbol extends Symbol {
 
-
   /**
    * 绘制点（虚函数）
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number} screenX - 屏幕坐标X
-   * @param {number} screenY - 屏幕坐标Y
+   * @param {ScreenXY} screenXY - 屏幕坐标
    */
   abstract draw(ctx: CanvasRenderingContext2D, screenXY: ScreenXY);
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY} screenXY - 屏幕坐标
+   */
   abstract getScreenBounds(screenXY: ScreenXY);
 }
 
@@ -74,7 +75,10 @@ export abstract class LineSymbol extends Symbol {
    * @param {number[][]} screenXYs - 线对应坐标点的屏幕坐标集合
    */
   abstract draw(ctx: CanvasRenderingContext2D, screenXYs: ScreenXY[]);
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
+   */
   abstract getScreenBounds(screenXYs: ScreenXY[]);
 }
 /**
@@ -90,7 +94,10 @@ export abstract class FillSymbol extends Symbol {
    * @param {number[][][]} screenXYs - 面对应坐标点的屏幕坐标集合
    */
   abstract draw(ctx: CanvasRenderingContext2D, screenXYs: ScreenXY[][]);
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
+   */
   abstract getScreenBounds(screenXYs: ScreenXY[][]);
 }
 
@@ -126,7 +133,10 @@ export class SimplePointSymbol extends PointSymbol {
     ctx.stroke();
     //ctx.restore();
   }
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY} screenXY - 屏幕坐标
+   */
   getScreenBounds(screenXY: ScreenXY) {
     let r = this.radius,
       w = this.stroke ? this.weight / 2 : 0,
@@ -203,8 +213,7 @@ export class SimpleMarkerSymbol extends PointSymbol {
    * @remarks
    * 注意异步加载
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number} screenX - 屏幕坐标X
-   * @param {number} screenY - 屏幕坐标Y
+   * @param {ScreenXY} screenXY - 屏幕坐标
    */
   draw(ctx: CanvasRenderingContext2D, screenXY: ScreenXY) {
     // if (!this._loaded) {
@@ -229,7 +238,10 @@ export class SimpleMarkerSymbol extends PointSymbol {
       ctx.drawImage(this.image, screenXY.x + this.offsetX, screenXY.y + this.offsetY, this.width, this.height);
     }
   }
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY} screenXY - 屏幕坐标
+   */
   getScreenBounds(screenXY: ScreenXY) {
     let p1 = new ScreenXY(this.offsetX, this.offsetY);
     let p2 = new ScreenXY(this.offsetX + this.width, this.offsetY + this.height);
@@ -247,7 +259,7 @@ export class SimpleLineSymbol extends LineSymbol {
   /**
    * 绘制线
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number[][]} screen - 线对应坐标点的屏幕坐标集合
+   * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
    */
   draw(ctx: CanvasRenderingContext2D, screenXYs: ScreenXY[]) {
     if (screenXYs.length < 2) return;
@@ -265,7 +277,10 @@ export class SimpleLineSymbol extends LineSymbol {
     ctx.stroke();
     // ctx.restore();
   }
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
+   */
   getScreenBounds(screenXYs: ScreenXY[]) {
     const bounds: ScreenBounds = new ScreenBounds();
     screenXYs.forEach(screenXY => {
@@ -289,7 +304,7 @@ export class SimpleFillSymbol extends FillSymbol {
    * 奇偶填充
    * https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number[][][]} screen - 面对应坐标点的屏幕坐标集合
+   * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
    */
   draw(ctx: CanvasRenderingContext2D, screenXYs: ScreenXY[][]) {
     // ctx.save();
@@ -316,6 +331,10 @@ export class SimpleFillSymbol extends FillSymbol {
     // ctx.restore();
   }
 
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
+   */
   getScreenBounds(screenXYs: ScreenXY[][]) {
     const bounds: ScreenBounds = new ScreenBounds();
     screenXYs.forEach(ring => {

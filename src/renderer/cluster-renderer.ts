@@ -12,22 +12,47 @@ import { ClusterSymbol } from "../symbol/cluster-symbol";
  */
 export class ClusterRenderer extends Renderer {
 
+  /**
+   * 默认渲染符号
+   */
   private _defaultSymbol: PointSymbol = new SimplePointSymbol();
+  /**
+   * 聚类容差距离
+   */
   private _tolerance: number = 50;     //distance 50px
+  /**
+   * 数据源
+   */
   private _featureClass: FeatureClass;
+  /**
+   * 聚合要素集
+   */
   private _features: any = {};         // Map<id, count>
+  /**
+   * 设置数据源
+   */
   set featureClass(value: FeatureClass) {
     if (value.type == GeometryType.Point) {
       this._featureClass = value;
     }
   }
+  /**
+   * 设置默认符号
+   */
   set defaultSymbol(value: PointSymbol) {
     this._defaultSymbol = value;
   }
-  set Tolerance(value: number) {
+  /**
+   * 设置容差
+   */
+  set tolerance(value: number) {
     this._tolerance = value;
   }
-
+  /**
+   * 根据矢量要素获取渲染符号
+   * @param {ScreenBounds} redrawBounds - 屏幕范围
+   * @remark Do something before layer draw, etc ClusterRenderer
+   */
   init(redrawBounds?: ScreenBounds) {
     this._features = {};
     if (!this._featureClass) return;
@@ -56,7 +81,11 @@ export class ClusterRenderer extends Renderer {
       feature = feature.next;
     }
   }
-
+  /**
+   * 根据矢量要素获取渲染符号
+   * @param {Feature} feature - 矢量要素
+   * @return {Symbol} 返回渲染符号
+   */
   getSymbol(feature: Feature): Symbol {
     const count = this._features[feature.id];
     if (!count) {
@@ -66,6 +95,5 @@ export class ClusterRenderer extends Renderer {
     } else {
       return new ClusterSymbol(count);
     }
-   
   }
 }

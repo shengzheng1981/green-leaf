@@ -5,24 +5,24 @@ import { ScreenBounds } from "../common/screen-bounds";
 import { ScreenXY } from "../common/screen-xy";
 import { CRS } from "../crs/crs";
 
-/*
+/**
  * 栅格
  */
 export abstract class Raster {
   private _canvas: HTMLCanvasElement;
-  /*
+  /**
    * 动态栅格（实时渲染）
    */
   get dynamic(): boolean {
     return false;
   }
-  /*
+  /**
    * 画布存放Image
    */
   get canvas(): HTMLCanvasElement {
     return this._canvas;
   }
-  /*
+  /**
    * 栅格经纬度边界
    */
   get bounds(): LatLngBounds {
@@ -30,9 +30,8 @@ export abstract class Raster {
   }
 
   /**
-* 坐标投影变换
-*/
-  // protected _projection: Projection;
+    * 坐标系
+    */
   protected _crs: CRS;
   /**
    * 包络矩形
@@ -43,8 +42,6 @@ export abstract class Raster {
 
   /**
    * 包络矩形
-   * @remarks
-   * 注意bound的坐标类型：一般为地理平面坐标，即投影后坐标
    */
   get latlngBounds(): LatLngBounds {
     return this._latlngBounds;
@@ -57,7 +54,9 @@ export abstract class Raster {
   get screenBounds(): ScreenBounds {
     return this._screenBounds;
   }
-
+  /**
+    * 设置坐标系并投影
+    */
   set crs(value: CRS) {
     this._crs = value;
     this.project();
@@ -81,12 +80,16 @@ export abstract class Raster {
     this._latlngBounds = new LatLngBounds(new LatLng(ymin, xmin), new LatLng(ymax, xmax));
   }
   /**
-     * 投影变换虚函数
-     * @param {Projection} projection - 坐标投影转换
-     */
+   * 投影变换虚函数
+   * @param {Projection} projection - 坐标投影转换
+   */
   abstract project();
 
-
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   abstract transform(origin: ScreenXY, zoom: number);
 
   /**
@@ -94,9 +97,6 @@ export abstract class Raster {
    * @remarks
    * 遍历图形集合进行绘制
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {Projection} projection - 坐标投影转换
-   * @param {Bound} extent - 当前可视范围
-   * @param {number} zoom - 当前缩放级别
    */
   abstract draw(ctx: CanvasRenderingContext2D);
 }

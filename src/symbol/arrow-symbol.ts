@@ -30,7 +30,7 @@ export class ArrowSymbol extends LineSymbol {
   /**
    * 绘制线
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number[][]} screen - 线对应坐标点的屏幕坐标集合
+   * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
    */
   draw(ctx: CanvasRenderingContext2D, screenXYs: ScreenXY[]) {
     ctx.save();
@@ -86,7 +86,10 @@ export class ArrowSymbol extends LineSymbol {
     });
     ctx.restore();
   }
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
+   */
   getScreenBounds(screenXYs: ScreenXY[]) {
     const bounds: ScreenBounds = new ScreenBounds();
     screenXYs.forEach(screenXY => {

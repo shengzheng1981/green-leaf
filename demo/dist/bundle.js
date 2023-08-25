@@ -12,10 +12,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Adapter": () => (/* binding */ Adapter)
 /* harmony export */ });
+/**
+ * 数据适配基类
+ */
 class Adapter {
+    /**
+      * 构造函数
+      * @param {GeometryType} type - 矢量数据类型
+      */
     constructor(type) {
         this._type = type;
     }
+    /**
+     * 获取矢量数据类型
+     */
     get type() {
         return this._type;
     }
@@ -54,11 +64,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * GeoJSON数据适配基类
+ */
 class GeoJSONAdapter extends _adapter__WEBPACK_IMPORTED_MODULE_9__.Adapter {
+    /**
+      * 构造函数
+      * @param {GeometryType} type - 矢量数据类型
+      * @param {string} url - 数据文件地址
+      */
     constructor(type, url) {
         super(type);
         this._url = url;
     }
+    /**
+     * 获取矢量数据
+     * @return {Promise<Feature[]>} 返回Promise
+     */
     async fetch() {
         const response = await fetch(this._url);
         const data = await response.json();
@@ -150,7 +172,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 class Heat extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
     /**
-     * 创建热力图
+     * 构造函数
      */
     constructor() {
         super(0, 0, 0, 0);
@@ -182,18 +204,33 @@ class Heat extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
     get dynamic() {
         return true;
     }
+    /**
+     * 数据值最小值
+     */
     get min() {
         return this._min;
     }
+    /**
+     * 数据值最小值
+     */
     set min(value) {
         this._min = value;
     }
+    /**
+     * 数据值最大值
+     */
     get max() {
         return this._max;
     }
+    /**
+     * 数据值最大值
+     */
     set max(value) {
         this._max = value;
     }
+    /**
+     * 数据投影
+     */
     project() {
         if (!this._crs)
             return;
@@ -203,6 +240,11 @@ class Heat extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
             feature = feature.next;
         }
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         let feature = this._featureClass.first;
         while (feature) {
@@ -210,7 +252,7 @@ class Heat extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
             feature = feature.next;
         }
     }
-    /*
+    /**
      * 初始化
      * @param {FeatureClass} featureClass - 点要素类
      * @param {Field} field - 值字段
@@ -239,9 +281,6 @@ class Heat extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
      * @remarks
      * 遍历图形集合进行绘制
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @param {Bound} extent - 当前可视范围
-     * @param {number} zoom - 当前缩放级别
      */
     draw(ctx) {
         if (!this._featureClass || !this._field)
@@ -360,7 +399,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 class IDW extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
     /**
-     * 创建插值
+     * 构造函数
      */
     constructor() {
         super(0, 0, 0, 0);
@@ -410,18 +449,33 @@ class IDW extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
     get dynamic() {
         return true;
     }
+    /**
+     * 数据值最小值
+     */
     get min() {
         return this._min;
     }
+    /**
+     * 数据值最小值
+     */
     set min(value) {
         this._min = value;
     }
+    /**
+     * 数据值最大值
+     */
     get max() {
         return this._max;
     }
+    /**
+     * 数据值最大值
+     */
     set max(value) {
         this._max = value;
     }
+    /**
+     * 数据投影
+     */
     project() {
         if (!this._crs)
             return;
@@ -431,15 +485,19 @@ class IDW extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
             feature = feature.next;
         }
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
-        this._origin = origin;
         let feature = this._featureClass.first;
         while (feature) {
             feature.geometry.transform(origin, zoom);
             feature = feature.next;
         }
     }
-    /*
+    /**
      * 初始化
      * @param {FeatureClass} featureClass - 点要素类
      * @param {Field} field - 值字段
@@ -468,9 +526,6 @@ class IDW extends _raster_raster__WEBPACK_IMPORTED_MODULE_1__.Raster {
      * @remarks
      * 遍历图形集合进行绘制
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @param {Bound} extent - 当前可视范围
-     * @param {number} zoom - 当前缩放级别
      */
     draw(ctx) {
         if (!this._featureClass || !this._field)
@@ -630,7 +685,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 class Kriging extends _raster_raster__WEBPACK_IMPORTED_MODULE_2__.Raster {
     /**
-     * 创建克里金插值
+     * 构造函数
      * @param {number} xmin - 经度左值
      * @param {number} ymin - 纬度下值
      * @param {number} xmax - 经度右值
@@ -1105,6 +1160,9 @@ class Kriging extends _raster_raster__WEBPACK_IMPORTED_MODULE_2__.Raster {
         }
     }
     ;
+    /**
+     * 数据投影
+     */
     project() {
         if (!this._crs)
             return;
@@ -1112,6 +1170,11 @@ class Kriging extends _raster_raster__WEBPACK_IMPORTED_MODULE_2__.Raster {
         const plane2 = this._crs.projection.project(this.bounds.getNorthEast());
         this._planeBounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(plane1, plane2);
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         if (!this._crs && !this._planeBounds)
             return;
@@ -1119,7 +1182,7 @@ class Kriging extends _raster_raster__WEBPACK_IMPORTED_MODULE_2__.Raster {
         const screen2 = this._crs.planeXYToScreenXY(this._planeBounds.getTopRight(), zoom).round(false).subtract(origin);
         this._screenBounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screen1, screen2);
     }
-    /*
+    /**
      * 生成插值
      * @param {FeatureClass} featureClass - 插值点要素类
      * @param {Field} field - 插值字段
@@ -1141,9 +1204,6 @@ class Kriging extends _raster_raster__WEBPACK_IMPORTED_MODULE_2__.Raster {
      * @remarks
      * 遍历图形集合进行绘制
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @param {Bound} extent - 当前可视范围
-     * @param {number} zoom - 当前缩放级别
      */
     draw(ctx) {
         if (!this._screenBounds)
@@ -1203,7 +1263,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 class LineAnimation extends Animation {
     /**
-     * 创建动画效果
+     * 构造函数
      * @param {Polyline} geometry - 线
      */
     constructor(geometry) {
@@ -1227,9 +1287,18 @@ class LineAnimation extends Animation {
         this.angle = Math.PI / 4;
         this._polyline = geometry;
     }
+    /**
+     * 数据投影
+     * @param {CRS} crs - 坐标系
+     */
     project(crs) {
         this._polyline.crs = crs;
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         this._polyline.transform(origin, zoom);
         //TODO: polyline, not line; but now just line
@@ -1274,13 +1343,6 @@ class LineAnimation extends Animation {
         //keep size
         //地理坐标 转回 屏幕坐标
         // ctx.setTransform(1,0,0,1,0,0);
-        // if (!this._gradient) {
-        //   this._gradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
-        //   this._gradient.addColorStop(0, this.startColor);
-        //   // lineGradient.addColorStop(0.3, '#fff');
-        //   this._gradient.addColorStop(1, this.endColor);
-        // }
-        // ctx.strokeStyle = this._gradient;    //设置线条样式
         const lineGradient = ctx.createLinearGradient(this._start[0], this._start[1], this._end[0], this._end[1]);
         lineGradient.addColorStop(0, this.startColor);
         lineGradient.addColorStop(1, this.endColor);
@@ -1331,7 +1393,7 @@ __webpack_require__.r(__webpack_exports__);
 class PointAnimation extends _animation__WEBPACK_IMPORTED_MODULE_0__.Animation {
     //radius: number = this.limit / this.ring;
     /**
-     * 创建动画效果
+     * 构造函数
      * @param {Point} geometry - 点
      */
     constructor(geometry) {
@@ -1359,11 +1421,8 @@ class PointAnimation extends _animation__WEBPACK_IMPORTED_MODULE_0__.Animation {
         this._point = geometry;
     }
     /**
-     * 动画效果初始化
-     * @remarks
-     * 一般情况下，把一次性逻辑放于此处，以及处理动画的初始状态
-     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
+     * 数据投影
+     * @param {CRS} crs - 坐标系
      */
     project(crs) {
         this._point.crs = crs;
@@ -1378,6 +1437,11 @@ class PointAnimation extends _animation__WEBPACK_IMPORTED_MODULE_0__.Animation {
         ctx.stroke();
         ctx.restore();*/
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         this._point.transform(origin, zoom);
     }
@@ -1421,6 +1485,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "BaseObject": () => (/* binding */ BaseObject)
 /* harmony export */ });
+/**
+ * 所有类的基类
+ */
 class BaseObject {
 }
 
@@ -1480,6 +1547,9 @@ const MOVE = {
     pointerdown: 'touchmove',
     MSPointerDown: 'touchmove'
 };
+/**
+ * 可拖拽选项
+ */
 class DraggableOptions extends _options_object__WEBPACK_IMPORTED_MODULE_6__.OptionsObject {
     constructor() {
         super(...arguments);
@@ -1492,6 +1562,9 @@ class DraggableOptions extends _options_object__WEBPACK_IMPORTED_MODULE_6__.Opti
         this.preventOutline = false;
     }
 }
+/**
+ * 可拖拽类
+ */
 class DraggableObject extends _evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObject {
     // @constructor L.Draggable(el: HTMLElement, dragHandle?: HTMLElement, preventOutline?: Boolean, options?: Draggable options)
     // Creates a `Draggable` object for moving `el` when you start dragging the `dragHandle` element (equals `el` itself by default).
@@ -1666,6 +1739,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _id_object__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./id-object */ "../dist/base/id-object.js");
 
 
+/**
+ * 可激发及监听事件基类
+ */
 class EventedObject extends _id_object__WEBPACK_IMPORTED_MODULE_1__.IDObject {
     constructor() {
         super();
@@ -1926,6 +2002,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _id_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./id-object */ "../dist/base/id-object.js");
 
+/**
+ * 可处理Map事件基类
+ */
 class HandlerObject extends _id_object__WEBPACK_IMPORTED_MODULE_0__.IDObject {
     // @section There is static function which can be called without instantiating L.Handler:
     // @function addTo(map: Map, name: String): this
@@ -1991,11 +2070,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
 
+/**
+ * 带ID实体基类
+ */
 class IDObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
+    /**
+      * 构造函数
+      */
     constructor() {
         super();
         this._create();
     }
+    /**
+    * ID
+    */
     get id() {
         return this._id;
     }
@@ -2007,10 +2095,16 @@ class IDObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
         IDObject.MAX_ID += 1;
         this._id = IDObject.MAX_ID;
     }
+    /**
+      * 输出字符串
+      */
     toString() {
         return this._id.toString();
     }
 }
+/**
+* 最大ID（类变量）
+*/
 IDObject.MAX_ID = 0;
 
 
@@ -2028,10 +2122,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _base_object__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base-object */ "../dist/base/base-object.js");
 
+/**
+ * 实体配置选项基类
+ */
 class OptionsObject extends _base_object__WEBPACK_IMPORTED_MODULE_0__.BaseObject {
+    /**
+      * 构造函数
+      */
     constructor() {
         super();
     }
+    /**
+      * 赋值函数
+      */
     assign(options) {
         if (options !== undefined) {
             for (let key in options) {
@@ -2058,31 +2161,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _xy__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./xy */ "../dist/common/xy.js");
 
-/*
- * @class Bounds
- * @aka L.Bounds
- *
- * Represents a rectangular area in pixel coordinates.
- *
- * @example
- *
- * ```js
- * var p1 = L.point(10, 10),
- * p2 = L.point(40, 60),
- * bounds = L.bounds(p1, p2);
- * ```
- *
- * All Leaflet methods that accept `Bounds` objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
- *
- * ```js
- * otherBounds.intersects([[10, 10], [40, 60]]);
- * ```
- *
- * Note that `Bounds` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 坐标范围
+ * @remark Represents a rectangular area in plane or pixel coordinates.
  */
 class XYBounds {
+    /**
+     * 构造函数
+     * @param {XY | XY[]} a - 坐标或坐标数组
+     * @param {XY} b - 坐标
+     */
     constructor(a, b) {
         let points;
         if (a instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY && b instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY) {
@@ -2103,49 +2191,66 @@ class XYBounds {
     }
     // @method extend(point: Point): this
     // Extends the bounds to contain the given point.
-    extend(xy) {
+    /**
+   * 扩展坐标范围
+   * @param {XY | XYBounds} obj - 坐标或坐标范围
+   * @return {LatLngBounds} 返回坐标范围
+   */
+    extend(obj) {
         // @property min: Point
         // The top left corner of the rectangle.
         // @property max: Point
         // The bottom right corner of the rectangle.
-        if (xy instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY) {
+        if (obj instanceof _xy__WEBPACK_IMPORTED_MODULE_0__.XY) {
             if (!this.min && !this.max) {
-                this.min = xy.clone();
-                this.max = xy.clone();
+                this.min = obj.clone();
+                this.max = obj.clone();
             }
             else {
-                this.min.x = Math.min(xy.x, this.min.x);
-                this.max.x = Math.max(xy.x, this.max.x);
-                this.min.y = Math.min(xy.y, this.min.y);
-                this.max.y = Math.max(xy.y, this.max.y);
+                this.min.x = Math.min(obj.x, this.min.x);
+                this.max.x = Math.max(obj.x, this.max.x);
+                this.min.y = Math.min(obj.y, this.min.y);
+                this.max.y = Math.max(obj.y, this.max.y);
             }
         }
-        else if (xy instanceof XYBounds) {
+        else if (obj instanceof XYBounds) {
             if (!this.min && !this.max) {
-                this.min = xy.min.clone();
-                this.max = xy.max.clone();
+                this.min = obj.min.clone();
+                this.max = obj.max.clone();
             }
             else {
-                this.min.x = Math.min(xy.min.x, this.min.x);
-                this.max.x = Math.max(xy.max.x, this.max.x);
-                this.min.y = Math.min(xy.min.y, this.min.y);
-                this.max.y = Math.max(xy.max.y, this.max.y);
+                this.min.x = Math.min(obj.min.x, this.min.x);
+                this.max.x = Math.max(obj.max.x, this.max.x);
+                this.min.y = Math.min(obj.min.y, this.min.y);
+                this.max.y = Math.max(obj.max.y, this.max.y);
             }
         }
         return this;
     }
     // @method getTopLeft(): Point
     // Returns the top-left point of the bounds (i.e. [`this.min`](#bounds-min)).
+    /**
+   * 获取左上角
+   * @return {XY} 返回左上角XY
+   */
     getTopLeft() {
         return this.min; // left, top
     }
     // @method getBottomRight(): Point
     // Returns the bottom-right point of the bounds (i.e. [`this.max`](#bounds-max)).
+    /**
+   * 获取右下角
+   * @return {XY} 返回右下角XY
+   */
     getBottomRight() {
         return this.max; // right, bottom
     }
     // @method getSize(): Point
     // Returns the size of the given bounds
+    /**
+     * 获取范围大小XY
+     * @return {XY} 返回范围大小XY
+     */
     getSize() {
         return this.max.subtract(this.min);
     }
@@ -2154,6 +2259,11 @@ class XYBounds {
     // @alternative
     // @method contains(point: Point): Boolean
     // Returns `true` if the rectangle contains the given point.
+    /**
+     * 判断是否包含坐标或坐标范围
+     * @param {XYBounds | XY} obj - 坐标或坐标范围
+     * @return {boolean} 返回是否包含
+     */
     contains(obj) {
         let min, max;
         if (obj instanceof XYBounds) {
@@ -2171,6 +2281,11 @@ class XYBounds {
     // @method intersects(otherBounds: Bounds): Boolean
     // Returns `true` if the rectangle intersects the given bounds. Two bounds
     // intersect if they have at least one point in common.
+    /**
+     * 判断是否与另一经纬度范围有交叉
+     * @param {LatLngBounds} obj - 经纬度范围
+     * @return {boolean} 返回是否交叉
+     */
     intersects(bounds) {
         let min = this.min, max = this.max, min2 = bounds.min, max2 = bounds.max, xIntersects = (max2.x >= min.x) && (min2.x <= max.x), yIntersects = (max2.y >= min.y) && (min2.y <= max.y);
         return xIntersects && yIntersects;
@@ -2178,10 +2293,19 @@ class XYBounds {
     // @method overlaps(otherBounds: Bounds): Boolean
     // Returns `true` if the rectangle overlaps the given bounds. Two bounds
     // overlap if their intersection is an area.
+    /**
+     * 判断是否与另一坐标范围有叠盖
+     * @param {XYBounds} obj - 经纬度范围
+     * @return {boolean} 返回是否叠盖
+     */
     overlaps(bounds) {
         let min = this.min, max = this.max, min2 = bounds.min, max2 = bounds.max, xOverlaps = (max2.x > min.x) && (min2.x < max.x), yOverlaps = (max2.y > min.y) && (min2.y < max.y);
         return xOverlaps && yOverlaps;
     }
+    /**
+     * 判断坐标范围是否有效
+     * @return {boolean} 返回是否有效
+     */
     isValid() {
         return !!(this.min && this.max);
     }
@@ -2202,36 +2326,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _latlng__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./latlng */ "../dist/common/latlng.js");
 
-/*
- * @class LatLngBounds
- * @aka L.LatLngBounds
- *
- * Represents a rectangular geographical area on a map.
- *
- * @example
- *
- * ```js
- * var corner1 = L.latLng(40.712, -74.227),
- * corner2 = L.latLng(40.774, -74.125),
- * bounds = L.latLngBounds(corner1, corner2);
- * ```
- *
- * All Leaflet methods that accept LatLngBounds objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
- *
- * ```js
- * map.fitBounds([
- * 	[40.712, -74.227],
- * 	[40.774, -74.125]
- * ]);
- * ```
- *
- * Caution: if the area crosses the antimeridian (often confused with the International Date Line), you must specify corners _outside_ the [-180, 180] degrees longitude range.
- *
- * Note that `LatLngBounds` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 经纬度坐标范围
+ * @remark Represents a rectangular geographical area on a map.
  */
 class LatLngBounds {
+    /**
+     * 构造函数
+     * @param {LatLng | LatLng[]} a - 经纬度或经纬度数组
+     * @param {LatLng} b - 经纬度
+     */
     constructor(a, b) {
         let latlngs;
         if (a instanceof _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng && b instanceof _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng) {
@@ -2255,6 +2359,11 @@ class LatLngBounds {
     // @alternative
     // @method extend(otherBounds: LatLngBounds): this
     // Extend the bounds to contain the given bounds
+    /**
+     * 扩展经纬度范围
+     * @param {LatLng | LatLngBounds} obj - 经纬度或经纬度范围
+     * @return {LatLngBounds} 返回经纬度范围
+     */
     extend(obj) {
         let sw = this._southWest, ne = this._northEast, sw2, ne2;
         if (obj instanceof _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng) {
@@ -2284,52 +2393,102 @@ class LatLngBounds {
     // Returns bounds created by extending or retracting the current bounds by a given ratio in each direction.
     // For example, a ratio of 0.5 extends the bounds by 50% in each direction.
     // Negative values will retract the bounds.
+    /**
+   * 缓冲经纬度范围
+   * @param {number} bufferRatio - 缓冲比例
+   * @return {LatLngBounds} 返回经纬度范围
+   */
     pad(bufferRatio) {
         let sw = this._southWest, ne = this._northEast, heightBuffer = Math.abs(sw.lat - ne.lat) * bufferRatio, widthBuffer = Math.abs(sw.lng - ne.lng) * bufferRatio;
         return new LatLngBounds(new _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng(sw.lat - heightBuffer, sw.lng - widthBuffer), new _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng(ne.lat + heightBuffer, ne.lng + widthBuffer));
     }
     // @method getCenter(): LatLng
     // Returns the center point of the bounds.
+    /**
+     * 中心点经纬度
+     * @remark Returns the center point of the bounds.
+     * @return {LatLng} 返回经纬度
+     */
     getCenter() {
         return new _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng((this._southWest.lat + this._northEast.lat) / 2, (this._southWest.lng + this._northEast.lng) / 2);
     }
     // @method getSouthWest(): LatLng
     // Returns the south-west point of the bounds.
+    /**
+     * 西南角经纬度
+     * @remark Returns the south-west point of the bounds.
+     * @return {LatLng} 返回经纬度
+     */
     getSouthWest() {
         return this._southWest;
     }
     // @method getNorthEast(): LatLng
     // Returns the north-east point of the bounds.
+    /**
+     * 东北角经纬度
+     * @remark Returns the north-east point of the bounds.
+     * @return {LatLng} 返回经纬度
+     */
     getNorthEast() {
         return this._northEast;
     }
     // @method getNorthWest(): LatLng
     // Returns the north-west point of the bounds.
+    /**
+     * 西北角经纬度
+     * @remark Returns the north-west point of the bounds.
+     * @return {LatLng} 返回经纬度
+     */
     getNorthWest() {
         return new _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng(this.getNorth(), this.getWest());
     }
     // @method getSouthEast(): LatLng
     // Returns the south-east point of the bounds.
+    /**
+     * 东南角经纬度
+     * @remark Returns the south-east point of the bounds.
+     * @return {LatLng} 返回经纬度
+     */
     getSouthEast() {
         return new _latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng(this.getSouth(), this.getEast());
     }
     // @method getWest(): Number
     // Returns the west longitude of the bounds
+    /**
+     * 西边经度
+     * @remark Returns the west longitude of the bounds
+     * @return {number} 返回经度
+     */
     getWest() {
         return this._southWest.lng;
     }
     // @method getSouth(): Number
     // Returns the south latitude of the bounds
+    /**
+     * 南边纬度
+     * @remark Returns the south latitude of the bounds
+     * @return {number} 返回纬度
+     */
     getSouth() {
         return this._southWest.lat;
     }
     // @method getEast(): Number
     // Returns the east longitude of the bounds
+    /**
+     * 东边经度
+     * @remark Returns the east longitude of the bounds
+     * @return {number} 返回经度
+     */
     getEast() {
         return this._northEast.lng;
     }
     // @method getNorth(): Number
     // Returns the north latitude of the bounds
+    /**
+     * 北边纬度
+     * @remark Returns the north latitude of the bounds
+     * @return {number} 返回纬度
+     */
     getNorth() {
         return this._northEast.lat;
     }
@@ -2338,6 +2497,11 @@ class LatLngBounds {
     // @alternative
     // @method contains (latlng: LatLng): Boolean
     // Returns `true` if the rectangle contains the given point.
+    /**
+     * 判断是否包含经纬度或经纬度范围
+     * @param {LatLng | LatLngBounds} obj - 经纬度或经纬度范围
+     * @return {boolean} 返回是否包含
+     */
     contains(obj) {
         let sw = this._southWest, ne = this._northEast, sw2, ne2;
         if (obj instanceof LatLngBounds) {
@@ -2352,23 +2516,43 @@ class LatLngBounds {
     }
     // @method intersects(otherBounds: LatLngBounds): Boolean
     // Returns `true` if the rectangle intersects the given bounds. Two bounds intersect if they have at least one point in common.
+    /**
+   * 判断是否与另一经纬度范围有交叉
+   * @param {LatLngBounds} obj - 经纬度范围
+   * @return {boolean} 返回是否交叉
+   */
     intersects(bounds) {
         let sw = this._southWest, ne = this._northEast, sw2 = bounds.getSouthWest(), ne2 = bounds.getNorthEast(), latIntersects = (ne2.lat >= sw.lat) && (sw2.lat <= ne.lat), lngIntersects = (ne2.lng >= sw.lng) && (sw2.lng <= ne.lng);
         return latIntersects && lngIntersects;
     }
     // @method overlaps(otherBounds: LatLngBounds): Boolean
     // Returns `true` if the rectangle overlaps the given bounds. Two bounds overlap if their intersection is an area.
+    /**
+   * 判断是否与另一经纬度范围有叠盖
+   * @param {LatLngBounds} obj - 经纬度范围
+   * @return {boolean} 返回是否叠盖
+   */
     overlaps(bounds) {
         const sw = this._southWest, ne = this._northEast, sw2 = bounds.getSouthWest(), ne2 = bounds.getNorthEast(), latOverlaps = (ne2.lat > sw.lat) && (sw2.lat < ne.lat), lngOverlaps = (ne2.lng > sw.lng) && (sw2.lng < ne.lng);
         return latOverlaps && lngOverlaps;
     }
     // @method toBBoxString(): String
     // Returns a string with bounding box coordinates in a 'southwest_lng,southwest_lat,northeast_lng,northeast_lat' format. Useful for sending requests to web services that return geo data.
-    toBBoxString() {
+    /**
+   * 输出字符串
+   * @return {string} 返回字符串
+   */
+    toString() {
         return [this.getWest(), this.getSouth(), this.getEast(), this.getNorth()].join(',');
     }
     // @method equals(otherBounds: LatLngBounds, maxMargin?: Number): Boolean
     // Returns `true` if the rectangle is equivalent (within a small margin of error) to the given bounds. The margin of error can be overridden by setting `maxMargin` to a small number.
+    /**
+   * 判断经纬度范围是否相等（在一定容差内）
+   * @param {LatLngBounds} bounds - 经纬度范围
+   * @param {number} maxMargin - 容差
+   * @return {boolean} 返回是否相等
+   */
     equals(bounds, maxMargin = 1.0E-9) {
         if (!bounds) {
             return false;
@@ -2378,6 +2562,10 @@ class LatLngBounds {
     }
     // @method isValid(): Boolean
     // Returns `true` if the bounds are properly initialized.
+    /**
+     * 判断经纬度范围是否有效
+     * @return {boolean} 返回是否有效
+     */
     isValid() {
         return !!(this._southWest && this._northEast);
     }
@@ -2402,31 +2590,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/* @class LatLng
- * @aka L.LatLng
- *
- * Represents a geographical point with a certain latitude and longitude.
- *
- * @example
- *
- * ```
- * var latlng = L.latLng(50.5, 30.5);
- * ```
- *
- * All Leaflet methods that accept LatLng objects also accept them in a simple Array form and simple object form (unless noted otherwise), so these lines are equivalent:
- *
- * ```
- * map.panTo([50, 30]);
- * map.panTo({lon: 30, lat: 50});
- * map.panTo({lat: 50, lng: 30});
- * map.panTo(L.latLng(50, 30));
- * ```
- *
- * Note that `LatLng` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 经纬度坐标
  */
 class LatLng {
+    /**
+      * 构造函数
+      * @param {number} lat - 纬度
+      * @param {number} lng - 经度
+      * @param {number} alt - 海拔
+      */
     constructor(lat = 0, lng = 0, alt = 0) {
         // @property lat: Number
         // Latitude in degrees
@@ -2440,6 +2613,12 @@ class LatLng {
     }
     // @method equals(otherLatLng: LatLng, maxMargin?: Number): Boolean
     // Returns `true` if the given `LatLng` point is at the same position (within a small margin of error). The margin of error can be overridden by setting `maxMargin` to a small number.
+    /**
+   * 判断坐标是否相等（在一定容差内）
+   * @param {LatLng} obj - 经纬度
+   * @param {number} maxMargin - 容差
+   * @return {boolean} 返回是否相等
+   */
     equals(obj, maxMargin = 1.0E-9) {
         if (!obj) {
             return false;
@@ -2449,30 +2628,58 @@ class LatLng {
     }
     // @method toString(): String
     // Returns a string representation of the point (for debugging purposes).
+    /**
+     * 输出字符串
+     * @param {number} precision - 保留精度
+     * @return {string} 返回字符串
+     */
     toString(precision = 6) {
         return 'LatLng(' +
             _util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lat, precision) + ', ' +
             _util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lng, precision) + ')';
     }
+    /**
+     * 输出GeoJSON格式
+     * @param {number} precision - 保留精度
+     * @return {Object} 返回GeoJSON格式
+     */
     toGeoJSON(precision = 6) {
         return [_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lng, precision), _util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum(this.lat, precision)];
     }
     // @method distanceTo(otherLatLng: LatLng): Number
     // Returns the distance (in meters) to the given `LatLng` calculated using the [Spherical Law of Cosines](https://en.wikipedia.org/wiki/Spherical_law_of_cosines).
+    /**
+   * 计算与另一点间球面距离
+   * @param {LatLng} other - 另一点经纬度
+   * @return {number} 返回距离
+   */
     distanceTo(other) {
         return new _crs_crs_earth__WEBPACK_IMPORTED_MODULE_1__.Earth().distance(this, other);
     }
     // @method wrap(): LatLng
     // Returns a new `LatLng` object with the longitude wrapped so it's always between -180 and +180 degrees.
+    /**
+   * 根据取值范围返回经纬度
+   * @return {LatLng} 返回取值范围内的经纬度
+   */
     wrap() {
         return new _crs_crs_earth__WEBPACK_IMPORTED_MODULE_1__.Earth().wrapLatLng(this);
     }
     // @method toBounds(sizeInMeters: Number): LatLngBounds
     // Returns a new `LatLngBounds` object in which each boundary is `sizeInMeters/2` meters apart from the `LatLng`.
+    /**
+   * 根据实地距离返回经纬度范围
+   * @param {number} sizeInMeters - 实地距离（米）
+   * @return {LatLng} 返回经纬度范围
+   */
     toLatLngBounds(sizeInMeters) {
         var latAccuracy = 180 * sizeInMeters / 40075017, lngAccuracy = latAccuracy / Math.cos((Math.PI / 180) * this.lat);
         return new _latlng_bounds__WEBPACK_IMPORTED_MODULE_2__.LatLngBounds(new LatLng(this.lat - latAccuracy, this.lng - lngAccuracy), new LatLng(this.lat + latAccuracy, this.lng + lngAccuracy));
     }
+    /**
+     * 克隆经纬度
+     * @return {LatLng} 返回经纬度
+     */
     clone() {
         return new LatLng(this.lat, this.lng, this.alt);
     }
@@ -2495,36 +2702,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _plane_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./plane-xy */ "../dist/common/plane-xy.js");
 
 
-/*
- * @class Bounds
- * @aka L.Bounds
- *
- * Represents a rectangular area in pixel coordinates.
- *
- * @example
- *
- * ```js
- * var p1 = L.point(10, 10),
- * p2 = L.point(40, 60),
- * bounds = L.bounds(p1, p2);
- * ```
- *
- * All Leaflet methods that accept `Bounds` objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
- *
- * ```js
- * otherBounds.intersects([[10, 10], [40, 60]]);
- * ```
- *
- * Note that `Bounds` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 平面坐标范围
+ * @remark Represents a rectangular area in plane coordinates.
  */
 class PlaneBounds extends _bounds__WEBPACK_IMPORTED_MODULE_0__.XYBounds {
+    /**
+     * 构造函数
+     * @param {PlaneXY | PlaneXY[]} a - 平面坐标或平面坐标数组
+     * @param {PlaneXY} b - 平面坐标
+     */
     constructor(a, b) {
         super(a, b);
     }
     // @method getCenter(round?: Boolean): Point
     // Returns the center point of the bounds.
+    /**
+     * 获取中心点
+     * @param {boolean} round - 是否取整
+     * @return {PlaneXY} 返回中心点
+     */
     getCenter(round = false) {
         const x = round ? Math.round((this.min.x + this.max.x) / 2) : (this.min.x + this.max.x) / 2;
         const y = round ? Math.round((this.min.y + this.max.y) / 2) : (this.min.y + this.max.y) / 2;
@@ -2532,11 +2729,19 @@ class PlaneBounds extends _bounds__WEBPACK_IMPORTED_MODULE_0__.XYBounds {
     }
     // @method getBottomLeft(): Point
     // Returns the bottom-left point of the bounds.
+    /**
+   * 获取左下角
+   * @return {PlaneXY} 返回左下角
+   */
     getBottomLeft() {
         return new _plane_xy__WEBPACK_IMPORTED_MODULE_1__.PlaneXY(this.min.x, this.max.y);
     }
     // @method getTopRight(): Point
     // Returns the top-right point of the bounds.
+    /**
+     * 获取右上角
+     * @return {PlaneXY} 返回右上角
+     */
     getTopRight() {
         return new _plane_xy__WEBPACK_IMPORTED_MODULE_1__.PlaneXY(this.max.x, this.min.y);
     }
@@ -2559,59 +2764,69 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./xy */ "../dist/common/xy.js");
 
 
-/*
- * @class Point
- * @aka L.Point
- *
- * Represents a point with `x` and `y` coordinates in pixels.
- *
- * @example
- *
- * ```js
- * var point = L.point(200, 300);
- * ```
- *
- * All Leaflet methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
- *
- * ```js
- * map.panBy([200, 300]);
- * map.panBy(L.point(200, 300));
- * ```
- *
- * Note that `Point` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 平面坐标
  */
 class PlaneXY extends _xy__WEBPACK_IMPORTED_MODULE_1__.XY {
+    /**
+      * 构造函数
+      * @param {number} x - X
+      * @param {number} y - Y
+      */
     constructor(x = 0, y = 0) {
         super(x, y);
     }
     // @method clone(): Point
     // Returns a copy of the current point.
+    /**
+     * 克隆坐标
+     * @return {PlaneXY} 返回坐标
+     */
     clone() {
         return new PlaneXY(this.x, this.y);
     }
     // @method distanceTo(otherPoint: Point): Number
     // Returns the cartesian distance between the current and the given points.
+    /**
+   * 计算与另一点间欧式距离
+   * @param {PlaneXY} planeXY - 另一点坐标
+   * @return {number} 返回距离
+   */
     distanceTo(planeXY) {
         return super.distanceTo(planeXY);
     }
     // @method equals(otherPoint: Point): Boolean
     // Returns `true` if the given point has the same coordinates.
+    /**
+   * 判断坐标是否相等
+   * @param {PlaneXY} obj - 坐标
+   * @return {boolean} 返回是否相等
+   */
     equals(planeXY) {
         return super.equals(planeXY);
     }
     // @method contains(otherPoint: Point): Boolean
     // Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+    /**
+   * 判断是否包含坐标
+   * @param {PlaneXY} obj - 坐标
+   * Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+   * @return {boolean} 返回是否包含
+   */
     contains(planeXY) {
         return super.contains(planeXY);
     }
     // @method toString(): String
     // Returns a string representation of the point for debugging purposes.
-    toString() {
+    /**
+   * 输出字符串
+   * @param {number} precision - 保留精度
+   * @return {string} 返回字符串
+   */
+    toString(precision = 3) {
         return 'PlaneXY(' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x) + ', ' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y) + ')';
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x, precision) + ', ' +
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y, precision) + ')';
     }
 }
 
@@ -2632,36 +2847,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _screen_xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./screen-xy */ "../dist/common/screen-xy.js");
 
 
-/*
- * @class Bounds
- * @aka L.Bounds
- *
- * Represents a rectangular area in pixel coordinates.
- *
- * @example
- *
- * ```js
- * var p1 = L.point(10, 10),
- * p2 = L.point(40, 60),
- * bounds = L.bounds(p1, p2);
- * ```
- *
- * All Leaflet methods that accept `Bounds` objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
- *
- * ```js
- * otherBounds.intersects([[10, 10], [40, 60]]);
- * ```
- *
- * Note that `Bounds` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 屏幕坐标范围
+ * @remark Represents a rectangular area in pixel coordinates.
  */
 class ScreenBounds extends _bounds__WEBPACK_IMPORTED_MODULE_0__.XYBounds {
+    /**
+     * 构造函数
+     * @param {ScreenXY | ScreenXY[]} a - 屏幕坐标或屏幕坐标数组
+     * @param {ScreenXY} b - 屏幕坐标
+     */
     constructor(a, b) {
         super(a, b);
     }
     // @method getCenter(round?: Boolean): Point
     // Returns the center point of the bounds.
+    /**
+   * 获取中心点
+   * @param {boolean} round - 是否取整
+   * @return {ScreenXY} 返回中心点
+   */
     getCenter(round = false) {
         const x = round ? Math.round((this.min.x + this.max.x) / 2) : (this.min.x + this.max.x) / 2;
         const y = round ? Math.round((this.min.y + this.max.y) / 2) : (this.min.y + this.max.y) / 2;
@@ -2669,14 +2874,26 @@ class ScreenBounds extends _bounds__WEBPACK_IMPORTED_MODULE_0__.XYBounds {
     }
     // @method getBottomLeft(): Point
     // Returns the bottom-left point of the bounds.
+    /**
+   * 获取左下角
+   * @return {ScreenXY} 返回左下角
+   */
     getBottomLeft() {
         return new _screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(this.min.x, this.max.y);
     }
     // @method getTopRight(): Point
     // Returns the top-right point of the bounds.
+    /**
+     * 获取右上角
+     * @return {ScreenXY} 返回右上角
+     */
     getTopRight() {
         return new _screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(this.max.x, this.min.y);
     }
+    /**
+     * 缓冲范围
+     * @param {number} pixel - 缓冲像素
+     */
     pad(pixel) {
         this.min.x -= pixel;
         this.min.y -= pixel;
@@ -2702,59 +2919,69 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _xy__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./xy */ "../dist/common/xy.js");
 
 
-/*
- * @class Point
- * @aka L.Point
- *
- * Represents a point with `x` and `y` coordinates in pixels.
- *
- * @example
- *
- * ```js
- * var point = L.point(200, 300);
- * ```
- *
- * All Leaflet methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
- *
- * ```js
- * map.panBy([200, 300]);
- * map.panBy(L.point(200, 300));
- * ```
- *
- * Note that `Point` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 屏幕坐标
  */
 class ScreenXY extends _xy__WEBPACK_IMPORTED_MODULE_1__.XY {
+    /**
+      * 构造函数
+      * @param {number} x - X
+      * @param {number} y - Y
+      */
     constructor(x = 0, y = 0) {
         super(x, y);
     }
     // @method clone(): Point
     // Returns a copy of the current point.
+    /**
+     * 克隆坐标
+     * @return {ScreenXY} 返回坐标
+     */
     clone() {
         return new ScreenXY(this.x, this.y);
     }
     // @method distanceTo(otherPoint: Point): Number
     // Returns the cartesian distance between the current and the given points.
+    /**
+   * 计算与另一点间欧式距离
+   * @param {ScreenXY} screenXY - 另一点坐标
+   * @return {number} 返回距离
+   */
     distanceTo(screenXY) {
         return super.distanceTo(screenXY);
     }
     // @method equals(otherPoint: Point): Boolean
     // Returns `true` if the given point has the same coordinates.
+    /**
+   * 判断坐标是否相等
+   * @param {ScreenXY} obj - 坐标
+   * @return {boolean} 返回是否相等
+   */
     equals(screenXY) {
         return super.equals(screenXY);
     }
     // @method contains(otherPoint: Point): Boolean
     // Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+    /**
+   * 判断是否包含坐标
+   * @param {ScreenXY} obj - 坐标
+   * Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+   * @return {boolean} 返回是否包含
+   */
     contains(screenXY) {
         return super.contains(screenXY);
     }
     // @method toString(): String
     // Returns a string representation of the point for debugging purposes.
-    toString() {
+    /**
+   * 输出字符串
+   * @param {number} precision - 保留精度
+   * @return {string} 返回字符串
+   */
+    toString(precision = 3) {
         return 'ScreenXY(' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x) + ', ' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y) + ')';
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x, precision) + ', ' +
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y, precision) + ')';
     }
 }
 
@@ -2773,30 +3000,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _util_util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/util */ "../dist/util/util.js");
 
-/*
- * @class Point
- * @aka L.Point
- *
- * Represents a point with `x` and `y` coordinates in pixels.
- *
- * @example
- *
- * ```js
- * var point = L.point(200, 300);
- * ```
- *
- * All Leaflet methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
- *
- * ```js
- * map.panBy([200, 300]);
- * map.panBy(L.point(200, 300));
- * ```
- *
- * Note that `Point` does not inherit from Leaflet's `Class` object,
- * which means new classes can't inherit from it, and new methods
- * can't be added to it with the `include` function.
+/**
+ * 坐标
  */
 class XY {
+    /**
+      * 构造函数
+      * @param {number} x - X
+      * @param {number} y - Y
+      */
     constructor(x = 0, y = 0) {
         // @property x: Number; The `x` coordinate of the point
         this.x = x;
@@ -2805,6 +3017,12 @@ class XY {
     }
     // @method add(otherPoint: Point): Point
     // Returns the result of addition of the current and the given points.
+    /**
+   * 坐标相加
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     add(otherXY, clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2817,6 +3035,12 @@ class XY {
     }
     // @method subtract(otherPoint: Point): Point
     // Returns the result of subtraction of the given point from the current.
+    /**
+   * 坐标相减
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     subtract(otherXY, clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2829,6 +3053,12 @@ class XY {
     }
     // @method divideBy(num: Number): Point
     // Returns the result of division of the current point by the given number.
+    /**
+   * 坐标除以常数
+   * @param {number} num - 常数
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     divideBy(num, clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2841,6 +3071,12 @@ class XY {
     }
     // @method multiplyBy(num: Number): Point
     // Returns the result of multiplication of the current point by the given number.
+    /**
+   * 坐标乘以常数
+   * @param {number} num - 常数
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     multiplyBy(num, clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2856,6 +3092,12 @@ class XY {
     // `scale`. In linear algebra terms, multiply the point by the
     // [scaling matrix](https://en.wikipedia.org/wiki/Scaling_%28geometry%29#Matrix_representation)
     // defined by `scale`.
+    /**
+   * 坐标相乘
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     scaleBy(otherXY, clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2869,6 +3111,12 @@ class XY {
     // @method unscaleBy(scale: Point): Point
     // Inverse of `scaleBy`. Divide each coordinate of the current point by
     // each coordinate of `scale`.
+    /**
+   * 坐标相除
+   * @param {XY} otherXY - 另一坐标
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     unscaleBy(otherXY, clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2881,6 +3129,11 @@ class XY {
     }
     // @method round(): Point
     // Returns a copy of the current point with rounded coordinates.
+    /**
+   * 坐标取整（四舍五入）
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     round(clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2893,6 +3146,11 @@ class XY {
     }
     // @method floor(): Point
     // Returns a copy of the current point with floored coordinates (rounded down).
+    /**
+   * 坐标向下取整
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     floor(clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2905,6 +3163,11 @@ class XY {
     }
     // @method ceil(): Point
     // Returns a copy of the current point with ceiled coordinates (rounded up).
+    /**
+   * 坐标向上取整
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     ceil(clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2917,6 +3180,11 @@ class XY {
     }
     // @method trunc(): Point
     // Returns a copy of the current point with truncated coordinates (rounded towards zero).
+    /**
+   * 坐标直接取整（将数字的小数部分去掉）
+   * @param {boolean} clone - 是否返回新坐标
+   * @return {XY} 返回坐标
+   */
     trunc(clone = true) {
         let source = this;
         // non-destructive, returns a new point
@@ -2929,12 +3197,22 @@ class XY {
     }
     // @method distanceTo(otherPoint: Point): Number
     // Returns the cartesian distance between the current and the given points.
+    /**
+   * 计算与另一点间欧式距离
+   * @param {XY} point - 另一点坐标
+   * @return {number} 返回距离
+   */
     distanceTo(point) {
         let x = point.x - this.x, y = point.y - this.y;
         return Math.sqrt(x * x + y * y);
     }
     // @method equals(otherPoint: Point): Boolean
     // Returns `true` if the given point has the same coordinates.
+    /**
+   * 判断坐标是否相等
+   * @param {XY} obj - 坐标
+   * @return {boolean} 返回是否相等
+   */
     equals(point) {
         if (!point)
             return false;
@@ -2943,16 +3221,27 @@ class XY {
     }
     // @method contains(otherPoint: Point): Boolean
     // Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+    /**
+   * 判断是否包含坐标
+   * @remark Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+   * @param {XY} obj - 坐标
+   * @return {boolean} 返回是否包含
+   */
     contains(point) {
         return Math.abs(point.x) <= Math.abs(this.x) &&
             Math.abs(point.y) <= Math.abs(this.y);
     }
     // @method toString(): String
     // Returns a string representation of the point for debugging purposes.
-    toString() {
+    /**
+   * 输出字符串
+   * @param {number} precision - 保留精度
+   * @return {string} 返回字符串
+   */
+    toString(precision = 3) {
         return 'XY(' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x) + ', ' +
-            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y) + ')';
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.x, precision) + ', ' +
+            (0,_util_util__WEBPACK_IMPORTED_MODULE_0__.formatNum)(this.y, precision) + ')';
     }
 }
 
@@ -3427,6 +3716,7 @@ __webpack_require__.r(__webpack_exports__);
  * 要素类（要素集合）
  * @remarks
  * TODO: a lot of things to be done
+ * 可设置CRS代表数据源坐标系，FeatureLayer对应Map显示坐标系，可内置数据转换
  */
 class FeatureClass {
     /**
@@ -3438,6 +3728,9 @@ class FeatureClass {
          * 属性字段集合
          */
         this._fields = [];
+        /**
+         * 矢量要素集合
+         */
         this._features = {}; //Map<string, Graphic>
         this._type = type;
     }
@@ -3446,6 +3739,12 @@ class FeatureClass {
      */
     get first() {
         return this._first;
+    }
+    /**
+     * 遍历集合的结尾要素
+     */
+    get last() {
+        return this._last;
     }
     /**
      * 空间数据类型：点/线/面
@@ -3478,7 +3777,6 @@ class FeatureClass {
      */
     addFeature(feature, last = true) {
         this._features[feature.id] = feature;
-        feature.geometry.crs = this._crs;
         if (!this._first) {
             this._first = feature;
             this._last = feature;
@@ -3544,6 +3842,10 @@ class FeatureClass {
     clearFields() {
         this._fields = [];
     }
+    /**
+     * 加载矢量数据
+     * @param {Adapter} adapter - 数据适配器
+     */
     async load(adapter) {
         if (this._type == adapter.type) {
             const features = await adapter.fetch();
@@ -3572,48 +3874,66 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class Feature extends _base_evented_object__WEBPACK_IMPORTED_MODULE_0__.EventedObject {
+    /**
+      * 构造函数
+      * @param {Geometry} geometry - 空间图形
+      * @param {Object} properties - 属性信息
+      */
     constructor(geometry, properties) {
         super();
+        /**
+         * 属性信息
+         */
         this._properties = {};
+        /**
+         * 是否可见
+         */
         this.visible = true;
+        /**
+         * 前一要素
+         * @remarks
+         * 用于FeatureClass要素链表
+         */
         this.prev = null;
+        /**
+         * 后一要素
+         * @remarks
+         * 用于FeatureClass要素链表
+         */
         this.next = null;
         this._geometry = geometry;
         this._properties = properties;
     }
+    /**
+     * 空间图形
+     */
     get geometry() {
         return this._geometry;
     }
+    /**
+     * 属性信息
+     */
     get properties() {
         return this._properties;
     }
-    get Text() {
-        return this._text;
-    }
-    set Text(value) {
-        this._text = value;
-    }
     /**
-       * 绘制点
-       * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-       * @param {Projection} projection - 坐标投影转换
-       * @param {Bound} extent - 当前可视范围
-       * @param {Symbol} symbol - 渲染符号
-       */
+      * 绘制点
+      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+      * @param {Symbol} symbol - 渲染符号
+      */
     draw(ctx, symbol) {
         this._geometry.draw(ctx, symbol);
     }
     /**
-       * 标注要素
-       * @remarks 调用空间坐标信息进行标注绘制
-       * @param {Field} field - 标注字段
-       * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-       * @param {Projection} projection - 坐标投影转换
-       * @param {SimpleTextSymbol} symbol - 标注符号
-       */
+      * 标注要素
+      * @remarks 调用空间坐标信息进行标注绘制
+      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+      * @param {Field} field - 标注字段
+      * @param {Text} text - 标注符号
+      */
     label(ctx, field, text = new _text_text__WEBPACK_IMPORTED_MODULE_1__.Text()) {
         if (this.visible)
-            this._geometry.label(ctx, this._properties[field.name], this._text || text);
+            this._geometry.label(ctx, this._properties[field.name], this.text || text);
     }
 }
 
@@ -6102,11 +6422,10 @@ class Collision {
 class NullCollision {
     /**
      * 冲突检测
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
      * @param {Feature[]} features - 准备绘制标注的要素集合
      * @param {Field} field - 标注字段
-     * @param {SimpleTextSymbol} symbol - 标注文本符号
-     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
+     * @param {Text} text - 标注文本符号
      * @return {Feature[]} 返回可绘制标注的要素集合
      */
     test(ctx, features, field, text) {
@@ -6130,11 +6449,10 @@ class SimpleCollision {
     }
     /**
      * 冲突检测
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
      * @param {Feature[]} features - 准备绘制标注的要素集合
      * @param {Field} field - 标注字段
-     * @param {SimpleTextSymbol} symbol - 标注文本符号
-     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
+     * @param {Text} text - 标注文本符号
      * @return {Feature[]} 返回可绘制标注的要素集合
      */
     test(ctx, features, field, text) {
@@ -11693,9 +12011,9 @@ function template(str, data) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!**************************!*\
-  !*** ./feature-layer.js ***!
-  \**************************/
+/*!********************************!*\
+  !*** ./pattern-fill-symbol.js ***!
+  \********************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dist */ "../dist/index.js");
 
@@ -11710,31 +12028,14 @@ window.load = async () => {
   tile.addTo(map);
 
   map.setView(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), 12);
-  //新建要素类
-  const featureClass = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureClass(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Point);
-  //新建字段
-  const field = new _dist__WEBPACK_IMPORTED_MODULE_0__.Field("rank", _dist__WEBPACK_IMPORTED_MODULE_0__.FieldType.Number);
-  featureClass.addField(field);
-  //新建矢量图层
-  const layer = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
-  layer.featureClass = featureClass;
-  //设置渲染方式——单一渲染
-  const renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimpleRenderer();
   //设置渲染符号
-  const symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
-  symbol.strokeStyle = "#3388FF";
-  symbol.fillStyle = "#3388FF80";
-  renderer.symbol = symbol;
-  layer.renderer = renderer;
-
+  const fillSymbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.LinePatternFillSymbol();
+  fillSymbol.size = 32;
+  fillSymbol.angle = 30;
   //生成随机数据
-  for (let i = 1; i <= 200; i++) {
-    const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1));
-    const feature = new _dist__WEBPACK_IMPORTED_MODULE_0__.Feature(point, { rank: parseInt(Math.random() * 10) });
-    featureClass.addFeature(feature);
-  }
-  //添加矢量图层
-  map.addFeatureLayer(layer);
+  const polygon = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polygon([[new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.807411 + Math.random() * 1), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.807411 + Math.random() * 1)]]);
+  const graphic = new _dist__WEBPACK_IMPORTED_MODULE_0__.Graphic(polygon, fillSymbol);
+  map.addGraphic(graphic);
 
 }
 })();

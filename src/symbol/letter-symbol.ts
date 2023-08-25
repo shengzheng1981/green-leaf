@@ -37,8 +37,7 @@ export class LetterSymbol extends PointSymbol {
   /**
    * 绘制字符符号
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {number} screenX - 屏幕坐标X
-   * @param {number} screenY - 屏幕坐标Y
+   * @param {ScreenXY} screenXY - 屏幕坐标
    */
   draw(ctx: CanvasRenderingContext2D, screenXY: ScreenXY) {
     ctx.save();
@@ -60,7 +59,10 @@ export class LetterSymbol extends PointSymbol {
     ctx.fillText(this.letter, screenXY.x, screenXY.y);
     ctx.restore();
   }
-
+  /**
+   * 获取包络矩形
+   * @param {ScreenXY} screenXY - 屏幕坐标
+   */
   getScreenBounds(screenXY: ScreenXY) {
     let r = this.radius,
     w = this.stroke ? this.weight / 2 : 0,

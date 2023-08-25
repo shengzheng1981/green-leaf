@@ -1,6 +1,6 @@
 module.exports = {
     mode: "development",
-    entry: "./feature-layer.js",
+    entry: "./pattern-fill-symbol.js",
     output: {
         filename: "bundle.js"
     },

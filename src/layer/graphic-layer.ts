@@ -66,7 +66,11 @@ export class GraphicLayer extends Layer {
     this._last = null;
     this._graphics = {};
   }
-
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   transform(origin: ScreenXY, zoom: number) {
     let graphic = this._first;
     while (graphic) {

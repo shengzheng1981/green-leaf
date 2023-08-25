@@ -1,7 +1,9 @@
 import { ScreenBounds } from "../common/screen-bounds";
 import { ScreenXY } from "../common/screen-xy";
 import { PointSymbol } from "./symbol";
-
+/**
+ * 形状点符号（正多边形）
+ */
 export class ShapeSymbol extends PointSymbol {
   /**
    * 圆点半径，像素值
@@ -9,14 +11,23 @@ export class ShapeSymbol extends PointSymbol {
   public radius: number = 10;
   /**
    * 边数
-  */  
+  */
   public sides: number = 4;
-
+  /**
+   * 旋转度数
+  */
   public angle: number = 0;  //(0, 360)
+  /**
+   * 旋转弧度
+  */
   get radian() {
     return this.angle * Math.PI / 180;
   }
-  
+  /**
+   * 绘制点（虚函数）
+   * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+   * @param {ScreenXY} screenXY - 屏幕坐标
+   */
   draw(ctx: CanvasRenderingContext2D, screenXY: ScreenXY) {
     ctx.save();
     //keep size
@@ -42,8 +53,9 @@ export class ShapeSymbol extends PointSymbol {
   }
 
   /**
-   * 包络矩形
-  */
+   * 获取包络矩形
+   * @param {ScreenXY} screenXY - 屏幕坐标
+   */
   getScreenBounds(screenXY: ScreenXY) {
     let r = this.radius,
       w = this.stroke ? this.weight / 2 : 0,

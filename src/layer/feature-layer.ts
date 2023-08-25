@@ -7,7 +7,9 @@ import { Label } from "../label/label";
 import { Renderer } from "../renderer/renderer";
 import { SimpleRenderer } from "../renderer/simple-renderer";
 import { Layer } from "./layer";
-
+/**
+ * 矢量图层类
+ */
 export class FeatureLayer extends Layer {
   /**
    * 矢量要素类（数据源）
@@ -79,7 +81,11 @@ export class FeatureLayer extends Layer {
       feature = feature.next;
     }
   } 
-
+  /**
+   * 数据变换
+   * @param {ScreenXY} origin - 窗口坐标原点
+   * @param {number} zoom - 当前缩放级别
+   */
   transform(origin: ScreenXY, zoom: number) {
     let feature = this._featureClass.first;
     while (feature) {
@@ -93,9 +99,8 @@ export class FeatureLayer extends Layer {
    * @remarks
    * 遍历图形集合进行绘制
    * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-   * @param {Projection} projection - 坐标投影转换
-   * @param {Bound} extent - 当前可视范围
    * @param {number} zoom - 当前缩放级别
+   * @param {ScreenBounds} redrawBounds - 当前可视范围
    */
   draw(ctx: CanvasRenderingContext2D, zoom: number, redrawBounds?: ScreenBounds) {
     if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom) return;
@@ -120,7 +125,12 @@ export class FeatureLayer extends Layer {
       this.label.draw(ctx, features);
     }
   }
-
+  /**
+   * 根据当前屏幕坐标位置查询图层
+   * @param {ScreenXY} screenXY - 当前屏幕坐标位置
+   * @param {number} zoom - 当前缩放级别
+   * @param {ScreenBounds} redrawBounds - 当前可视范围
+   */
   query(screenXY: ScreenXY, zoom: number, bounds: ScreenBounds) {
     if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom) return [];
     let feature = this._featureClass.first;

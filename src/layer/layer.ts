@@ -34,8 +34,8 @@ export abstract class Layer extends EventedObject {
    */
   private _zoom: number[] = [1, 20];
   /**
-     * 图层可见缩放级别设置
-     */
+   * 图层可见缩放级别设置
+   */
   get minZoom() {
     return this._zoom[0];
   }
