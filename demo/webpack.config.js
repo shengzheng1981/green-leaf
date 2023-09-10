@@ -1,6 +1,6 @@
 module.exports = {
     mode: "development",
-    entry: "./pattern-fill-symbol.js",
+    entry: "./subway.js",
     output: {
         filename: "bundle.js"
     },

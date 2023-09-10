@@ -12011,9 +12011,9 @@ function template(str, data) {
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-/*!********************************!*\
-  !*** ./pattern-fill-symbol.js ***!
-  \********************************/
+/*!*******************!*\
+  !*** ./subway.js ***!
+  \*******************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _dist__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dist */ "../dist/index.js");
 
@@ -12028,15 +12028,28 @@ window.load = async () => {
   tile.addTo(map);
 
   map.setView(new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.909186, 116.397411), 12);
-  //设置渲染符号
-  const fillSymbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.LinePatternFillSymbol();
-  fillSymbol.size = 32;
-  fillSymbol.angle = 30;
-  //生成随机数据
-  const polygon = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polygon([[new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.897411 + Math.random() * 1), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.807411 + Math.random() * 1), new _dist__WEBPACK_IMPORTED_MODULE_0__.LatLng(39.409186 + Math.random() * 1, 115.807411 + Math.random() * 1)]]);
-  const graphic = new _dist__WEBPACK_IMPORTED_MODULE_0__.Graphic(polygon, fillSymbol);
-  map.addGraphic(graphic);
 
+  const geojsonAdapter = new _dist__WEBPACK_IMPORTED_MODULE_0__.GeoJSONAdapter(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polyline, "https://raw.githubusercontent.com/shengzheng1981/green-leaf/master/demo/assets/geojson/line1.json");
+  // const geojsonAdapter = new GeoJSONAdapter(GeometryType.Polygon, "assets/geojson/beijing.json");
+  //新建要素类
+  const featureClass = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureClass(_dist__WEBPACK_IMPORTED_MODULE_0__.GeometryType.Polyline);
+  //新建字段
+  const field = new _dist__WEBPACK_IMPORTED_MODULE_0__.Field("name", _dist__WEBPACK_IMPORTED_MODULE_0__.FieldType.String);
+  featureClass.addField(field);
+  await featureClass.load(geojsonAdapter);
+  //新建矢量图层
+  const featureLayer = new _dist__WEBPACK_IMPORTED_MODULE_0__.FeatureLayer();
+  featureLayer.featureClass = featureClass;
+  //设置渲染方式——分类渲染
+  const renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimpleRenderer();
+  renderer.symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimpleLineSymbol();
+  renderer.symbol.strokeStyle = "rgb(192,58,47)";
+  renderer.symbol.weight = 3;
+  featureLayer.renderer = renderer;
+  featureLayer.zoom = [5, 20];
+
+  //添加矢量图层
+  map.addFeatureLayer(featureLayer);
 }
 })();
 
