@@ -63,6 +63,10 @@ export class Polyline extends Geometry{
 		return this._latlngs;
 	}
 
+  getPlaneXYs() {
+		return this._planeXYs;
+	}
+
 	_setLatLngs(latlngs: LatLng[]) {
 		this._latlngBounds = new LatLngBounds();
 		this._latlngs = [];

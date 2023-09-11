@@ -4049,6 +4049,9 @@ class Geometry {
     get screenBounds() {
         return this._screenBounds;
     }
+    get crs() {
+        return this._crs;
+    }
     set crs(value) {
         this._crs = value;
         this.project();
@@ -4701,6 +4704,10 @@ class Point extends _geometry__WEBPACK_IMPORTED_MODULE_0__.Geometry {
     get latlng() {
         return this._latlng;
     }
+    set latlng(value) {
+        this._latlng = value;
+        this.project();
+    }
     get screenXY() {
         return this._screenXY;
     }
@@ -4963,6 +4970,9 @@ class Polyline extends _geometry__WEBPACK_IMPORTED_MODULE_2__.Geometry {
     getLatLngs() {
         return this._latlngs;
     }
+    getPlaneXYs() {
+        return this._planeXYs;
+    }
     _setLatLngs(latlngs) {
         this._latlngBounds = new _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_0__.LatLngBounds();
         this._latlngs = [];
@@ -5074,6 +5084,9 @@ class Graphic extends _base_evented_object__WEBPACK_IMPORTED_MODULE_0__.EventedO
     }
     get geometry() {
         return this._geometry;
+    }
+    set geometry(value) {
+        this._geometry = value;
     }
     get symbol() {
         return this._symbol;
@@ -6611,6 +6624,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _layer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./layer */ "../dist/layer/layer.js");
 
 
+/**
+ * 矢量图层类
+ */
 class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
     constructor() {
         super(...arguments);
@@ -6670,6 +6686,11 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
             feature = feature.next;
         }
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         let feature = this._featureClass.first;
         while (feature) {
@@ -6682,9 +6703,8 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
      * @remarks
      * 遍历图形集合进行绘制
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {Projection} projection - 坐标投影转换
-     * @param {Bound} extent - 当前可视范围
      * @param {number} zoom - 当前缩放级别
+     * @param {ScreenBounds} redrawBounds - 当前可视范围
      */
     draw(ctx, zoom, redrawBounds) {
         if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom)
@@ -6710,6 +6730,12 @@ class FeatureLayer extends _layer__WEBPACK_IMPORTED_MODULE_1__.Layer {
             this.label.draw(ctx, features);
         }
     }
+    /**
+     * 根据当前屏幕坐标位置查询图层
+     * @param {ScreenXY} screenXY - 当前屏幕坐标位置
+     * @param {number} zoom - 当前缩放级别
+     * @param {ScreenBounds} redrawBounds - 当前可视范围
+     */
     query(screenXY, zoom, bounds) {
         if (!this.visible || this.minZoom >= zoom || this.maxZoom <= zoom)
             return [];
@@ -6805,6 +6831,11 @@ class GraphicLayer extends _layer__WEBPACK_IMPORTED_MODULE_0__.Layer {
         this._last = null;
         this._graphics = {};
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         let graphic = this._first;
         while (graphic) {
@@ -6907,8 +6938,8 @@ class Layer extends _base_evented_object__WEBPACK_IMPORTED_MODULE_0__.EventedObj
         this._visible = value;
     }
     /**
-       * 图层可见缩放级别设置
-       */
+     * 图层可见缩放级别设置
+     */
     get minZoom() {
         return this._zoom[0];
     }
@@ -6988,6 +7019,11 @@ class RasterLayer extends _layer__WEBPACK_IMPORTED_MODULE_0__.Layer {
             this._raster.crs = value;
         }
     }
+    /**
+     * 数据变换
+     * @param {ScreenXY} origin - 窗口坐标原点
+     * @param {number} zoom - 当前缩放级别
+     */
     transform(origin, zoom) {
         if (this._raster) {
             this._raster.transform(origin, zoom);
@@ -7412,6 +7448,14 @@ class Viewer extends _canvas__WEBPACK_IMPORTED_MODULE_3__.Canvas {
         if (this._origin) {
             graphic.transform(this._origin, this._zoom);
             this._requestRedraw(graphic.geometry);
+        }
+    }
+    updateGraphic(graphic, geometry) {
+        if (this._origin) {
+            geometry.transform(this._origin, this._zoom);
+            this._requestRedraw(graphic.geometry);
+            this._requestRedraw(geometry);
+            graphic.geometry = geometry;
         }
     }
     removeGraphic(graphic) {
@@ -9063,6 +9107,17 @@ class Map extends _base_evented_object__WEBPACK_IMPORTED_MODULE_4__.EventedObjec
         // this._canvas.addGraphic(graphic);
         this._viewer.addGraphic(graphic);
     }
+    removeGraphic(graphic) {
+        // this._canvas.addGraphic(graphic);
+        this._viewer.removeGraphic(graphic);
+    }
+    updateGraphic(graphic, geometry) {
+        geometry.crs = this._crs;
+        this._viewer.updateGraphic(graphic, geometry);
+    }
+    clearGraphics() {
+        this._viewer.clearGraphics();
+    }
     addGraphicLayer(graphicLayer) {
         graphicLayer.crs = this._crs;
         // this._canvas.addGraphicLayer(graphicLayer);
@@ -9220,7 +9275,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/latlng-bounds */ "../dist/common/latlng-bounds.js");
 
 
-/*
+/**
  * 栅格
  */
 class Raster {
@@ -9242,19 +9297,19 @@ class Raster {
         this._canvas.height = height;
         this._latlngBounds = new _common_latlng_bounds__WEBPACK_IMPORTED_MODULE_1__.LatLngBounds(new _common_latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng(ymin, xmin), new _common_latlng__WEBPACK_IMPORTED_MODULE_0__.LatLng(ymax, xmax));
     }
-    /*
+    /**
      * 动态栅格（实时渲染）
      */
     get dynamic() {
         return false;
     }
-    /*
+    /**
      * 画布存放Image
      */
     get canvas() {
         return this._canvas;
     }
-    /*
+    /**
      * 栅格经纬度边界
      */
     get bounds() {
@@ -9262,8 +9317,6 @@ class Raster {
     }
     /**
      * 包络矩形
-     * @remarks
-     * 注意bound的坐标类型：一般为地理平面坐标，即投影后坐标
      */
     get latlngBounds() {
         return this._latlngBounds;
@@ -9274,6 +9327,9 @@ class Raster {
     get screenBounds() {
         return this._screenBounds;
     }
+    /**
+      * 设置坐标系并投影
+      */
     set crs(value) {
         this._crs = value;
         this.project();
@@ -9306,6 +9362,12 @@ __webpack_require__.r(__webpack_exports__);
  * 分类渲染项
  */
 class CategoryRendererItem {
+    /**
+     * 构造函数
+     * @param {number} value - 分类值
+     * @param {Symbol} symbol - 渲染符号
+     * @param {string} label - 分类标题
+     */
     constructor(value, symbol, label) {
         /**
          * 该类总数
@@ -9394,6 +9456,11 @@ class CategoryRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_3__.Renderer {
             }
         });
     }
+    /**
+      * 根据矢量要素获取渲染符号
+      * @param {Feature} feature - 矢量要素
+      * @return {Symbol} 返回渲染符号
+      */
     getSymbol(feature) {
         const item = this.items.find(item => item.value == feature.properties[this.field.name]);
         if (item)
@@ -9429,6 +9496,13 @@ __webpack_require__.r(__webpack_exports__);
  * 分级区间一般为( ]: 即下开上闭
  */
 class ClassRendererItem {
+    /**
+     * 构造函数
+     * @param {number} low - 下限
+     * @param {number} high - 上限
+     * @param {Symbol} symbol - 渲染符号
+     * @param {string} label - 分级标题
+     */
     constructor(low, high, symbol, label) {
         this.low = low;
         this.high = high;
@@ -9458,6 +9532,9 @@ class ClassRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_3__.Renderer {
     get field() {
         return this._field;
     }
+    /**
+     * 设置分级字段
+     */
     set field(value) {
         this._field = value;
     }
@@ -9471,6 +9548,9 @@ class ClassRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_3__.Renderer {
      * 自动生成分级渲染项
      * @remarks
      * TODO: 分级有多种方式，目前只实现均分
+     * @param {FeatureClass} featureClass - 要素类（要素集合）
+     * @param {Field} field - 分级字段
+     * @param {number} breaks - 分级数量
      */
     generate(featureClass, field, breaks) {
         this._field = field;
@@ -9519,6 +9599,11 @@ class ClassRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_3__.Renderer {
             }
         }
     }
+    /**
+     * 根据矢量要素获取渲染符号
+     * @param {Feature} feature - 矢量要素
+     * @return {Symbol} 返回渲染符号
+     */
     getSymbol(feature) {
         const item = this.items.find(item => item.low <= feature.properties[this.field.name] && item.high >= feature.properties[this.field.name]);
         if (item)
@@ -9553,21 +9638,44 @@ __webpack_require__.r(__webpack_exports__);
 class ClusterRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_1__.Renderer {
     constructor() {
         super(...arguments);
+        /**
+         * 默认渲染符号
+         */
         this._defaultSymbol = new _symbol_symbol__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
+        /**
+         * 聚类容差距离
+         */
         this._tolerance = 50; //distance 50px
+        /**
+         * 聚合要素集
+         */
         this._features = {}; // Map<id, count>
     }
+    /**
+     * 设置数据源
+     */
     set featureClass(value) {
         if (value.type == _geometry_geometry__WEBPACK_IMPORTED_MODULE_2__.GeometryType.Point) {
             this._featureClass = value;
         }
     }
+    /**
+     * 设置默认符号
+     */
     set defaultSymbol(value) {
         this._defaultSymbol = value;
     }
-    set Tolerance(value) {
+    /**
+     * 设置容差
+     */
+    set tolerance(value) {
         this._tolerance = value;
     }
+    /**
+     * 根据矢量要素获取渲染符号
+     * @param {ScreenBounds} redrawBounds - 屏幕范围
+     * @remark Do something before layer draw, etc ClusterRenderer
+     */
     init(redrawBounds) {
         this._features = {};
         if (!this._featureClass)
@@ -9597,6 +9705,11 @@ class ClusterRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_1__.Renderer {
             feature = feature.next;
         }
     }
+    /**
+     * 根据矢量要素获取渲染符号
+     * @param {Feature} feature - 矢量要素
+     * @return {Symbol} 返回渲染符号
+     */
     getSymbol(feature) {
         const count = this._features[feature.id];
         if (!count) {
@@ -9634,12 +9747,23 @@ __webpack_require__.r(__webpack_exports__);
  * 只适用点图层
  */
 class DotRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_1__.Renderer {
+    /**
+     * 半径字段
+     */
     get field() {
         return this._field;
     }
+    /**
+     * 半径字段
+     */
     set field(value) {
         this._field = value;
     }
+    /**
+     * 根据矢量要素获取渲染符号
+     * @param {Feature} feature - 矢量要素
+     * @return {Symbol} 返回渲染符号
+     */
     getSymbol(feature) {
         this.symbol = this.symbol || new _symbol_symbol__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol();
         this.symbol.radius = Number(feature.properties[this.field.name] || 0);
@@ -9664,6 +9788,11 @@ __webpack_require__.r(__webpack_exports__);
  * 渲染方式基类
  */
 class Renderer {
+    /**
+     * 根据矢量要素获取渲染符号
+     * @param {ScreenBounds} redrawBounds - 屏幕范围
+     * @remark Do something before layer draw, etc ClusterRenderer
+     */
     init(redrawBounds) {
         //do something before layer draw; 
         //etc ClusterRenderer
@@ -9689,6 +9818,11 @@ __webpack_require__.r(__webpack_exports__);
  * 单一渲染
  */
 class SimpleRenderer extends _renderer__WEBPACK_IMPORTED_MODULE_0__.Renderer {
+    /**
+     * 根据矢量要素获取渲染符号
+     * @param {Feature} feature - 矢量要素
+     * @return {Symbol} 返回渲染符号
+     */
     getSymbol(feature) {
         return this.symbol;
     }
@@ -9726,7 +9860,7 @@ class AlternateLineSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.LineSymbo
     /**
      * 绘制线
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number[][]} screen - 线对应坐标点的屏幕坐标集合
+     * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
      */
     draw(ctx, screenXYs) {
         if (screenXYs.length < 2)
@@ -9759,6 +9893,10 @@ class AlternateLineSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.LineSymbo
         ctx.stroke();
         ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
+     */
     getScreenBounds(screenXYs) {
         const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(screenXY => {
@@ -9912,7 +10050,7 @@ class ArrowSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.LineSymbol {
     /**
      * 绘制线
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number[][]} screen - 线对应坐标点的屏幕坐标集合
+     * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
      */
     draw(ctx, screenXYs) {
         ctx.save();
@@ -9970,6 +10108,10 @@ class ArrowSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.LineSymbol {
         });
         ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
+     */
     getScreenBounds(screenXYs) {
         const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(screenXY => {
@@ -10104,8 +10246,7 @@ class ClusterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_3__.PointSymbol {
     /**
      * 绘制聚合符号
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number} screenX - 屏幕坐标X
-     * @param {number} screenY - 屏幕坐标Y
+     * @param {ScreenXY} screenXY - 屏幕坐标
      */
     draw(ctx, screenXY) {
         ctx.save();
@@ -10131,6 +10272,10 @@ class ClusterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_3__.PointSymbol {
         ctx.fillText(this.text, screenXY.x, screenXY.y);
         ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY} screenXY - 屏幕坐标
+     */
     getScreenBounds(screenXY) {
         let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
         return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
@@ -10192,8 +10337,7 @@ class LetterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
     /**
      * 绘制字符符号
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number} screenX - 屏幕坐标X
-     * @param {number} screenY - 屏幕坐标Y
+     * @param {ScreenXY} screenXY - 屏幕坐标
      */
     draw(ctx, screenXY) {
         ctx.save();
@@ -10215,6 +10359,10 @@ class LetterSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
         ctx.fillText(this.letter, screenXY.x, screenXY.y);
         ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY} screenXY - 屏幕坐标
+     */
     getScreenBounds(screenXY) {
         let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
         return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
@@ -10251,7 +10399,7 @@ class PatternFillSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.FillSymbol 
      * 奇偶填充
      * https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number[][][]} screen - 面对应坐标点的屏幕坐标集合
+     * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
      */
     draw(ctx, screenXYs) {
         // ctx.save();
@@ -10280,6 +10428,10 @@ class PatternFillSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_1__.FillSymbol 
         ctx.stroke();
         // ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
+     */
     getScreenBounds(screenXYs) {
         const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(ring => {
@@ -10393,6 +10545,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * 形状点符号（正多边形）
+ */
 class ShapeSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
     constructor() {
         super(...arguments);
@@ -10404,11 +10559,22 @@ class ShapeSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
          * 边数
         */
         this.sides = 4;
+        /**
+         * 旋转度数
+        */
         this.angle = 0; //(0, 360)
     }
+    /**
+     * 旋转弧度
+    */
     get radian() {
         return this.angle * Math.PI / 180;
     }
+    /**
+     * 绘制点（虚函数）
+     * @param {CanvasRenderingContext2D} ctx - 绘图上下文
+     * @param {ScreenXY} screenXY - 屏幕坐标
+     */
     draw(ctx, screenXY) {
         ctx.save();
         //keep size
@@ -10433,8 +10599,9 @@ class ShapeSymbol extends _symbol__WEBPACK_IMPORTED_MODULE_2__.PointSymbol {
         ctx.restore();
     }
     /**
-     * 包络矩形
-    */
+     * 获取包络矩形
+     * @param {ScreenXY} screenXY - 屏幕坐标
+     */
     getScreenBounds(screenXY) {
         let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
         return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
@@ -10556,6 +10723,10 @@ class SimplePointSymbol extends PointSymbol {
         ctx.stroke();
         //ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY} screenXY - 屏幕坐标
+     */
     getScreenBounds(screenXY) {
         let r = this.radius, w = this.stroke ? this.weight / 2 : 0, p = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(r + w, r + w);
         return new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds(screenXY.subtract(p), screenXY.add(p));
@@ -10619,8 +10790,7 @@ class SimpleMarkerSymbol extends PointSymbol {
      * @remarks
      * 注意异步加载
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number} screenX - 屏幕坐标X
-     * @param {number} screenY - 屏幕坐标Y
+     * @param {ScreenXY} screenXY - 屏幕坐标
      */
     draw(ctx, screenXY) {
         // if (!this._loaded) {
@@ -10646,6 +10816,10 @@ class SimpleMarkerSymbol extends PointSymbol {
             ctx.drawImage(this.image, screenXY.x + this.offsetX, screenXY.y + this.offsetY, this.width, this.height);
         }
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY} screenXY - 屏幕坐标
+     */
     getScreenBounds(screenXY) {
         let p1 = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(this.offsetX, this.offsetY);
         let p2 = new _common_screen_xy__WEBPACK_IMPORTED_MODULE_1__.ScreenXY(this.offsetX + this.width, this.offsetY + this.height);
@@ -10661,7 +10835,7 @@ class SimpleLineSymbol extends LineSymbol {
     /**
      * 绘制线
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number[][]} screen - 线对应坐标点的屏幕坐标集合
+     * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
      */
     draw(ctx, screenXYs) {
         if (screenXYs.length < 2)
@@ -10681,6 +10855,10 @@ class SimpleLineSymbol extends LineSymbol {
         ctx.stroke();
         // ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY[]} screenXYs - 线对应坐标点的屏幕坐标集合
+     */
     getScreenBounds(screenXYs) {
         const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(screenXY => {
@@ -10702,7 +10880,7 @@ class SimpleFillSymbol extends FillSymbol {
      * 奇偶填充
      * https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/fill
      * @param {CanvasRenderingContext2D} ctx - 绘图上下文
-     * @param {number[][][]} screen - 面对应坐标点的屏幕坐标集合
+     * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
      */
     draw(ctx, screenXYs) {
         // ctx.save();
@@ -10730,6 +10908,10 @@ class SimpleFillSymbol extends FillSymbol {
         ctx.stroke();
         // ctx.restore();
     }
+    /**
+     * 获取包络矩形
+     * @param {ScreenXY[][]} screenXYs - 面对应坐标点的屏幕坐标集合
+     */
     getScreenBounds(screenXYs) {
         const bounds = new _common_screen_bounds__WEBPACK_IMPORTED_MODULE_0__.ScreenBounds();
         screenXYs.forEach(ring => {
@@ -12043,13 +12225,121 @@ window.load = async () => {
   //设置渲染方式——分类渲染
   const renderer = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimpleRenderer();
   renderer.symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimpleLineSymbol();
-  renderer.symbol.strokeStyle = "rgb(192,58,47)";
+  renderer.symbol.strokeStyle = "#c03a2f";
   renderer.symbol.weight = 3;
   featureLayer.renderer = renderer;
   featureLayer.zoom = [5, 20];
 
   //添加矢量图层
   map.addFeatureLayer(featureLayer);
+
+  const feature = featureClass.first;
+  const polyline = feature.geometry;
+  //对向线路
+  const latlngs = polyline.getLatLngs();
+  const reverse = new _dist__WEBPACK_IMPORTED_MODULE_0__.Polyline([...latlngs].reverse());
+  reverse.crs = polyline.crs;
+  //沿线段按距离取点
+  const _getPointAlongLine = (p1, p2, d) => {
+    //line length
+    let l = Math.sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+    let t = d / l;
+    return new _dist__WEBPACK_IMPORTED_MODULE_0__.PlaneXY((1 - t) * p1.x + t * p2.x, (1 - t) * p1.y + t * p2.y);
+  }
+  //折线(曲线)按距离取点
+  const _getPointAlongPolyLine = (polyline, distance) => {
+    const xys = polyline.getPlaneXYs();
+    for (let i = 0; i < xys.length - 1; i++) {
+      const start = xys[i];
+      const end = xys[i+1];
+      const d = Math.sqrt((start.x - end.x) * (start.x - end.x) + (start.y - end.y) * (start.y - end.y));
+      if (d < distance) {
+        distance = distance - d;
+      } else {
+        return _getPointAlongLine(start, end, distance);
+      }
+    }
+    return null;
+  }
+
+  //模拟列车运行
+  const run = (polyline, start, symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.SimplePointSymbol) => {
+    let velocity = 50 / 3 * 60;  // 60km/h 1min = 1sec
+    let graphic;
+    const animate = (timestamp) => {
+      if (timestamp > start) {
+        const elapsed = timestamp - start;
+        const distance = velocity * elapsed / 1000;
+        const xy = _getPointAlongPolyLine(polyline, distance);
+        if (xy) {
+          const projection = new _dist__WEBPACK_IMPORTED_MODULE_0__.EPSG3857().projection;
+          const latlng = projection.unproject(xy);
+          const point = new _dist__WEBPACK_IMPORTED_MODULE_0__.Point(latlng);
+          if (!graphic) {
+            graphic = new _dist__WEBPACK_IMPORTED_MODULE_0__.Graphic(point, symbol);
+            map.addGraphic(graphic);
+          } else {
+            map.updateGraphic(graphic, point);
+          }
+          window.requestAnimationFrame(animate);
+        } else {
+          map.removeGraphic(graphic);
+        }
+      } else {
+        window.requestAnimationFrame(animate);
+      }
+    };
+    window.requestAnimationFrame(animate);
+  }
+
+  //列车时刻表
+  const metros = [
+    {time: 1000, direction: 1},
+    {time: 4000, direction: 1},
+    {time: 8000, direction: 1},
+    {time: 9000, direction: -1},
+    {time: 13000, direction: 1},
+    {time: 16000, direction: 1},
+    {time: 18000, direction: -1},
+    {time: 20000, direction: 1},
+    {time: 24000, direction: 1},
+    {time: 27000, direction: 1},
+    {time: 28000, direction: -1},
+    {time: 30000, direction: 1},
+    {time: 33000, direction: 1},
+    {time: 36000, direction: 1},
+    {time: 36000, direction: -1},
+    {time: 39000, direction: 1},
+    {time: 42000, direction: 1},
+    {time: 42000, direction: -1},
+    {time: 46000, direction: 1},
+    {time: 49000, direction: 1},
+    {time: 50000, direction: -1},
+    {time: 53000, direction: 1},
+    {time: 56000, direction: 1},
+    {time: 58000, direction: -1},
+    {time: 59000, direction: 1},
+  ];
+  metros.forEach(metro => {
+    if (metro.direction == 1) {
+      const symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.LetterSymbol();
+      symbol.letter = "环";
+      symbol.fillStyle = "#002FA7";
+      symbol.strokeStyle = "#002FA7";
+      symbol.fontColor = "#fff";
+      symbol.fontWeight = "bold";
+      run(polyline, metro.time, symbol);
+    } else {
+      const symbol = new _dist__WEBPACK_IMPORTED_MODULE_0__.LetterSymbol();
+      symbol.letter = "古";
+      symbol.fillStyle = "#FBD26A";
+      symbol.strokeStyle = "#FBD26A";
+      symbol.fontColor = "#333";
+      symbol.fontWeight = "bold";
+      run(reverse, metro.time, symbol);
+    }
+  })
+  
 }
 })();
 

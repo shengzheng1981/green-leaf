@@ -9,6 +9,7 @@ import { GraphicLayer } from '../../layer/graphic-layer';
 import { FeatureLayer } from '../../layer/feature-layer';
 import { RasterLayer } from '../../layer/raster-layer';
 import { Canvas, CanvasOptions } from "./canvas";
+import { Geometry } from '../../geometry/geometry';
 
 export class ViewerOptions extends CanvasOptions {
   pane: string = 'overlayPane';
@@ -71,6 +72,15 @@ export class Viewer extends Canvas {
     if (this._origin) {
       graphic.transform(this._origin, this._zoom);
       this._requestRedraw(graphic.geometry);
+    }
+  }
+
+  updateGraphic(graphic: Graphic, geometry: Geometry) {
+    if (this._origin) {
+      geometry.transform(this._origin, this._zoom);
+      this._requestRedraw(graphic.geometry);
+      this._requestRedraw(geometry);
+      graphic.geometry = geometry;
     }
   }
 

@@ -76,6 +76,10 @@ export abstract class Geometry {
     return this._screenBounds;
   }
 
+  get crs(): CRS {
+    return this._crs;
+  }
+
   set crs(value: CRS) {
     this._crs = value;
     this.project();

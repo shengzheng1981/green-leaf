@@ -15,6 +15,10 @@ export class Graphic extends EventedObject implements ILinkedList {
     return this._geometry;
   }
 
+  set geometry(value: Geometry) {
+    this._geometry = value;
+  }
+
   get symbol(): Symbol {
     return this._symbol;
   }

@@ -39,6 +39,11 @@ export class Point extends Geometry {
     return this._latlng;
   }
 
+  set latlng(value: LatLng) {
+    this._latlng = value;
+    this.project();
+  }
+
   get screenXY(): ScreenXY {
     return this._screenXY;
   }

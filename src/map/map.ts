@@ -23,6 +23,7 @@ import { OptionsObject } from '../base/options-object';
 import { CRS } from '../crs/crs';
 import { Viewer } from './canvas/viewer';
 import { Animater } from './canvas/animater';
+import { Geometry } from '../geometry/geometry';
 // import { Layer } from '../layer/layer';
 
 
@@ -1467,6 +1468,20 @@ export class Map extends EventedObject {
   addGraphic(graphic: Graphic) {
     // this._canvas.addGraphic(graphic);
     this._viewer.addGraphic(graphic);
+  }
+
+  removeGraphic(graphic: Graphic) {
+    // this._canvas.addGraphic(graphic);
+    this._viewer.removeGraphic(graphic);
+  }
+
+  updateGraphic(graphic: Graphic, geometry: Geometry) {
+    geometry.crs = this._crs;
+    this._viewer.updateGraphic(graphic, geometry);
+  }
+
+  clearGraphics() {
+    this._viewer.clearGraphics();
   }
 
   addGraphicLayer(graphicLayer: GraphicLayer) {
